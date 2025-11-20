@@ -11,7 +11,6 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
 </div>
 
 
-
 ## Fitur Utama
 - Login/Logout + Session (role: `admin`, `karyawan`)
 - Dashboard sesuai role
@@ -23,5 +22,11 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
 - Pola: PHP REST API + View HTML sederhana (Tailwind via CDN) + MySQL.
 - Detail arsitektur, ERD, flow & activity diagram: lihat `ARCHITECTURE.md`.
 
+
+## Instalasi
+### Tailwind
+```bash
+  npx @tailwindcss/cli -i ./public/assets/css/input.css -o ./public/assets/css/output.css --watch
+```
 
 

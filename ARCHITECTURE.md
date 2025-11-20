@@ -1,3 +1,83 @@
+# HRIS - Human Resource Management System Architecture
+
+## Overview
+Project HRIS ini dibangun dengan arsitektur **MVC Architecture (Model–View–Controller)** yang sederhana namun terstruktur, menggabungkan PHP untuk logika backend, MySQL sebagai basis data, dan HTML dengan Tailwind CSS untuk tampilan frontend.
+
+### Tech Stack
+- **Backend**: PHP 8.2+ (Native PHP, no framework)
+- **Database**: MySQL 8.0
+- **Frontend**: HTML5 + Tailwind CSS 4.1 (via CDN) + Vanilla JavaScript
+- **Server**: Apache/Nginx + PHP-FPM
+- **Authentication**: Session-based authentication
+
+### Arsitektur Aplikasi (MVC Pattern)
+hris-project/
+├─ public/                     # Root yang diakses browser
+│  ├─ index.php                # Router/front controller
+│  ├─ assets/
+│  │  ├─ css/
+│  │  │  └─ style.css          # Output build Tailwind
+│  │  ├─ js/
+│  │  │  └─ app.js             # Script utama
+│  │  └─ img/
+│  ├─ uploads/                 # File karyawan / foto profil
+│  └─ .htaccess                # Routing mod_rewrite
+│
+├─ app/
+│  ├─ Controllers/
+│  │  ├─ AuthController.php
+│  │  ├─ DashboardController.php
+│  │  ├─ AttendanceController.php
+│  │  ├─ LeaveController.php
+│  │  └─ PayrollController.php
+│  │
+│  ├─ Models/
+│  │  ├─ User.php
+│  │  ├─ Attendance.php
+│  │  ├─ LeaveRequest.php
+│  │  └─ Payroll.php
+│  │
+│  ├─ Views/
+│  │  ├─ layouts/
+│  │  │  ├─ header.php
+│  │  │  └─ footer.php
+│  │  ├─ auth/
+│  │  │  └─ login.php
+│  │  ├─ dashboard/
+│  │  │  ├─ admin.php
+│  │  │  └─ employee.php
+│  │  ├─ attendance/
+│  │  │  ├─ index.php
+│  │  ├─ leave/
+│  │  │  ├─ index.php
+│  │  │  └─ submit.php
+│  │  └─ payroll/
+│  │     └─ index.php
+│  │
+│  ├─ Core/
+│  │  ├─ Database.php           # Koneksi MySQL (PDO)
+│  │  ├─ Router.php             # Pengatur route
+│  │  ├─ Session.php            # Auth handler
+│  │  └─ Helpers.php
+│  │
+│  └─ config.php                # Konfigurasi environment
+│
+├─ storage/
+│  └─ logs/
+│     └─ app.log                # (optional) logging
+│
+├─ tailwind.config.js
+├─ package.json                 # Jika ingin build Tailwind
+├─ composer.json                # Jika mau pakai autoload PSR-4 (opsional)
+└─ README.md
+
+
+### Request Flow (MVC)
+1. **Model** → logika data & query database
+2. **View** → file tampilan (HTML, Tailwind)
+3. **Controller** → logika aplikasi & routing
+4. **Core** → library internal, router, session, hel
+
 ## Flowchart Utama HRMS
 ```mermaid
 flowchart TD
@@ -15,7 +95,7 @@ D -->|Valid| E{Role User?}
 D -->|Invalid| C
 
 E -->|Admin| F[Dashboard Admin]
-E -->|Karyawan| G[Dashboard Karyawan]
+E -->|Karyawan| G[Dashboard Karyawan]++
 
 %% === DASHBOARD Admin ===
 F --> H{Pilih Menu}
