@@ -10,7 +10,3 @@ CREATE TABLE users (
     karyawan_id INT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-INSERT INTO users (username, password_hash, role) VALUES ('admin', 'admin_password', 'admin');
-INSERT INTO users (username, password_hash, role) VALUES ('user1', 'user1_password', 'karyawan');
-INSERT INTO users (username, password_hash, role) VALUES ('user2', 'user2_password', 'karyawan');

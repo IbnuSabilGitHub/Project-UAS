@@ -5,13 +5,16 @@
 
     <?php if (isset($error)): ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <?= htmlspecialchars($error) ?>
+            <!-- Gunakan htmlspecialchars (adalah fungsi bawaan PHP) untuk mencegah XSS,
+              dengan ENT_QUOTES (mengonversi baik kutip tunggal maupun ganda) dan UTF-8 sebagai encoding -->
+            <?= htmlspecialchars($error ?? '', ENT_QUOTES, 'UTF-8') ?>
         </div>
     <?php endif; ?>
 
     <?php if (isset($success)): ?>
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            <?= htmlspecialchars($success) ?>
+            <!-- Cegah XSS -->
+            <?= htmlspecialchars($success ?? '', ENT_QUOTES, 'UTF-8') ?>
         </div>
     <?php endif; ?>
 
@@ -41,6 +44,7 @@
         </button>
     </form>
 
+    <!-- Bagian ini hanya untuk keperluan testing development saja, bisa dihapus nanti -->
     <div class="mt-6 p-4 bg-gray-50 rounded text-sm">
         <p class="font-semibold mb-2">Akun Testing:</p>
         <p>Admin: username=<code class="bg-gray-200 px-1">admin</code>, password=<code class="bg-gray-200 px-1">admin_password</code></p>

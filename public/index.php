@@ -1,6 +1,5 @@
 <?php
-// Normalisasi base path agar include bekerja walau file ini di-require dari root index.
-$baseDir = dirname(__DIR__); // C:\Users\MYPC\coding\HRIS
+$baseDir = dirname(__DIR__); 
 require_once $baseDir . "/app/config.php";
 require_once $baseDir . "/app/Core/Router.php";
 require_once $baseDir . "/app/Core/Helpers.php";
@@ -13,11 +12,9 @@ if (session_status() === PHP_SESSION_NONE) {
 // Parse URI untuk menghilangkan query string
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// Jika aplikasi dijalankan dari subfolder (mis. /HRIS),
-// hapus base path dari URI sehingga Router menerima path yang diharapkan.
-$scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']); // e.g. /HRIS/index.php or /HRIS/public/index.php
-$basePath = dirname($scriptName); // e.g. /HRIS or /HRIS/public or /
-$basePath = str_replace('/public', '', $basePath); // jika front controller berada di /public
+$scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']); 
+$basePath = dirname($scriptName);
+$basePath = str_replace('/public', '', $basePath);
 $basePath = rtrim($basePath, '/');
 if ($basePath === '') {
 	$basePath = '/';

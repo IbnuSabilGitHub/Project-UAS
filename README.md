@@ -218,12 +218,19 @@ Lihat di pojok kanan bawah jendela Open, ubah dropdown dari Text Documents (*.tx
 
 ## 📝 Testing Aplikasi
 
-**Akun Testing yang Tersedia:**
+### Register akun baru 
+> ⚠️ Fitur ini hanya untuk keperluan development saja, bisa dihapus nanti
 
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | `admin` | `admin_password` |
-| Karyawan | `user1` | `user1_password` |
+Untuk membuat akun baru (admin/karyawan):
+1. Buka folder `scripts/register`
+2. Modifikasi variabel `$username`, `$password`, dan `$role` di `register.php` sesuai kebutuhan
+3. Buka CLI (Command Prompt/Terminal)
+4. Jalankan script register:
+   ```bash
+      php -d extension=mysqli register.php
+   ```
+5. Cek di database `hris_db` tabel `users` untuk memastikan akun sudah terbuat
+
 
 ---
 
@@ -250,6 +257,11 @@ HRIS/
 ├── public/               # Document root
 │   ├── index.php         # Front controller
 │   └── assets/           # CSS, JS, images
+│       ├── css/
+│       │   ├── input.css     # Tailwind input
+│       │   └── output.css    # Compiled CSS
+├── scripts/
+│   └── register.php      # Script pendaftaran akun baru (development only)
 ├── database/             # SQL schema & queries
 └── README.md
 ```

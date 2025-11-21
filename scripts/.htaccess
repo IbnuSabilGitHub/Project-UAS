@@ -1,0 +1,5 @@
+# cegah akses langsung ke file PHP 
+<Files "register.php">
+    Order Allow,Deny
+    Deny from all
+</Files>

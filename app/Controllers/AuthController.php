@@ -8,9 +8,9 @@ class AuthController {
         $this->db = new Database();
     }
 
-    // Render view dengan data
+    // Render halaman view
     private function render($view, $data = []) {
-        extract($data); // Convert array keys to variables
+        extract($data); // Konversi array data menjadi variabel
         require __DIR__ . "/../Views/{$view}.php";
     }
 
@@ -44,7 +44,12 @@ class AuthController {
             redirect('/login');
         }
 
-        $username = $_POST['username'] ?? '';
+        // Sanitas input username
+        $username = trim($_POST['username'] ?? '');
+        $username = filter_var($username, FILTER_SANITIZE_SPECIAL_CHARS);
+        $username = preg_replace('/[^a-zA-Z0-9_\-.@]/', '', $username);
+
+        // password tidak disanitasi agar sesuai dengan hash asli
         $password = $_POST['password'] ?? '';
 
         if (empty($username) || empty($password)) {
@@ -52,24 +57,35 @@ class AuthController {
             redirect('/login');
         }
 
-        // Query untuk mencari user
+        // Konksi db
         $conn = $this->db->getConnection();
+
+        // Query user berdasarkan username
         $stmt = $conn->prepare("SELECT id, username, password_hash, role FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result->num_rows === 0) {
+        $invalid_login = function () {
             $_SESSION['error'] = 'Username atau password salah';
             redirect('/login');
-        }
+        };
 
+        // Cek apakah user ditemukan atau tidak
+        if ($result->num_rows === 0) {
+            $invalid_login();
+        }
+        
+        // Ambil data user dengan fetch_assoc
         $user = $result->fetch_assoc();
 
-        if ($password !== $user['password_hash']) {
-            $_SESSION['error'] = 'Username atau password salah';
-            redirect('/login');
+    
+        // Verifikasi password
+        if (!password_verify($password, $user['password_hash'])) {
+            $invalid_login();
         }
+
+        session_regenerate_id(true); // cegah session fixation
 
         // Login berhasil
         $_SESSION['user_id'] = $user['id'];
@@ -86,6 +102,7 @@ class AuthController {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        // Hapus semua data session
         session_destroy();
         redirect('/login');
     }
@@ -96,6 +113,7 @@ class AuthController {
             session_start();
         }
         
+        // Cek apakah user sudah login, jika belum redirect ke login
         if (!isset($_SESSION['user_id'])) {
             redirect('/login');
         }

@@ -5,14 +5,10 @@
  * @param string $path Path relatif (misal: '/login', '/dashboard')
  */
 function redirect($path) {
-    $basePath = defined('BASE_PATH') ? BASE_PATH : '';
-    if ($basePath === '/') {
-        $basePath = '';
-    }
-    $fullPath = $basePath . $path;
-    header("Location: $fullPath");
+    header('Location: ' . BASE_URL . '/' . ltrim($path, '/'));
     exit;
 }
+
 
 /**
  * Helper function untuk generate URL dengan base path otomatis
