@@ -1,4 +1,4 @@
-# HRIS
+# HRIS (Human Resource Information System)
 
 Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manajemen Karyawan, Absensi Harian (Check-in/Check-out), dan Pengajuan/Persetujuan Cuti.
 
