@@ -29,13 +29,11 @@ hris-project/
 │  │  ├─ DashboardController.php
 │  │  ├─ AttendanceController.php
 │  │  ├─ LeaveController.php
-│  │  └─ PayrollController.php
 │  │
 │  ├─ Models/
 │  │  ├─ User.php
 │  │  ├─ Attendance.php
-│  │  ├─ LeaveRequest.php
-│  │  └─ Payroll.php
+│  │  └─ LeaveRequest.php
 │  │
 │  ├─ Views/
 │  │  ├─ layouts/
@@ -48,11 +46,9 @@ hris-project/
 │  │  │  └─ employee.php
 │  │  ├─ attendance/
 │  │  │  ├─ index.php
-│  │  ├─ leave/
-│  │  │  ├─ index.php
-│  │  │  └─ submit.php
-│  │  └─ payroll/
-│  │     └─ index.php
+│  │  └─ leave/
+│  │     ├─ index.php
+│  │     └─ submit.php
 │  │
 │  ├─ Core/
 │  │  ├─ Database.php           # Koneksi MySQL (PDO)
