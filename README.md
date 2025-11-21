@@ -246,16 +246,20 @@ npm run dev
 ```
 HRIS/
 ├── app/
-│   ├── Controllers/      # Logic aplikasi
-│   ├── Models/           # Data access layer
-│   ├── Views/            # Template HTML
-│   │   ├── layouts/      # Header & Footer
-│   │   ├── auth/         # Login page
-│   │   └── dashboard/    # Dashboard views
-│   ├── Core/             # Router, Database, Helper
-│   └── config.php        # Konfigurasi
-├── public/               # Document root
-│   ├── index.php         # Front controller
+│   ├── Controllers/             # Logic aplikasi
+│   │   ├── AuthController.php 
+│   ├── Views/                   # Template HTML
+│   │   ├── layouts/             # Header & Footer
+│   │   ├── auth/                # Login page
+│   │   └── dashboard/           # Dashboard views
+│   ├── Core/                    # Router, Database, Helper
+│   │   ├── Database.php         # Koneksi database
+│   │   ├── Router.php           # Routing
+│   │   ├── Env.php              # Env
+│   │   ├── Helpers.php          # Load env
+│   └── config.php               # Konfigurasi
+├── public/                      # Document root
+│   ├── index.php                # Front controller
 │   └── assets/           # CSS, JS, images
 │       ├── css/
 │       │   ├── input.css     # Tailwind input
