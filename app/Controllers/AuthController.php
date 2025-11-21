@@ -41,8 +41,7 @@ class AuthController {
         }
         
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /login');
-            exit;
+            redirect('/login');
         }
 
         $username = $_POST['username'] ?? '';
@@ -50,8 +49,7 @@ class AuthController {
 
         if (empty($username) || empty($password)) {
             $_SESSION['error'] = 'Username dan password harus diisi';
-            header('Location: /login');
-            exit;
+            redirect('/login');
         }
 
         // Query untuk mencari user
@@ -63,16 +61,14 @@ class AuthController {
 
         if ($result->num_rows === 0) {
             $_SESSION['error'] = 'Username atau password salah';
-            header('Location: /login');
-            exit;
+            redirect('/login');
         }
 
         $user = $result->fetch_assoc();
 
         if ($password !== $user['password_hash']) {
             $_SESSION['error'] = 'Username atau password salah';
-            header('Location: /login');
-            exit;
+            redirect('/login');
         }
 
         // Login berhasil
@@ -82,8 +78,7 @@ class AuthController {
         $_SESSION['success'] = 'Login berhasil!';
 
         // Redirect ke dashboard
-        header('Location: /dashboard');
-        exit;
+        redirect('/dashboard');
     }
 
     // Logout user
@@ -92,8 +87,7 @@ class AuthController {
             session_start();
         }
         session_destroy();
-        header('Location: /login');
-        exit;
+        redirect('/login');
     }
 
     // Menampilkan dashboard
@@ -103,8 +97,7 @@ class AuthController {
         }
         
         if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
+            redirect('/login');
         }
 
         // Siapkan data untuk view

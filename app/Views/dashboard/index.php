@@ -29,7 +29,7 @@
         </div>
 
         <div class="border-t pt-6">
-            <a href="/logout" 
+            <a href="<?= url('/logout') ?>" 
                class="inline-block bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 rounded transition duration-200">
                 Logout
             </a>

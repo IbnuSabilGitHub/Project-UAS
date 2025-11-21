@@ -15,7 +15,7 @@
         </div>
     <?php endif; ?>
 
-    <form method="POST" action="/login">
+    <form method="POST" action="<?= url('/login') ?>">
         <div class="mb-4">
             <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
             <input type="text" 
