@@ -44,12 +44,6 @@
         </button>
     </form>
 
-    <!-- Bagian ini hanya untuk keperluan testing development saja, bisa dihapus nanti -->
-    <div class="mt-6 p-4 bg-gray-50 rounded text-sm">
-        <p class="font-semibold mb-2">Akun Testing:</p>
-        <p>Admin: username=<code class="bg-gray-200 px-1">admin</code>, password=<code class="bg-gray-200 px-1">admin_password</code></p>
-        <p>User: username=<code class="bg-gray-200 px-1">user1</code>, password=<code class="bg-gray-200 px-1">user1_password</code></p>
-    </div>
 </div>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
