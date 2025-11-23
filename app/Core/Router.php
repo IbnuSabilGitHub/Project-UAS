@@ -2,12 +2,6 @@
 
 class Router {
     public function resolve($uri, $method) {
-        // Route untuk proses login (POST)
-        if ($uri === "/login" && $method === "POST") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->login();
-            return;
-        }
 
         // Route untuk halaman login (GET)
         if ($uri === "/" || ($uri === "/login" && $method === "GET")) {
@@ -16,10 +10,31 @@ class Router {
             return;
         }
 
-        // Route untuk dashboard
+        // Route untuk proses login (POST)
+        if ($uri === "/login" && $method === "POST") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->login();
+            return;
+        }
+
+        // Route untuk dashboard 
         if ($uri === "/dashboard") {
             require_once __DIR__ . "/../Controllers/AuthController.php";
             (new AuthController())->dashboard();
+            return;
+        }
+
+        // Admin dashboard
+        if ($uri === "/admin/dashboard") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->adminDashboard();
+            return;
+        }
+
+        // Karyawan dashboard
+        if ($uri === "/karyawan/dashboard") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->employeeDashboard();
             return;
         }
 
@@ -28,6 +43,63 @@ class Router {
             require_once __DIR__ . "/../Controllers/AuthController.php";
             (new AuthController())->logout();
             return;
+        }
+
+        // Routes untuk manajemen karyawan (admin)
+        if (strpos($uri, '/admin/karyawan') === 0) {
+            require_once __DIR__ . "/../Controllers/KaryawanController.php";
+            $kc = new KaryawanController();
+
+            if ($uri === '/admin/karyawan' && $method === 'GET') {
+                $kc->index();
+                return;
+            }
+
+            if ($uri === '/admin/karyawan/create' && $method === 'GET') {
+                $kc->create();
+                return;
+            }
+
+            if ($uri === '/admin/karyawan/store' && $method === 'POST') {
+                $kc->create_account();
+                return;
+            }
+
+            if ($uri === '/admin/karyawan/edit' && $method === 'GET') {
+                $kc->edit();
+                return;
+            }
+
+            if ($uri === '/admin/karyawan/update' && $method === 'POST') {
+                $kc->update();
+                return;
+            }
+
+            if ($uri === '/admin/karyawan/delete' && $method === 'POST') {
+                $kc->delete();
+                return;
+            }
+                if ($uri === '/admin/karyawan/deactivate' && $method === 'POST') {
+                    $kc->deactivate();
+                    return;
+                }
+            if ($uri === '/admin/karyawan/activate' && $method === 'POST') {
+                $kc->activateAccount();
+                return;
+            }
+        }
+
+        if ($uri === '/change-password') {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            $ac = new AuthController();
+            if ($method === 'GET') {
+                $ac->changePasswordPage();
+                return;
+            }
+            if ($method === 'POST') {
+                $ac->changePassword();
+                return;
+            }
         }
 
         // 404 Not Found

@@ -90,10 +90,10 @@ C --> D{Validasi kredensial}
 D -->|Valid| E{Role User?}
 D -->|Invalid| C
 
-E -->|Admin| F[Dashboard Admin]
-E -->|Karyawan| G[Dashboard Karyawan]++
+E -->|Admin/HR| F[Dashboard Admin/HR]
+E -->|Karyawan| G[Dashboard Karyawan]
 
-%% === DASHBOARD Admin ===
+%% === DASHBOARD ADMIN/HR ===
 F --> H{Pilih Menu}
 
 H -->|Manajemen Karyawan| I[Halaman List Karyawan]
@@ -131,6 +131,7 @@ O --> G
 
 %% === END ===
 Z --> A
+
 ```
 
 ## ERD
@@ -334,6 +335,22 @@ flowchart TD
     F --> G[Simpan payroll ke database]
     G --> H([End])
 ```
+
+## Spesifikasi API (MVP)
+
+## Halaman/Route Utama
+- GET /login → form login
+- POST /api/login → proses login
+- GET /dashboard → redirect sesuai role: /admin/dashboard atau /employee/dashboard
+- Admin:
+    - GET /admin/dashboard
+    - GET /admin/karyawan (+ create/edit)
+    - GET /admin/absensi
+    - GET /admin/cuti
+- Karyawan:
+    - GET /employee/dashboard
+    - GET /employee/absensi (check-in/out)
+    - GET /employee/cuti (ajukan + riwayat)
 
 ---
 

@@ -23,12 +23,12 @@ $db = new Database();
 $conn = $db->getConnection();
 $username = 'ibnu';
 $password = 'ibnu123';
-$role = 'karyawan';
+$role = 'admin'; // atau 'karyawan'
 
 if($role === 'admin'){
     $karyawan_id = null; // admin tidak terkait dengan karyawan manapun
 } else {
-    $karyawan_id = 1; // ganti dengan ID karyawan yang sesuai
+    echo "Untuk membuat user karyawan, buat dulu data karyawannya";
 }
 
 # enkripsi password
