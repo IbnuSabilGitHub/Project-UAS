@@ -12,11 +12,21 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
 
 
 ## Fitur Utama
-- Login/Logout + Session (role: `admin`, `karyawan`)
-- Dashboard sesuai role
-- CRUD Karyawan (admin)
-- Absensi karyawan (check-in/check-out, 1x per hari)
-- Pengajuan cuti (karyawan) + Approve/Reject (admin)
+- **Login/Logout + Session** (role: `admin`, `karyawan`)
+  - Validasi status akun (active/disabled)
+  - Wajib ganti password pertama kali login
+  - Redirect otomatis ke dashboard sesuai role
+- **Dashboard Berbasis Role**
+  - Dashboard Admin: Akses manajemen karyawan
+  - Dashboard Karyawan: Akses fitur personal (absensi & cuti)
+- **Manajemen Karyawan (Admin)**
+  - CRUD data karyawan (NIK, nama, email, posisi, dll)
+  - Aktivasi/Nonaktifkan akun karyawan
+  - Generate temporary password otomatis
+  - Soft delete (nonaktifkan) & Hard delete (hapus permanen - super_admin only)
+- **Absensi Karyawan** (check-in/check-out, 1x per hari) - *dalam jadi*
+- **Pengajuan Cuti** (karyawan) + Approve/Reject (admin) - *dalam jadi*
+- super_admin role feature (masih di pertimbangkan)
 
 ## Arsitektur
 - Pola: **MVC Pattern** (Model-View-Controller)
@@ -35,16 +45,20 @@ Pastikan sudah terinstall:
 - **Node.js** (untuk Tailwind CSS)
 - **Git**
 
-### 1️⃣ Clone Repository
+### 1️⃣ Clone Repository (branch: feat/dashboard-admin)
 ```bash
 git clone https://github.com/IbnuSabilGitHub/Project-UAS.git
 cd Project-UAS
 ```
 
-### 2️⃣ Install Dependencies (Tailwind CSS)
+### 2️⃣ Install Dependencies (Tailwind CSS + Flowbite)
 ```bash
 npm install
 ```
+
+**Apa yang diinstall:**
+- **Tailwind CSS 4.1** - Utility-first CSS framework
+- **Flowbite 4.0** - Component library berbasis Tailwind CSS (alert, table, form, dll)
 
 ### 3️⃣ Setup Database
 1. Buka **phpMyAdmin** di browser: `http://localhost/phpmyadmin`
@@ -144,12 +158,9 @@ Anda bisa memilih salah satu dari **2 opsi** berikut:
    ```
 
 4. **Login dengan akun testing:**
-   - **Admin:**
-     - Username: `admin`
-     - Password: `admin_password`
-   - **User/Karyawan:**
-     - Username: `user1`
-     - Password: `user1_password`
+   > ⚠️ Anda perlu membuat akun admin terlebih dahulu menggunakan script `register.php` (lihat bagian [Membuat Akun Admin](#membuat-akun-admin-development-only))
+   
+   Setelah membuat akun admin, login dengan kredensial yang Anda buat di script `register.php`
 
 ---
 
@@ -212,24 +223,42 @@ Lihat di pojok kanan bawah jendela Open, ubah dropdown dari Text Documents (*.tx
    http://hris.local
    ```
 
-6. **Login dengan akun testing** (sama seperti Opsi 1)
+6. **Login dengan akun yang telah dibuat** (lihat bagian [Membuat Akun Admin](#membuat-akun-admin-development-only))
 
 ---
 
 ## 📝 Testing Aplikasi
 
-### Register akun baru 
-> ⚠️ Fitur ini hanya untuk keperluan development saja, bisa dihapus nanti
+### Membuat Akun Admin (Development Only)
+> ⚠️ **Perubahan Penting:** Script `register.php` sekarang **HANYA bisa membuat akun admin**, tidak bisa membuat akun karyawan lagi.
 
-Untuk membuat akun baru (admin/karyawan):
-1. Buka folder `scripts/register`
-2. Modifikasi variabel `$username`, `$password`, dan `$role` di `register.php` sesuai kebutuhan
-3. Buka CLI (Command Prompt/Terminal)
-4. Jalankan script register:
+**Mengapa?** Karena akun karyawan sekarang wajib terkait dengan data karyawan yang dibuat melalui fitur **Manajemen Karyawan** di dashboard admin.
+
+**Cara membuat akun admin:**
+1. Buka folder `scripts/`
+2. Edit file `register.php`:
+   - Ubah variabel `$username` (contoh: `'admin'`)
+   - Ubah variabel `$password` (contoh: `'admin123'`)
+   - Pastikan `$role = 'admin'`
+3. Jalankan di CLI (Command Prompt/Terminal):
    ```bash
-      php -d extension=mysqli register.php
+   cd scripts
+   php -d extension=mysqli register.php
    ```
-5. Cek di database `hris_db` tabel `users` untuk memastikan akun sudah terbuat
+4. Cek di database `hris_db` tabel `users` untuk memastikan akun admin sudah terbuat
+
+**Cara membuat akun karyawan:**
+1. Login sebagai admin
+2. Buka menu **Manajemen Karyawan** (`/admin/karyawan`)
+3. Klik **Tambah Karyawan**
+4. Isi data karyawan (NIK, Nama, Email, dll)
+5. **Centang opsi "Buat Akun Sekarang?"** jika ingin langsung membuat akun login
+6. Sistem akan:
+   - Membuat data karyawan
+   - Generate username otomatis (dari NIK atau email)
+   - Generate temporary password acak
+   - Menampilkan kredensial login (catat untuk diberikan ke karyawan)
+   - User wajib ganti password saat login pertama kali
 
 
 ---
@@ -247,26 +276,37 @@ npm run dev
 HRIS/
 ├── app/
 │   ├── Controllers/             # Logic aplikasi
-│   │   ├── AuthController.php 
+│   │   ├── AuthController.php   # Login, logout, change password
+│   │   └── KaryawanController.php # CRUD karyawan (admin)
+│   ├── Models/                  # Data access layer
+│   │   └── Karyawan.php         # Model karyawan
 │   ├── Views/                   # Template HTML
 │   │   ├── layouts/             # Header & Footer
-│   │   ├── auth/                # Login page
-│   │   └── dashboard/           # Dashboard views
+│   │   ├── auth/                # Login, change password
+│   │   │   ├── login.php
+│   │   │   └── change_password.php
+│   │   ├── dashboard/           # Dashboard berbasis role
+│   │   │   ├── admin.php
+│   │   │   └── employee.php
+│   │   └── karyawan/            # Manajemen karyawan (admin)
+│   │       ├── index.php        # List karyawan
+│   │       └── form.php         # Form tambah/edit
 │   ├── Core/                    # Router, Database, Helper
 │   │   ├── Database.php         # Koneksi database
 │   │   ├── Router.php           # Routing
-│   │   ├── Env.php              # Env
-│   │   ├── Helpers.php          # Load env
+│   │   ├── Env.php              # Environment loader
+│   │   └── Helpers.php          # Helper functions
 │   └── config.php               # Konfigurasi
 ├── public/                      # Document root
 │   ├── index.php                # Front controller
-│   └── assets/           # CSS, JS, images
-│       ├── css/
-│       │   ├── input.css     # Tailwind input
-│       │   └── output.css    # Compiled CSS
+│   └── assets/                  # CSS, JS, images
+│       └── css/
+│           ├── input.css        # Tailwind input
+│           └── output.css       # Compiled CSS
 ├── scripts/
-│   └── register.php      # Script pendaftaran akun baru (development only)
-├── database/             # SQL schema & queries
+│   └── register.php             # Script buat akun admin (dev only)
+├── database/
+│   └── query.sql                # Database schema
 └── README.md
 ```
 
