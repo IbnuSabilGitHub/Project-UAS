@@ -8,7 +8,18 @@ Project HRIS ini dibangun dengan arsitektur **MVC Architecture (Model–View–C
 - **Database**: MySQL 8.0
 - **Frontend**: HTML5 + Tailwind CSS 4.1 (via CDN) + Vanilla JavaScript
 - **Server**: Apache/Nginx + PHP-FPM
-- **Authentication**: Session-based authentication
+- **Authentication**: Session-based authentication (No self-registration for employees)
+
+### Authentication Flow
+**Admin:**
+- Login dengan kredensial yang sudah ada (pre-seeded di database)
+
+**Karyawan:**
+- **TIDAK ADA** halaman register/sign up
+- Akun dibuat oleh Admin melalui menu "Manajemen Karyawan"
+- Admin input data karyawan lengkap + set username & password default
+- Karyawan menerima kredensial dari HR/Admin → login pertama kali
+- (Optional) Karyawan ganti password setelah login pertama
 
 ### Arsitektur Aplikasi (MVC Pattern)
 hris-project/
@@ -171,6 +182,8 @@ erDiagram
         date start_date
         date end_date
         text reason
+        varchar document_path
+        varchar document_name
         enum status
         datetime created_at
     }
@@ -219,15 +232,17 @@ Log presensi harian.
 
 **Tabel: pengajuan_cuti**
 Pengajuan cuti oleh karyawan.
-| Field       | Tipe                              | Keterangan       |
-| ----------- | --------------------------------- | ---------------- |
-| id          | INT PK                            | Auto             |
-| karyawan_id | INT FK                            | Karyawan pengaju |
-| start_date  | DATE                              | Awal cuti        |
-| end_date    | DATE                              | Akhir cuti       |
-| reason      | TEXT                              | Alasan           |
-| status      | ENUM(pending, approved, rejected) | Status workflow  |
-| created_at  | DATETIME                          | Timestamp        |
+| Field         | Tipe                              | Keterangan                               |
+| ------------- | --------------------------------- | ---------------------------------------- |
+| id            | INT PK                            | Auto                                     |
+| karyawan_id   | INT FK                            | Karyawan pengaju                         |
+| start_date    | DATE                              | Awal cuti                                |
+| end_date      | DATE                              | Akhir cuti                               |
+| reason        | TEXT                              | Alasan                                   |
+| document_path | VARCHAR(255)                      | Path file dokumen pendukung (nullable)   |
+| document_name | VARCHAR(255)                      | Nama asli file yang diupload (nullable)  |
+| status        | ENUM(pending, approved, rejected) | Status workflow                          |
+| created_at    | DATETIME                          | Timestamp                                |
 
 
 ## Use Case Diagram (Admin & karyawan)
@@ -293,18 +308,22 @@ flowchart TD
 ```mermaid
 flowchart TD
     A([Start]) --> B[Karyawan buka menu pengajuan cuti]
-    B --> C[Isi form cuti]
-    C --> D[Submit pengajuan]
-    D --> E[Sistem simpan status: Pending]
-    E --> F[Admin melihat daftar permintaan cuti]
+    B --> C[Isi form cuti: tanggal, alasan]
+    C --> D{Upload dokumen pendukung?}
+    D -- Ya --> E[Pilih file & upload]
+    D -- Tidak --> F[Submit pengajuan]
+    E --> F
+    F --> G[Validasi & simpan data + file]
+    G --> H[Sistem simpan status: Pending]
+    H --> I[Admin melihat daftar permintaan cuti]
 
-    F --> G{Admin Approve?}
-    G -- Ya --> H[Status = Approved]
-    G -- Tidak --> I[Status = Rejected]
+    I --> J{Admin Approve?}
+    J -- Ya --> K[Status = Approved]
+    J -- Tidak --> L[Status = Rejected]
 
-    H --> J[Kirim ke karyawan]
-    I --> J
-    J --> K([End])
+    K --> M[Notifikasi ke karyawan]
+    L --> M
+    M --> N([End])
 ```
 
 ## Activity Diagram Pencatatan Kehadira (Check-in / Check-out)
