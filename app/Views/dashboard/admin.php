@@ -13,7 +13,7 @@
         <h1 class="text-3xl font-bold text-heading mb-4">Admin Dashboard</h1>
         <p class="mb-8 text-body">Selamat datang, <strong class="text-heading"><?= htmlspecialchars($username) ?></strong> 
             <span class="inline-block bg-brand-soft text-brand px-3 py-1 rounded-full text-sm font-medium ml-2"><?= htmlspecialchars($role) ?></span>
-        </p>""
+        </p>
         
         <div class="grid md:grid-cols-3 gap-6">
             <a href="<?= url('/admin/karyawan') ?>" 
@@ -22,11 +22,11 @@
                 <p class="text-sm text-body">Lihat, tambah, nonaktifkan, hapus permanen karyawan.</p>
             </a>
             
-            <div class="block bg-neutral-secondary-medium opacity-60 cursor-not-allowed rounded-base p-6 border border-default">
+            <a href="<?= url('/admin/attendance') ?>" 
+               class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
                 <h2 class="text-xl font-semibold text-heading mb-2">Absensi</h2>
-                <p class="text-sm text-body">Modul absensi akan ditambahkan.</p>
-                <span class="inline-block bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mt-2">Coming Soon</span>
-            </div>
+                <p class="text-sm text-body">Lihat, filter, dan export data absensi karyawan.</p>
+            </a>
             
             <div class="block bg-neutral-secondary-medium opacity-60 cursor-not-allowed rounded-base p-6 border border-default">
                 <h2 class="text-xl font-semibold text-heading mb-2">Pengajuan Cuti</h2>

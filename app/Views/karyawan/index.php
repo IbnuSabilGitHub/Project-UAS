@@ -138,7 +138,13 @@
             </tbody>
         </table>
     </div>
-
+    <div class="mt-8">
+        <a href="<?= url('/admin/dashboard') ?>"
+            class="inline-block text-brand hover:text-brand-strong font-medium">
+            <i class="fa-solid fa-arrow-left-long mr-2"></i>
+            Kembali ke Dashboard
+        </a>
+    </div>
 </div>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

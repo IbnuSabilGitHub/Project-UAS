@@ -2,6 +2,96 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Attendance Management for Admin] - 2024-11-25
+
+### ✨ Added
+
+#### **Manajemen Absensi untuk Admin**
+- **AttendanceController.php** - Extended dengan fitur admin
+  - `adminIndex()` - Halaman manajemen absensi untuk admin dengan filter & pagination
+  - `export()` - Export data absensi ke format CSV
+  - `ensureAdmin()` - Middleware untuk validasi akses admin only
+
+- **Attendance Model** (`app/Models/Attendance.php`) - Extended
+  - `getAllWithFilter()` - Query data absensi dengan filter dinamis (tanggal, **search nama**, status)
+  - `countAllWithFilter()` - Hitung total record untuk sistem pagination
+  - `getAdminStats()` - Statistik ringkas (total absensi, tepat waktu, terlambat, half day, belum checkout)
+
+- **Views Absensi Admin** (`app/Views/attendance/admin.php`)
+  - **Dashboard Statistik** dengan 5 metrics cards:
+    - Total Absensi
+    - Tepat Waktu
+    - Terlambat
+    - Half Day
+    - Belum Checkout
+  
+  - **Filter Section** dengan 3 filter:
+    - Filter tanggal (date picker)
+    - **Search nama karyawan** (text input dengan LIKE query) - Scalable untuk banyak karyawan
+    - Filter status (dropdown: Hadir/Terlambat/Half Day)
+    - Tombol Filter dan Export CSV
+    - Reset Filter link (muncul saat filter aktif)
+  
+  - **Data Table** dengan kolom:
+    - Tanggal, NIK, Nama Karyawan, Jabatan
+    - Check-in, Check-out, Durasi (jam & menit)
+    - Status (badge dengan warna sesuai kondisi)
+    - Catatan karyawan
+  
+  - **Pagination** dengan navigasi:
+    - Info halaman saat ini & total halaman
+    - Tombol Previous/Next
+    - Nomor halaman (max 5 tombol visible)
+    - 20 record per halaman
+  
+  - **Export CSV** mencakup semua field dengan filter yang dipilih
+
+#### **Routing Updates**
+- `/admin/attendance` (GET) - Halaman manajemen absensi admin
+- `/admin/attendance/export` (GET) - Download data absensi dalam format CSV
+  
+### 🔄 Changed
+
+#### **Dashboard Admin**
+- Updated menu "Absensi" dari coming soon menjadi aktif
+- Link ke `/admin/attendance`
+- Deskripsi updated: "Lihat, filter, dan export data absensi karyawan"
+
+#### **Filter Karyawan - Performance Optimization**
+- **Dari**: Dropdown select dengan semua karyawan (tidak efektif untuk data banyak)
+- **Ke**: Text input search by name dengan LIKE query (scalable & user-friendly)
+- **Alasan**: 
+  - Dropdown select dengan ratusan karyawan tidak praktis dan lambat
+  - Search input lebih cepat dan intuitif
+  - Partial match dengan LIKE memudahkan pencarian
+  - Tidak perlu load semua karyawan di view
+  - Bandwidth efficient - hanya kirim string search, bukan ratusan options HTML
+
+### 📝 Features Detail
+
+#### Search by Name Feature
+- Input type: Text dengan placeholder "Cari nama karyawan..."
+- Query: MySQL LIKE dengan wildcard `%nama%`
+- Case-insensitive search
+- Partial match support (cukup ketik sebagian nama)
+- Performance: Menggunakan prepared statements untuk keamanan
+- Scalability: Efektif untuk database dengan ratusan atau ribuan karyawan
+
+### ⚡ Performance Improvements
+
+**Search by Name vs Dropdown Select**:
+- ✅ **Search input**: O(log n) dengan database index, minimal bandwidth
+- ❌ **Dropdown select**: O(n) - load semua karyawan di HTML, bandwidth besar
+- ✅ **UX**: Lebih cepat untuk user menemukan karyawan spesifik
+- ✅ **Scalability**: Tetap cepat meski karyawan mencapai ribuan
+
+**Recommended Database Index** (untuk optimal performance):
+```sql
+ALTER TABLE karyawan ADD INDEX idx_name (name);
+```
+
+---
+
 ## [add employee management & enhanced authentication] - 2024-11-23
 
 ### ✨ Added

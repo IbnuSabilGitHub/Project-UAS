@@ -123,6 +123,22 @@ class Router {
             }
         }
 
+        // Routes untuk Attendance (admin)
+        if (strpos($uri, '/admin/attendance') === 0) {
+            require_once __DIR__ . "/../Controllers/AttendanceController.php";
+            $ac = new AttendanceController();
+
+            if ($uri === '/admin/attendance' && $method === 'GET') {
+                $ac->adminIndex();
+                return;
+            }
+
+            if ($uri === '/admin/attendance/export' && $method === 'GET') {
+                $ac->export();
+                return;
+            }
+        }
+
         // Routes untuk Leave Request (karyawan)
         if (strpos($uri, '/karyawan/leave') === 0) {
             require_once __DIR__ . "/../Controllers/LeaveController.php";
