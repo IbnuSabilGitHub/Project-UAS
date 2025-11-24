@@ -43,7 +43,7 @@ class AuthController {
         $this->render('auth/login', $data);
     }
 
-    // Proses logi
+    // Proses login
     public function login() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

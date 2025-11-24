@@ -5,7 +5,9 @@
  * @param string $path Path relatif (misal: '/login', '/dashboard')
  */
 function redirect($path) {
-    header('Location: ' . BASE_URL . '/' . ltrim($path, '/'));
+    // Pastikan path dimulai dengan /
+    $path = '/' . ltrim($path, '/');
+    header('Location: ' . $path);
     exit;
 }
 
@@ -16,11 +18,8 @@ function redirect($path) {
  * @return string URL lengkap dengan base path
  */
 function url($path) {
-    $basePath = defined('BASE_PATH') ? BASE_PATH : '';
-    if ($basePath === '/') {
-        $basePath = '';
-    }
-    return $basePath . $path;
+    // Pastikan path dimulai dengan / untuk absolute path
+    return '/' . ltrim($path, '/');
 }
 
 /**
@@ -29,9 +28,9 @@ function url($path) {
  * @return string URL lengkap ke asset
  */
 function asset($path) {
-    $basePath = defined('BASE_PATH') ? BASE_PATH : '';
-    if ($basePath === '/') {
-        $basePath = '';
-    }
-    return $basePath . '/public/assets/' . ltrim($path, '/');
+    // Normalize path: hapus leading slash
+    $path = ltrim($path, '/');
+    
+    // Return absolute path dari root
+    return '/assets/' . $path;
 }

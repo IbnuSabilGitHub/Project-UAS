@@ -31,5 +31,45 @@ CREATE TABLE users (
         ON DELETE SET NULL ON UPDATE CASCADE
 );
 
+-- Tabel untuk absensi (check-in/check-out)
+CREATE TABLE attendance (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    karyawan_id INT NOT NULL,
+    check_in DATETIME NOT NULL,
+    check_out DATETIME NULL,
+    notes TEXT NULL,
+    status ENUM('present','late','half_day') DEFAULT 'present',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_attendance_karyawan
+        FOREIGN KEY (karyawan_id) REFERENCES karyawan(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    INDEX idx_karyawan_date (karyawan_id, check_in)
+);
+
+-- Tabel untuk pengajuan cuti
+CREATE TABLE leave_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    karyawan_id INT NOT NULL,
+    leave_type ENUM('annual','sick','emergency','unpaid') NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    total_days INT NOT NULL,
+    reason TEXT NOT NULL,
+    attachment_file VARCHAR(255) NULL,
+    status ENUM('pending','approved','rejected') DEFAULT 'pending',
+    approved_by INT NULL,
+    approved_at DATETIME NULL,
+    rejection_reason TEXT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_leave_karyawan
+        FOREIGN KEY (karyawan_id) REFERENCES karyawan(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_leave_approver
+        FOREIGN KEY (approved_by) REFERENCES users(id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX idx_karyawan_status (karyawan_id, status),
+    INDEX idx_dates (start_date, end_date)
+);
 
 

@@ -102,9 +102,57 @@ class Router {
             }
         }
 
+        // Routes untuk Attendance (karyawan)
+        if (strpos($uri, '/karyawan/attendance') === 0) {
+            require_once __DIR__ . "/../Controllers/AttendanceController.php";
+            $ac = new AttendanceController();
+
+            if ($uri === '/karyawan/attendance' && $method === 'GET') {
+                $ac->index();
+                return;
+            }
+
+            if ($uri === '/karyawan/attendance/checkin' && $method === 'POST') {
+                $ac->checkIn();
+                return;
+            }
+
+            if ($uri === '/karyawan/attendance/checkout' && $method === 'POST') {
+                $ac->checkOut();
+                return;
+            }
+        }
+
+        // Routes untuk Leave Request (karyawan)
+        if (strpos($uri, '/karyawan/leave') === 0) {
+            require_once __DIR__ . "/../Controllers/LeaveController.php";
+            $lc = new LeaveController();
+
+            if ($uri === '/karyawan/leave' && $method === 'GET') {
+                $lc->index();
+                return;
+            }
+
+            if ($uri === '/karyawan/leave/create' && $method === 'GET') {
+                $lc->create();
+                return;
+            }
+
+            if ($uri === '/karyawan/leave/store' && $method === 'POST') {
+                $lc->store();
+                return;
+            }
+
+            if ($uri === '/karyawan/leave/delete' && $method === 'POST') {
+                $lc->delete();
+                return;
+            }
+        }
+
         // 404 Not Found
         http_response_code(404);
         echo "<h1>404 - Halaman tidak ditemukan</h1>";
     }
 }
+
 

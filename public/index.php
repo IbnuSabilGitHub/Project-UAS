@@ -14,10 +14,10 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 $scriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']); 
 $basePath = dirname($scriptName);
-$basePath = str_replace('/public', '', $basePath);
-$basePath = rtrim($basePath, '/');
-if ($basePath === '') {
-	$basePath = '/';
+
+// Jika base path adalah '.' atau '/' (running dari public folder), set ke empty
+if ($basePath === '.' || $basePath === '/') {
+	$basePath = '';
 }
 
 // Simpan BASE_PATH sebagai constant agar bisa diakses dari Controller
