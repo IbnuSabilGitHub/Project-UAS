@@ -52,7 +52,7 @@
             
             <tbody>
                 <?php foreach ($karyawans as $k): ?>
-                    <tr class="bg-white border-b hover:bg-neutral-secondary-medium">
+                    <tr class="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium transition-colors duration-150">
                         <td class="px-6 py-4"><?= htmlspecialchars($k['id']) ?></td>
                         <td class="px-6 py-4"><?= htmlspecialchars($k['nik']) ?></td>
                         <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
@@ -65,11 +65,11 @@
                         <td class="px-6 py-4">
                             <?php
                                 $emp = $k['employment_status'] ?? 'active';
-                                $badge_class = 'bg-green-100 text-green-800';
+                                $badge_class = 'bg-success-soft text-success-strong';
                                 if ($emp === 'resigned' || $emp === 'terminated') {
-                                    $badge_class = 'bg-red-100 text-red-800';
+                                    $badge_class = 'bg-danger-soft text-danger-strong';
                                 } elseif ($emp === 'on_leave') {
-                                    $badge_class = 'bg-yellow-100 text-yellow-800';
+                                    $badge_class = 'bg-warning-soft text-warning-strong';
                                 }
                             ?>
                             <span class="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full <?= $badge_class ?>">
@@ -79,12 +79,12 @@
 
                         <td class="px-6 py-4">
                             <?php if (!empty($k['user_id'])): ?>
-                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full bg-green-100 text-green-800">
+                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full bg-success-soft text-success-strong">
                                     Aktif
                                 </span>
 
                                 <?php if (!empty($k['must_change_password'])): ?>
-                                    <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800 ml-2">Wajib Ganti</span>
+                                    <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full bg-warning-soft text-warning-strong ml-2">Wajib Ganti</span>
                                 <?php endif; ?>
 
                                 <?php if (($k['employment_status'] ?? 'active') === 'active'): ?>
@@ -93,20 +93,20 @@
                                             class="inline ml-2"
                                             onsubmit="return confirm('Nonaktifkan akun karyawan ini?');">
                                         <input type="hidden" name="id" value="<?= $k['id'] ?>">
-                                        <button type="submit" class="text-sm text-orange-600 hover:underline hover:text-orange-700 font-medium">
+                                        <button type="submit" class="text-sm text-warning-strong hover:underline hover:text-warning font-medium">
                                             Nonaktifkan Akun
                                         </button>
                                     </form>
                                 <?php endif; ?>
 
                             <?php else: ?>
-                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-800">
+                                <span class="text-xs font-medium me-2 px-2.5 py-0.5 rounded-full bg-neutral-secondary-soft text-body">
                                     Belum Ada
                                 </span>
                                 <form action="<?= url('/admin/karyawan/activate') ?>" method="post" class="inline">
                                     <input type="hidden" name="karyawan_id" value="<?= $k['id'] ?>">
                                     <button type="submit"
-                                                class="ml-2 text-blue-600 text-sm hover:underline hover:text-blue-700 font-medium"
+                                                class="ml-2 text-brand text-sm hover:underline hover:text-brand-strong font-medium"
                                                 onclick="return confirm('Aktifkan akun untuk karyawan ini?');">
                                         Aktifkan Akun
                                     </button>
@@ -126,7 +126,7 @@
                                         class="inline"
                                         onsubmit="return confirm('Hapus permanen karyawan ini?');">
                                     <input type="hidden" name="id" value="<?= $k['id'] ?>">
-                                    <button type="submit" class="text-red-600 hover:underline">
+                                    <button type="submit" class="text-danger-strong hover:underline hover:text-danger font-medium">
                                         Hapus Permanen
                                     </button>
                                 </form>

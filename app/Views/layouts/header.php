@@ -6,4 +6,4 @@
     <title><?= $title ?? 'HRIS' ?></title>
     <link href="<?= asset('css/output.css') ?>" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
+<body class="dark bg-neutral-secondary-medium">

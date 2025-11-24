@@ -2,14 +2,17 @@
 
 /* Flowbite */
 
-/* ENTERPRISE THEME */
-@import url('https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-@import "flowbite/src/themes/enterprise";
-
+/* MINIMAL THEME */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import "flowbite/src/themes/minimal";
 
 /* Import the Flowbite plugin file */
 @plugin "flowbite/plugin";
 
 /* Configure the source files of Flowbite */
 @source "../node_modules/flowbite";
+
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 

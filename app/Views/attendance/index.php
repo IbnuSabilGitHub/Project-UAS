@@ -51,7 +51,7 @@
             
             <?php if (!$todayStatus): ?>
                 <!-- Form Check-in -->
-                <form action="/karyawan/attendance/checkin" method="POST">
+                <form action="<?= url('/karyawan/attendance/checkin') ?>" method="POST">
                     <div class="mb-4">
                         <label class="block text-gray-700 font-medium mb-2">Catatan (opsional)</label>
                         <textarea name="notes" rows="3" 
@@ -65,7 +65,7 @@
                 </form>
             <?php elseif (!$todayStatus['check_out']): ?>
                 <!-- Form Check-out -->
-                <form action="/karyawan/attendance/checkout" method="POST">
+                <form action="<?= url('/karyawan/attendance/checkout') ?>" method="POST">
                     <div class="mb-4">
                         <label class="block text-gray-700 font-medium mb-2">Catatan (opsional)</label>
                         <textarea name="notes" rows="3" 
@@ -185,7 +185,7 @@
 
     <!-- Tombol Kembali -->
     <div class="mt-6">
-        <a href="/karyawan/dashboard" 
+        <a href="<?= url('/karyawan/dashboard') ?>" 
            class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition duration-200">
             Kembali ke Dashboard
         </a>
