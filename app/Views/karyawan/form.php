@@ -3,7 +3,7 @@
 <div class="container mx-auto px-4 py-8">
     <h1 class="text-2xl font-bold mb-4 text-heading"><?= $title ?></h1>
 
-    <div class="max-w-4xl mx-auto bg-white shadow rounded-base p-6 border border-default-medium">
+    <div class="max-w-4xl  bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
         <?php
         $k = $karyawan ?? null;
         $isEdit = !empty($k);
