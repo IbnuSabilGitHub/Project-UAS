@@ -31,5 +31,23 @@ CREATE TABLE users (
         ON DELETE SET NULL ON UPDATE CASCADE
 );
 
+CREATE TABLE pengajuan_cuti (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    karyawan_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    reason TEXT NOT NULL,
+    document_path VARCHAR(255) NULL,
+    status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_pengajuan_cuti_karyawan
+        FOREIGN KEY (karyawan_id) REFERENCES karyawan(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+
 
 

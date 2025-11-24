@@ -2,7 +2,7 @@
 
 /**
  * Helper function untuk redirect dengan base path otomatis
- * @param string $path Path relatif (misal: '/login', '/dashboard')
+ * @param string $path Path relatif
  */
 function redirect($path) {
     header('Location: ' . BASE_URL . '/' . ltrim($path, '/'));
@@ -12,7 +12,7 @@ function redirect($path) {
 
 /**
  * Helper function untuk generate URL dengan base path otomatis
- * @param string $path Path relatif (misal: '/login', '/dashboard')
+ * @param string $path Path relatif
  * @return string URL lengkap dengan base path
  */
 function url($path) {

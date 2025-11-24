@@ -2,6 +2,75 @@
 
 All notable changes to this project will be documented in this file.
 
+## [add leave request management for admin] - 2024-11-24
+
+### ✨ Added
+
+#### **Pengajuan Cuti (Admin)**
+- **CutiController.php** - Controller lengkap untuk manajemen pengajuan cuti
+  - `index()` - Menampilkan daftar pengajuan cuti dengan statistik
+  - `create()` - Form tambah pengajuan cuti atas nama karyawan
+  - `store()` - Menyimpan pengajuan cuti baru dengan validasi & **upload dokumen PDF**
+  - `edit()` - Form edit pengajuan cuti
+  - `update()` - Update data pengajuan cuti & **ganti dokumen PDF**
+  - `approve()` - Menyetujui pengajuan cuti (status: approved)
+  - `reject()` - Menolak pengajuan cuti (status: rejected)
+  - `delete()` - Menghapus pengajuan cuti & **hapus file PDF**
+  - `uploadDocument()` - Upload & validasi file PDF (maks 5MB)
+  - `deleteDocument()` - Hapus file PDF dari server
+
+- **PengajuanCuti Model** (`app/Models/PengajuanCuti.php`)
+  - CRUD operations untuk tabel `pengajuan_cuti`
+  - `allWithKaryawan()` - Join dengan data karyawan
+  - `find()` - Cari pengajuan berdasarkan ID
+  - `getByKaryawan()` - Ambil riwayat cuti per karyawan
+  - `updateStatus()` - Update status (pending/approved/rejected)
+  - `calculateDays()` - Hitung durasi cuti otomatis
+  - `getStatistics()` - Statistik pengajuan (total, pending, approved, rejected)
+
+- **Database Schema**
+  - Tabel `pengajuan_cuti` dengan foreign key ke `karyawan`
+  - Field: id, karyawan_id, start_date, end_date, reason, **document_path**, status, created_at, updated_at
+  - Status ENUM: pending, approved, rejected
+  - **document_path** (VARCHAR 255, nullable) - Path ke file PDF dokumen pendukung
+
+- **Upload File PDF**
+  - Folder `public/uploads/cuti/` untuk menyimpan dokumen
+  - Validasi: hanya PDF, maksimal 5MB
+  - Auto-generate nama file unik: `cuti_{timestamp}_{uniqid}.pdf`
+  - Auto-delete file saat pengajuan dihapus atau diganti
+
+- **Views Pengajuan Cuti**
+  - `app/Views/cuti/index.php` - Daftar pengajuan dengan statistik cards & **kolom dokumen dengan link download PDF**
+  - `app/Views/cuti/form.php` - Form tambah/edit dengan **input file upload** & preview dokumen existing
+
+- **Routes Pengajuan Cuti**
+  - GET `/admin/cuti` - List pengajuan cuti
+  - GET `/admin/cuti/create` - Form tambah
+  - POST `/admin/cuti/store` - Simpan pengajuan
+  - GET `/admin/cuti/edit` - Form edit
+  - POST `/admin/cuti/update` - Update pengajuan
+  - POST `/admin/cuti/approve` - Approve pengajuan
+  - POST `/admin/cuti/reject` - Reject pengajuan
+  - POST `/admin/cuti/delete` - Hapus pengajuan
+
+#### **Dashboard Update**
+- Menu "Pengajuan Cuti" di admin dashboard sudah aktif (bukan lagi "Coming Soon")
+- Link langsung ke `/admin/cuti` untuk kelola pengajuan cuti
+
+### 🔧 Enhanced
+- Validasi tanggal cuti (tanggal selesai tidak boleh lebih awal dari tanggal mulai)
+- Auto-calculate durasi cuti (inclusive start dan end date)
+- Statistics cards untuk monitoring pengajuan cuti (total, pending, approved, rejected)
+- Status badge dengan color coding (yellow: pending, green: approved, red: rejected)
+
+### 📝 Notes
+- Fitur "Ajukan Cuti" untuk role karyawan belum diimplementasikan (sedang develop tim lain)
+- Admin dapat membuat pengajuan cuti atas nama karyawan
+- Admin dapat approve/reject langsung dari halaman index
+
+---
+
 ## [add employee management & enhanced authentication] - 2024-11-23
 
 ### ✨ Added
