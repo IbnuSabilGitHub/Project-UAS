@@ -1,36 +1,42 @@
 <?php
 
 /**
- * Helper function untuk redirect dengan base path otomatis
- * @param string $path Path relatif (misal: '/login', '/dashboard')
+ * Ambil base URL secara otomatis, baik di htdocs/HRIS maupun localhost:8000
+ */
+function base_url() {
+    $scheme = isset($_SERVER['REQUEST_SCHEME']) ? $_SERVER['REQUEST_SCHEME'] : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+    // Path ke folder project (misal: /HRIS atau /)
+    $scriptDir = rtrim(str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']), '/');
+
+    // Jika root "/", kosongkan saja
+    if ($scriptDir === '/') {
+        $scriptDir = '';
+    }
+
+    return $scheme . '://' . $host . $scriptDir;
+}
+
+/**
+ * Redirect universal
  */
 function redirect($path) {
-    // Pastikan path dimulai dengan /
-    $path = '/' . ltrim($path, '/');
-    header('Location: ' . $path);
+    $url = rtrim(base_url(), '/') . '/' . ltrim($path, '/');
+    header("Location: $url");
     exit;
 }
 
-
 /**
- * Helper function untuk generate URL dengan base path otomatis
- * @param string $path Path relatif (misal: '/login', '/dashboard')
- * @return string URL lengkap dengan base path
+ * Generate URL universal
  */
 function url($path) {
-    // Pastikan path dimulai dengan / untuk absolute path
-    return '/' . ltrim($path, '/');
+    return rtrim(base_url(), '/') . '/' . ltrim($path, '/');
 }
 
 /**
- * Helper function untuk generate asset URL
- * @param string $path Path relatif ke asset (misal: 'css/output.css')
- * @return string URL lengkap ke asset
+ * Asset universal
  */
 function asset($path) {
-    // Normalize path: hapus leading slash
-    $path = ltrim($path, '/');
-    
-    // Return absolute path dari root
-    return '/assets/' . $path;
+    return rtrim(base_url(), '/') . '/public/assets/' . ltrim($path, '/');
 }

@@ -10,7 +10,7 @@
     <?php endif; ?>
 
     <div class="bg-white shadow-md rounded-lg p-6">
-        <form action="/karyawan/leave/store" method="POST" enctype="multipart/form-data" id="leaveForm">
+        <form action="<?= url('/karyawan/leave/store') ?>" method="POST" enctype="multipart/form-data" id="leaveForm">
             <!-- Jenis Cuti -->
             <div class="mb-4">
                 <label for="leave_type" class="block text-gray-700 font-medium mb-2">
@@ -91,7 +91,7 @@
                         class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-3 rounded transition duration-200">
                     Ajukan Cuti
                 </button>
-                <a href="/karyawan/leave" 
+                <a href="<?= url('/karyawan/leave') ?>" 
                    class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-medium px-4 py-3 rounded text-center transition duration-200">
                     Batal
                 </a>

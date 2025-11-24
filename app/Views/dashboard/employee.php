@@ -14,7 +14,7 @@
     <!-- Menu Cards -->
     <div class="grid md:grid-cols-3 gap-6 mb-8">
         <!-- Check-in / Check-out -->
-        <a href="/karyawan/attendance" class="block bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition duration-300 border-t-4 border-blue-500">
+        <a href="<?= url('/karyawan/attendance') ?>" class="block bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition duration-300 border-t-4 border-blue-500">
             <div class="flex items-center mb-4">
                 <div class="bg-blue-100 p-3 rounded-full">
                     <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,7 +30,7 @@
         </a>
 
         <!-- Pengajuan Cuti -->
-        <a href="/karyawan/leave/create" class="block bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition duration-300 border-t-4 border-green-500">
+        <a href="<?= url('/karyawan/leave/create') ?>" class="block bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition duration-300 border-t-4 border-green-500">
             <div class="flex items-center mb-4">
                 <div class="bg-green-100 p-3 rounded-full">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +46,7 @@
         </a>
 
         <!-- Riwayat Cuti -->
-        <a href="/karyawan/leave" class="block bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition duration-300 border-t-4 border-purple-500">
+        <a href="<?= url('/karyawan/leave') ?>" class="block bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition duration-300 border-t-4 border-purple-500">
             <div class="flex items-center mb-4">
                 <div class="bg-purple-100 p-3 rounded-full">
                     <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
