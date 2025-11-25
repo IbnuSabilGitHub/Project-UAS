@@ -192,13 +192,13 @@
                                                     </form>
                                                 </li>
                                                 <li>
-                                                    <form action="<?= url('/admin/cuti/reject') ?>" method="post" class="block" onsubmit="return confirm('Tolak pengajuan cuti ini?');">
-                                                        <input type="hidden" name="id" value="<?= $pc['id'] ?>">
-                                                        <button type="submit" class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong font-medium flex items-center">
-                                                            <i class="fa-solid fa-x text-xs mr-2"></i>
-                                                            Reject
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                        data-modal-target="reject-modal-<?= $pc['id'] ?>"
+                                                        data-modal-toggle="reject-modal-<?= $pc['id'] ?>"
+                                                        class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong font-medium flex items-center">
+                                                        <i class="fa-solid fa-xmark text-xs mr-2"></i>
+                                                        Reject
+                                                    </button>
                                                 </li>
                                                 <li>
                                                     <hr class="my-1 border-default-medium">
@@ -206,7 +206,8 @@
                                             <?php endif; ?>
                                             <li>
                                                 <button type="button"
-                                                    onclick="alert('Detail: <?= htmlspecialchars($pc['reason']) ?>')"
+                                                    title="<?= htmlspecialchars($pc['reason']) ?>"
+                                                    onclick="showDetailInfo('<?= htmlspecialchars($pc['karyawan_name']) ?>', '<?= htmlspecialchars($pc['reason']) ?>', '<?= date('d/m/Y', strtotime($pc['start_date'])) ?> - <?= date('d/m/Y', strtotime($pc['end_date'])) ?>', '<?= $duration ?>')"
                                                     class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-heading flex items-center">
                                                     <i class="fa-solid fa-eye text-xs mr-2"></i>
                                                     Detail
@@ -225,6 +226,66 @@
                                                 </form>
                                             </li>
                                         </ul>
+                                    </div>
+
+                                    <!-- Rejection Modal -->
+                                    <div id="reject-modal-<?= $pc['id'] ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                        <div class="relative p-4 w-full max-w-md max-h-full">
+                                            <!-- Modal content -->
+                                            <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6">
+                                                <!-- Modal header -->
+                                                <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5">
+                                                    <h3 class="text-lg font-semibold text-heading">
+                                                        <i class="fa-solid fa-triangle-exclamation text-danger-strong inline-block mr-2"></i>
+                                                        Tolak Pengajuan Cuti
+                                                    </h3>
+                                                    <button type="button"
+                                                        class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center"
+                                                        data-modal-hide="reject-modal-<?= $pc['id'] ?>">
+                                                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                                                        </svg>
+                                                        <span class="sr-only">Close modal</span>
+                                                    </button>
+                                                </div>
+                                                <!-- Modal body -->
+                                                <form action="<?= url('/admin/cuti/reject') ?>" method="POST">
+                                                    <input type="hidden" name="id" value="<?= $pc['id'] ?>">
+                                                    <div class="py-4 md:py-6">
+                                                        <!-- Info Karyawan -->
+                                                        <div class="bg-neutral-secondary-soft border border-default-medium rounded-base p-3 mb-4 flex flex-col items-start">
+                                                            <p class="text-sm text-body aligin"><strong class="text-heading">Karyawan:</strong> <?= htmlspecialchars($pc['karyawan_name']) ?></p>
+                                                            <p class="text-sm text-body aligin"><strong class="text-heading">Periode:</strong> <?= date('d/m/y', strtotime($pc['start_date'])) ?> - <?= date('d/m/y', strtotime($pc['end_date'])) ?></p>
+                                                        </div>
+
+                                                        <!-- Alasan Penolakan -->
+                                                        <div class="mb-4">
+                                                            <label for="rejection_reason_<?= $pc['id'] ?>" class="block mb-2.5 text-sm font-medium text-heading">
+                                                                Alasan Penolakan <span class="text-danger-strong">*</span>
+                                                            </label>
+                                                            <textarea
+                                                                id="rejection_reason_<?= $pc['id'] ?>"
+                                                                name="rejection_reason"
+                                                                rows="4"
+                                                                required
+                                                                class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand w-full p-3.5 shadow-xs placeholder:text-body"
+                                                                placeholder="Jelaskan alasan penolakan cuti ini kepada karyawan..."></textarea>
+
+                                                            <div class="flex items-start sm:items-center py-2 px-4 mb-2 mt-2 text-sm text-fg-warning rounded-base bg-warning-soft" role="alert">
+                                                                <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                                </svg>
+                                                                <p>Alasan ini akan dikirimkan kepada karyawa</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="w-full text-white bg-danger box-border border border-transparent hover:bg-danger-strong focus:ring-4 focus:ring-danger-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                                                        Tolak Pengajuan
+                                                    </button>
+
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </td>
                             </tr>
@@ -245,5 +306,19 @@
     </div>
 
 </div>
+
+<script>
+    function showDetailInfo(karyawan, reason, periode, durasi) {
+        const message = `
+Karyawan: ${karyawan}
+Periode: ${periode}
+Durasi: ${durasi} hari
+
+Alasan:
+${reason}
+    `;
+        alert(message);
+    }
+</script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

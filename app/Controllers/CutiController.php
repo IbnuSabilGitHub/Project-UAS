@@ -159,14 +159,21 @@ class CutiController {
 
         $id = (int)($_POST['id'] ?? 0);
         if (!$id) {
+            $_SESSION['error'] = 'ID tidak valid';
             redirect('/admin/cuti');
         }
 
-        $rejectionReason = trim($_POST['rejection_reason'] ?? 'Ditolak oleh admin');
+        $rejectionReason = trim($_POST['rejection_reason'] ?? '');
+        
+        // Validasi: rejection_reason wajib diisi
+        if (empty($rejectionReason)) {
+            $_SESSION['error'] = 'Alasan penolakan wajib diisi';
+            redirect('/admin/cuti');
+        }
 
         // Update dengan approved_by dan rejection_reason
         if ($this->model->updateStatus($id, 'rejected', $_SESSION['user_id'], $rejectionReason)) {
-            $_SESSION['success'] = 'Pengajuan cuti berhasil ditolak';
+            $_SESSION['success'] = 'Pengajuan cuti berhasil ditolak dengan alasan yang diberikan';
         } else {
             $_SESSION['error'] = 'Gagal menolak pengajuan cuti';
         }

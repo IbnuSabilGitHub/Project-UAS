@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Feature: Rejection Reason Modal] - 2024-11-25
+
+### ✨ Added
+
+#### **Modal Input Rejection Reason**
+- ✅ Menambahkan modal dialog saat admin klik tombol "Reject" pada pengajuan cuti
+- ✅ Admin wajib mengisi alasan penolakan sebelum menolak pengajuan cuti
+- ✅ Modal menampilkan informasi karyawan dan periode cuti yang akan ditolak
+- ✅ Textarea untuk input alasan penolakan (required field)
+- ✅ Info tooltip bahwa alasan akan dikirimkan ke karyawan
+
+**Changes in `app/Views/cuti/index.php`:**
+- Mengubah button "Reject" dari direct submit menjadi trigger modal
+- Menambahkan modal rejection untuk setiap row data pengajuan cuti
+- Modal menggunakan komponen Flowbite dengan styling konsisten
+- Form di dalam modal mengirim `rejection_reason` ke controller
+
+**Modal Features:**
+- Header dengan icon warning dan judul "Tolak Pengajuan Cuti"
+- Info panel menampilkan nama karyawan dan periode cuti
+- Textarea wajib diisi untuk alasan penolakan
+- Helper text menjelaskan alasan akan dikirim ke karyawan
+- Button "Tolak Pengajuan" dengan warna danger
+
+**User Experience:**
+- Mencegah penolakan tanpa alasan yang jelas
+- Meningkatkan transparansi komunikasi admin-karyawan
+- Validasi required memastikan alasan selalu terisi
+- Modal dapat ditutup dengan tombol X, atau klik di luar modal
+
+
+
+
+
 ## [Fix: Employee Leave Request Date Format] - 2024-11-25
 
 ### 🐛 Bug Fixes
