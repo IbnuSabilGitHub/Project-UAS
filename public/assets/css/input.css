@@ -8,7 +8,7 @@
 @plugin "flowbite/plugin";
 
 /* Configure the source files of Flowbite */
-@source "../node_modules/flowbite";
+@source "C:/xampp/htdocs/HRIS/node_modules/flowbite"; /* Paksan path absolut (karena htdoc tricky) */
 
 
 @custom-variant dark (&:where(.dark, .dark *));

@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Fix: Employee Leave Request Date Format] - 2024-11-25
+
+### 🐛 Bug Fixes
+
+#### **Backend Date Handling**
+- ✅ Fixed date format conversion from Flowbite datepicker (MM/DD/YYYY) to MySQL format (YYYY-MM-DD)
+- ✅ Added `convertDateFormat()` method in `LeaveController.php` to handle multiple date formats
+- ✅ Fixed "0000-00-00" dates in database by properly converting datepicker input
+- ✅ Added validation to prevent invalid dates from being saved
+
+**Changes in `app/Controllers/LeaveController.php`:**
+
+#### **Total Days Calculation**
+- ✅ Fixed total_days not being sent to backend
+- ✅ Added hidden input field to store calculated total_days
+- ✅ JavaScript now updates both display and hidden input value
+
+**Changes in `app/Views/leave/form.php`:**
+- Added `<input type="hidden" name="total_days" id="totalDaysInput" value="0">`
+- Updated `calculateDays()` function to populate hidden input
+- Added form validation before submit to ensure dates are selected
+
+#### **Display Invalid Dates**
+- ✅ Fixed display of invalid dates (0000-00-00) in leave history table
+- ✅ Shows "Tanggal tidak valid" message for corrupted date data
+
+**Changes in `app/Views/leave/index.php`:**
+- Added validation before displaying dates with `date()` function
+- Prevents PHP errors when encountering 0000-00-00 dates
+
+
+---
+
 ## [Refactor: remove CRUD Features in admin] - 2024-11-25
 
 ### 🗑️ Removed

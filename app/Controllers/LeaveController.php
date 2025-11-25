@@ -76,6 +76,34 @@ class LeaveController {
     }
 
     /**
+     * Konversi format tanggal dari MM/DD/YYYY ke YYYY-MM-DD
+     */
+    private function convertDateFormat($date) {
+        if (empty($date)) return null;
+        
+        // Jika sudah format YYYY-MM-DD, return langsung
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $date;
+        }
+        
+        // Konversi dari MM/DD/YYYY ke YYYY-MM-DD
+        if (preg_match('/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/', $date, $matches)) {
+            $month = str_pad($matches[1], 2, '0', STR_PAD_LEFT);
+            $day = str_pad($matches[2], 2, '0', STR_PAD_LEFT);
+            $year = $matches[3];
+            return "$year-$month-$day";
+        }
+        
+        // Coba parse dengan DateTime sebagai fallback
+        try {
+            $dt = new DateTime($date);
+            return $dt->format('Y-m-d');
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * Proses submit pengajuan cuti
      */
     public function store() {
@@ -93,9 +121,13 @@ class LeaveController {
 
         // Validasi input
         $leaveType = trim($_POST['leave_type'] ?? '');
-        $startDate = trim($_POST['start_date'] ?? '');
-        $endDate = trim($_POST['end_date'] ?? '');
+        $startDateRaw = trim($_POST['start_date'] ?? '');
+        $endDateRaw = trim($_POST['end_date'] ?? '');
         $reason = trim($_POST['reason'] ?? '');
+
+        // Konversi format tanggal
+        $startDate = $this->convertDateFormat($startDateRaw);
+        $endDate = $this->convertDateFormat($endDateRaw);
 
         if (empty($leaveType) || empty($startDate) || empty($endDate) || empty($reason)) {
             $_SESSION['error'] = 'Semua field wajib diisi';

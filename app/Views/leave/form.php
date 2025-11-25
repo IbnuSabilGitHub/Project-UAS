@@ -33,25 +33,42 @@
                 </select>
             </div>
 
-            <!-- Tanggal Mulai -->
+            <!-- Tanggal Range -->
             <div class="mb-4">
-                <label for="start_date" class="block text-sm font-medium text-heading mb-2">
-                    Tanggal Mulai <span class="text-red-500">*</span>
+                <label class="block text-sm font-medium text-heading mb-2 ">
+                    Pilih Rentang Tanggal
                 </label>
-                <input type="date" name="start_date" id="start_date" required
-                    min="<?= date('Y-m-d') ?>"
-                    class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow">
+                <div id="date-range-picker" date-rangepicker datepicker-format="yyyy-mm-dd" class="flex items-center gap-4 w-full">
+                    <!-- start date -->
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z" />
+                            </svg>
+                        </div>
+                        <input id="start_date" name="start_date" type="text"
+                            class="block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+                            placeholder="Select date start">
+
+                    </div>
+
+                    <span class="text-body">to</span>
+
+                    <!-- end date -->
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16m-8-3V4M7 7V4m10 3V4M5 20h14a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Zm3-7h.01v.01H8V13Zm4 0h.01v.01H12V13Zm4 0h.01v.01H16V13Zm-8 4h.01v.01H8V17Zm4 0h.01v.01H12V17Zm4 0h.01v.01H16V17Z" />
+                            </svg>
+                        </div>
+                        <input id="end_date" name="end_date" type="text"
+                            class="block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
+                            placeholder="Select date end">
+                    </div>
+                </div>
+
             </div>
 
-            <!-- Tanggal Selesai -->
-            <div class="mb-4">
-                <label for="end_date" class="block text-sm font-medium text-heading mb-2">
-                    Tanggal Selesai <span class="text-red-500">*</span>
-                </label>
-                <input type="date" name="end_date" id="end_date" required
-                    min="<?= date('Y-m-d') ?>"
-                    class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow">
-            </div>
 
             <!-- Total Hari (auto calculate) -->
             <div class="mb-4">
@@ -59,6 +76,7 @@
                 <div class="bg-neutral-secondary-medium border border-default-medium p-3 rounded-base">
                     <span id="totalDays" class="text-lg font-semibold text-brand">0 hari</span>
                 </div>
+                <input type="hidden" name="total_days" id="totalDaysInput" value="0">
             </div>
 
             <!-- Alasan -->
@@ -116,27 +134,52 @@
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
     const totalDaysSpan = document.getElementById('totalDays');
+    const totalDaysInput = document.getElementById('totalDaysInput');
 
     function calculateDays() {
         const startDate = startDateInput.value;
         const endDate = endDateInput.value;
 
+        console.log('Start date:', startDate, 'End date:', endDate); // Debug
+
         if (startDate && endDate) {
+            // Parse tanggal format yyyy-mm-dd
             const start = new Date(startDate);
             const end = new Date(endDate);
 
-            if (end >= start) {
-                const diffTime = Math.abs(end - start);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                totalDaysSpan.textContent = diffDays + ' hari';
+            console.log('Start object:', start, 'End object:', end); // Debug
+
+            if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
+                if (end >= start) {
+                    const diffTime = end.getTime() - start.getTime();
+                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    console.log('Calculated days:', diffDays); // Debug
+                    
+                    totalDaysSpan.textContent = diffDays + ' hari';
+                    totalDaysInput.value = diffDays;
+                } else {
+                    totalDaysSpan.textContent = '0 hari';
+                    totalDaysInput.value = 0;
+                }
             } else {
+                console.error('Invalid date format'); // Debug
                 totalDaysSpan.textContent = '0 hari';
+                totalDaysInput.value = 0;
             }
+        } else {
+            totalDaysSpan.textContent = '0 hari';
+            totalDaysInput.value = 0;
         }
     }
 
+    // Trigger calculation saat datepicker berubah
+    startDateInput.addEventListener('changeDate', calculateDays);
+    endDateInput.addEventListener('changeDate', calculateDays);
     startDateInput.addEventListener('change', calculateDays);
     endDateInput.addEventListener('change', calculateDays);
+    startDateInput.addEventListener('input', calculateDays);
+    endDateInput.addEventListener('input', calculateDays);
 
     // Update min date for end_date when start_date changes
     startDateInput.addEventListener('change', function() {
@@ -149,6 +192,40 @@
         if (file && file.size > 5 * 1024 * 1024) {
             alert('Ukuran file maksimal 5MB');
             this.value = '';
+        }
+    });
+
+    // Validasi sebelum submit
+    document.getElementById('leaveForm').addEventListener('submit', function(e) {
+        const startDate = startDateInput.value;
+        const endDate = endDateInput.value;
+
+        console.log('Submit - Form data:', {
+            start_date: startDate,
+            end_date: endDate,
+            total_days: totalDaysInput.value
+        });
+
+        if (!startDate || !endDate) {
+            e.preventDefault();
+            alert('Silakan pilih tanggal mulai dan tanggal selesai');
+            return false;
+        }
+
+        // Recalculate sebelum submit untuk memastikan
+        calculateDays();
+
+        if (parseInt(totalDaysInput.value) <= 0) {
+            e.preventDefault();
+            alert('Total hari cuti harus lebih dari 0. Total: ' + totalDaysInput.value);
+            return false;
+        }
+    });
+
+    // Trigger calculation saat page load jika sudah ada nilai
+    window.addEventListener('load', function() {
+        if (startDateInput.value && endDateInput.value) {
+            calculateDays();
         }
     });
 </script>

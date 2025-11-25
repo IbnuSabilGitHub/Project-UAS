@@ -6,6 +6,12 @@
     <title><?= $title ?? 'HRIS' ?></title>
     <link href="<?= asset('css/output.css') ?>" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Jika di komputer kalian style flowbite tidak berfungsi gunakan aja cdn ini -->
+    <!-- Flowbite tidak berfungsi mungkin karena htdoc selalu tricky dalam hal path-->
+    <!-- <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" /> -->
+
 </head>
 
-<body class="dark bg-neutral-secondary-medium">
+<body class="dark bg-neutral-primary">
+
