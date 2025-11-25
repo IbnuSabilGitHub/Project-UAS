@@ -89,6 +89,121 @@ All notable changes to this project will be documented in this file.
 ```sql
 ALTER TABLE karyawan ADD INDEX idx_name (name);
 ```
+## [Integration with Employee Leave Request] - 2024-11-24
+
+### 🔄 Changed - **Penyesuaian Kompatibilitas dengan Fitur Ajukan Cuti**
+
+**Alasan Perubahan:**  
+Fitur "Ajukan Cuti" untuk karyawan sudah dirilis di branch lain menggunakan tabel `leave_requests` dengan struktur berbeda. Untuk menghindari konflik merge dan memastikan integrasi yang mulus, fitur admin disesuaikan untuk menggunakan skema database yang sama.
+
+#### **Database Migration**
+- ❌ **Removed**: Tabel `pengajuan_cuti` (skema lama)
+- ✅ **Migrated to**: Tabel `leave_requests` (skema baru)
+- **New Fields Added**:
+  - `leave_type` ENUM('annual','sick','emergency','unpaid') - Jenis cuti (tahunan/sakit/darurat/tanpa gaji)
+  - `total_days` INT - Durasi cuti dalam hari (dihitung otomatis)
+  - `attachment_file` VARCHAR(255) - Nama file lampiran (ganti `document_path`)
+  - `approved_by` INT - ID user yang menyetujui (foreign key ke `users.id`)
+  - `approved_at` DATETIME - Waktu persetujuan
+  - `rejection_reason` TEXT - Alasan penolakan cuti
+
+#### **Model Changes** (`app/Models/PengajuanCuti.php`)
+- Updated table reference: `pengajuan_cuti` → `leave_requests`
+- `create()` - Added `leave_type` and `total_days` parameters
+- `updateStatus()` - Added `approved_by` and `rejection_reason` support
+- `calculateDays()` - Automatically calculates `total_days` including weekends
+
+#### **Controller Changes** (`app/Controllers/CutiController.php`)
+- `store()` - Now includes `leave_type` validation and `total_days` calculation
+- `approve()` - Records `approved_by` (admin user ID) and `approved_at` timestamp
+- `reject()` - Records `rejection_reason` when rejecting leave requests
+- **File Upload Path Changed**: 
+  - Old: `public/uploads/cuti/`
+  - New: `public/uploads/leave_attachments/` (consistent with employee feature)
+- **File Types Expanded**: PDF + Images (JPG/PNG) - max 5MB
+
+#### **View Changes**
+- `app/Views/cuti/form.php`:
+  - Added `leave_type` dropdown (Annual/Sick/Emergency/Unpaid Leave)
+  - Updated file input: `accept=".pdf,.jpg,.jpeg,.png"` (was `.pdf` only)
+  - Changed file reference: `document_path` → `attachment_file`
+  
+- `app/Views/cuti/index.php`:
+  - Display `leave_type` badge with color coding
+  - Show `approved_by` admin name in approved requests
+  - Show `rejection_reason` in rejected requests tooltip
+
+#### **Routes** (No changes - backward compatible)
+- All existing routes `/admin/cuti/*` remain functional
+
+---
+
+## [add leave request management for admin] - 2024-11-24
+
+### ✨ Added
+
+#### **Pengajuan Cuti (Admin) - Initial Implementation**
+- **CutiController.php** - Controller lengkap untuk manajemen pengajuan cuti
+  - `index()` - Menampilkan daftar pengajuan cuti dengan statistik
+  - `create()` - Form tambah pengajuan cuti atas nama karyawan
+  - `store()` - Menyimpan pengajuan cuti baru dengan validasi & upload dokumen
+  - `edit()` - Form edit pengajuan cuti
+  - `update()` - Update data pengajuan cuti & ganti dokumen
+  - `approve()` - Menyetujui pengajuan cuti (status: approved)
+  - `reject()` - Menolak pengajuan cuti (status: rejected)
+  - `delete()` - Menghapus pengajuan cuti & hapus file
+  - `uploadDocument()` - Upload & validasi file (PDF/JPG/PNG, maks 5MB)
+  - `deleteDocument()` - Hapus file dari server
+
+- **PengajuanCuti Model** (`app/Models/PengajuanCuti.php`)
+  - CRUD operations untuk tabel `leave_requests`
+  - `allWithKaryawan()` - Join dengan data karyawan
+  - `find()` - Cari pengajuan berdasarkan ID
+  - `getByKaryawan()` - Ambil riwayat cuti per karyawan
+  - `updateStatus()` - Update status (pending/approved/rejected) + approved_by
+  - `calculateDays()` - Hitung durasi cuti otomatis
+  - `getStatistics()` - Statistik pengajuan (total, pending, approved, rejected)
+
+- **Database Schema**
+  - Tabel `pengajuan_cuti` dengan foreign key ke `karyawan`
+  - Field: id, karyawan_id, start_date, end_date, reason, **document_path**, status, created_at, updated_at
+  - Status ENUM: pending, approved, rejected
+  - **document_path** (VARCHAR 255, nullable) - Path ke file PDF dokumen pendukung
+
+- **Upload File PDF**
+  - Folder `public/uploads/cuti/` untuk menyimpan dokumen
+  - Validasi: hanya PDF, maksimal 5MB
+  - Auto-generate nama file unik: `cuti_{timestamp}_{uniqid}.pdf`
+  - Auto-delete file saat pengajuan dihapus atau diganti
+
+- **Views Pengajuan Cuti**
+  - `app/Views/cuti/index.php` - Daftar pengajuan dengan statistik cards & **kolom dokumen dengan link download PDF**
+  - `app/Views/cuti/form.php` - Form tambah/edit dengan **input file upload** & preview dokumen existing
+
+- **Routes Pengajuan Cuti**
+  - GET `/admin/cuti` - List pengajuan cuti
+  - GET `/admin/cuti/create` - Form tambah
+  - POST `/admin/cuti/store` - Simpan pengajuan
+  - GET `/admin/cuti/edit` - Form edit
+  - POST `/admin/cuti/update` - Update pengajuan
+  - POST `/admin/cuti/approve` - Approve pengajuan
+  - POST `/admin/cuti/reject` - Reject pengajuan
+  - POST `/admin/cuti/delete` - Hapus pengajuan
+
+#### **Dashboard Update**
+- Menu "Pengajuan Cuti" di admin dashboard sudah aktif (bukan lagi "Coming Soon")
+- Link langsung ke `/admin/cuti` untuk kelola pengajuan cuti
+
+### 🔧 Enhanced
+- Validasi tanggal cuti (tanggal selesai tidak boleh lebih awal dari tanggal mulai)
+- Auto-calculate durasi cuti (inclusive start dan end date)
+- Statistics cards untuk monitoring pengajuan cuti (total, pending, approved, rejected)
+- Status badge dengan color coding (yellow: pending, green: approved, red: rejected)
+
+### 📝 Notes
+- Fitur "Ajukan Cuti" untuk role karyawan belum diimplementasikan (sedang develop tim lain)
+- Admin dapat membuat pengajuan cuti atas nama karyawan
+- Admin dapat approve/reject langsung dari halaman index
 
 ---
 

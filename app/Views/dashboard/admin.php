@@ -21,18 +21,19 @@
                 <h2 class="text-xl font-semibold text-heading mb-2">Manajemen Karyawan</h2>
                 <p class="text-sm text-body">Lihat, tambah, nonaktifkan, hapus permanen karyawan.</p>
             </a>
+
+            <a href="<?= url('/admin/cuti') ?>" 
+               class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
+                <h2 class="text-xl font-semibold text-heading mb-2">Pengajuan Cuti</h2>
+                <p class="text-sm text-body">Kelola pengajuan cuti karyawan dan approve/reject.</p>
+            </a>
             
             <a href="<?= url('/admin/attendance') ?>" 
                class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
                 <h2 class="text-xl font-semibold text-heading mb-2">Absensi</h2>
                 <p class="text-sm text-body">Lihat, filter, dan export data absensi karyawan.</p>
             </a>
-            
-            <div class="block bg-neutral-secondary-medium opacity-60 cursor-not-allowed rounded-base p-6 border border-default">
-                <h2 class="text-xl font-semibold text-heading mb-2">Pengajuan Cuti</h2>
-                <p class="text-sm text-body">Modul cuti akan ditambahkan.</p>
-                <span class="inline-block bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full mt-2">Coming Soon</span>
-            </div>
+
         </div>
         
         <div class="mt-8 border-t border-default pt-6">

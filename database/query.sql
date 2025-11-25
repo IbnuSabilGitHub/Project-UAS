@@ -46,18 +46,18 @@ CREATE TABLE attendance (
     INDEX idx_karyawan_date (karyawan_id, check_in)
 );
 
--- Tabel untuk pengajuan cuti
+-- Tabel untuk pengajuan cuti (kompatibel dengan fitur karyawan)
 CREATE TABLE leave_requests (
     id INT AUTO_INCREMENT PRIMARY KEY,
     karyawan_id INT NOT NULL,
-    leave_type ENUM('annual','sick','emergency','unpaid') NOT NULL,
+    leave_type ENUM('annual','sick','emergency','unpaid') NOT NULL DEFAULT 'annual',
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     total_days INT NOT NULL,
     reason TEXT NOT NULL,
-    attachment_file VARCHAR(255) NULL,
+    attachment_file VARCHAR(255) NULL COMMENT 'File PDF/gambar pendukung',
     status ENUM('pending','approved','rejected') DEFAULT 'pending',
-    approved_by INT NULL,
+    approved_by INT NULL COMMENT 'ID user admin yang approve/reject',
     approved_at DATETIME NULL,
     rejection_reason TEXT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -71,5 +71,9 @@ CREATE TABLE leave_requests (
     INDEX idx_karyawan_status (karyawan_id, status),
     INDEX idx_dates (start_date, end_date)
 );
+
+
+
+
 
 

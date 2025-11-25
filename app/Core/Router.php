@@ -89,6 +89,52 @@ class Router {
             }
         }
 
+        // Routes untuk pengajuan cuti (admin)
+        if (strpos($uri, '/admin/cuti') === 0) {
+            require_once __DIR__ . "/../Controllers/CutiController.php";
+            $cc = new CutiController();
+
+            if ($uri === '/admin/cuti' && $method === 'GET') {
+                $cc->index();
+                return;
+            }
+
+            if ($uri === '/admin/cuti/create' && $method === 'GET') {
+                $cc->create();
+                return;
+            }
+
+            if ($uri === '/admin/cuti/store' && $method === 'POST') {
+                $cc->store();
+                return;
+            }
+
+            if ($uri === '/admin/cuti/edit' && $method === 'GET') {
+                $cc->edit();
+                return;
+            }
+
+            if ($uri === '/admin/cuti/update' && $method === 'POST') {
+                $cc->update();
+                return;
+            }
+
+            if ($uri === '/admin/cuti/approve' && $method === 'POST') {
+                $cc->approve();
+                return;
+            }
+
+            if ($uri === '/admin/cuti/reject' && $method === 'POST') {
+                $cc->reject();
+                return;
+            }
+
+            if ($uri === '/admin/cuti/delete' && $method === 'POST') {
+                $cc->delete();
+                return;
+            }
+        }
+
         if ($uri === '/change-password') {
             require_once __DIR__ . "/../Controllers/AuthController.php";
             $ac = new AuthController();
