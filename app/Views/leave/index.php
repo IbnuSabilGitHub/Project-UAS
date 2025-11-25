@@ -2,97 +2,115 @@
 
 <div class="max-w-7xl mx-auto py-8 px-4">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Riwayat Cuti Saya</h1>
-        <a href="/karyawan/leave/create" 
-           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition duration-200">
-            + Ajukan Cuti Baru
+        <h1 class="text-3xl font-bold text-heading">Riwayat Cuti Saya</h1>
+        <a href="<?= url('/karyawan/leave/create') ?>"
+            class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+            <i class="fa-solid fa-circle-plus text-lg w-4 h-4 me-2.5 -ms-0.5"></i>
+            Ajukan Cuti Baru
         </a>
     </div>
 
+
+
     <?php if (!empty($success)): ?>
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
-            <?= htmlspecialchars($success) ?>
+        <div class="flex items-center p-4 mb-4 text-green-800 rounded-base bg-green-50" role="alert">
+            <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <span class="sr-only">Info</span>
+            <div class="ms-3 text-sm font-medium">
+                <?= htmlspecialchars($success) ?>
+            </div>
         </div>
     <?php endif; ?>
 
     <?php if (!empty($error)): ?>
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            <?= htmlspecialchars($error) ?>
+        <div class="flex items-center p-4 mb-4 text-red-800 rounded-base bg-red-50" role="alert">
+            <svg class="shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+            </svg>
+            <span class="sr-only">Danger</span>
+            <div class="ms-3 text-sm font-medium">
+                <?= htmlspecialchars($error) ?>
+            </div>
         </div>
     <?php endif; ?>
 
     <!-- Summary -->
-    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-        <h2 class="text-xl font-semibold mb-4">Ringkasan Cuti Tahun Ini</h2>
+    <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
+        <h2 class="text-xl font-semibold mb-4 text-heading">Ringkasan Cuti Tahun Ini</h2>
         <div class="grid md:grid-cols-3 gap-4">
-            <div class="bg-blue-50 p-4 rounded text-center">
+            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium text-center">
                 <p class="text-3xl font-bold text-blue-600"><?= $totalDaysUsed ?></p>
-                <p class="text-sm text-gray-600">Hari Cuti Terpakai</p>
+                <p class="text-sm text-body">Hari Cuti Terpakai</p>
             </div>
-            <div class="bg-green-50 p-4 rounded text-center">
+            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium text-center">
                 <p class="text-3xl font-bold text-green-600"><?= max(0, 12 - $totalDaysUsed) ?></p>
-                <p class="text-sm text-gray-600">Hari Cuti Tersisa</p>
+                <p class="text-sm text-body">Hari Cuti Tersisa</p>
             </div>
-            <div class="bg-yellow-50 p-4 rounded text-center">
+            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium text-center">
                 <p class="text-3xl font-bold text-yellow-600">
-                    <?= count(array_filter($leaves, function($l) { return $l['status'] === 'pending'; })) ?>
+                    <?= count(array_filter($leaves, function ($l) {
+                        return $l['status'] === 'pending';
+                    })) ?>
                 </p>
-                <p class="text-sm text-gray-600">Menunggu Persetujuan</p>
+                <p class="text-sm text-body">Menunggu Persetujuan</p>
             </div>
         </div>
     </div>
 
     <!-- Daftar Pengajuan Cuti -->
-    <div class="bg-white shadow-md rounded-lg p-6">
-        <h2 class="text-xl font-semibold mb-4">Daftar Pengajuan Cuti</h2>
-        
+    <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
+        <h2 class="text-xl font-semibold mb-4 text-heading">Daftar Pengajuan Cuti</h2>
+
         <?php if (empty($leaves)): ?>
             <div class="text-center py-12">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <p class="mt-4 text-gray-600">Belum ada pengajuan cuti</p>
-                <a href="<?= url('/karyawan/leave/create') ?>" 
-                   class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded transition duration-200">
+                <a href="<?= url('/karyawan/leave/create') ?>"
+                    class="mt-4 inline-block text-white bg-brand hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium rounded-base text-sm px-5 py-2.5">
                     Ajukan Cuti Sekarang
                 </a>
             </div>
         <?php else: ?>
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+
+            <div class="orelative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
+                <table class="w-full text-sm text-left rtl:text-right text-body">
+                    <thead class="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">No</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Jenis Cuti</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Durasi</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Lampiran</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                            <th scope="col" class="px-6 py-3 font-medium">No</th>
+                            <th scope="col" class="px-6 py-3 font-medium">Jenis Cuti</th>
+                            <th scope="col" class="px-6 py-3 font-medium">Tanggal</th>
+                            <th scope="col" class="px-6 py-3 font-medium">Durasi</th>
+                            <th scope="col" class="px-6 py-3 font-medium">Status</th>
+                            <th scope="col" class="px-6 py-3 font-medium">Lampiran</th>
+                            <th scope="col" class="px-6 py-3 font-medium">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php foreach ($leaves as $index => $leave): ?>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <tr class="bg-neutral-primary border-b border-default">
+                                <td class="px-6 py-4">
                                     <?= $index + 1 ?>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <td class="px-6 py-4">
                                     <?php
-                                        $types = [
-                                            'annual' => 'Tahunan',
-                                            'sick' => 'Sakit',
-                                            'emergency' => 'Darurat',
-                                            'unpaid' => 'Tidak Dibayar'
-                                        ];
-                                        echo $types[$leave['leave_type']] ?? $leave['leave_type'];
+                                    $types = [
+                                        'annual' => 'Tahunan',
+                                        'sick' => 'Sakit',
+                                        'emergency' => 'Darurat',
+                                        'unpaid' => 'Tidak Dibayar'
+                                    ];
+                                    echo $types[$leave['leave_type']] ?? $leave['leave_type'];
                                     ?>
                                 </td>
                                 <td class="px-6 py-4 text-sm">
                                     <div><?= date('d/m/Y', strtotime($leave['start_date'])) ?></div>
                                     <div class="text-gray-500">s/d <?= date('d/m/Y', strtotime($leave['end_date'])) ?></div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <td class="px-6 py-4">
                                     <?= $leave['total_days'] ?> hari
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -104,12 +122,12 @@
                                         <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Ditolak</span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                <td class="px-6 py-4">
                                     <?php if ($leave['attachment_file']): ?>
-                                        <a href="/uploads/leave_attachments/<?= htmlspecialchars($leave['attachment_file']) ?>" 
-                                           target="_blank"
-                                           class="text-blue-600 hover:text-blue-800">
-                                            📎 Lihat File
+                                        <a href="/uploads/leave_attachments/<?= htmlspecialchars($leave['attachment_file']) ?>"
+                                            target="_blank"
+                                            class="text-blue-600 hover:text-blue-800">
+                                            Lihat File
                                         </a>
                                     <?php else: ?>
                                         <span class="text-gray-400">-</span>
@@ -117,16 +135,16 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <?php if ($leave['status'] === 'pending'): ?>
-                                        <form action="/karyawan/leave/delete" method="POST" 
-                                              onsubmit="return confirm('Yakin ingin membatalkan pengajuan cuti ini?')">
+                                        <form action="/karyawan/leave/delete" method="POST"
+                                            onsubmit="return confirm('Yakin ingin membatalkan pengajuan cuti ini?')">
                                             <input type="hidden" name="id" value="<?= $leave['id'] ?>">
                                             <button type="submit" class="text-red-600 hover:text-red-800">
                                                 Batalkan
                                             </button>
                                         </form>
                                     <?php else: ?>
-                                        <button type="button" class="text-blue-600 hover:text-blue-800" 
-                                                onclick="showDetail(<?= htmlspecialchars(json_encode($leave)) ?>)">
+                                        <button type="button" class="text-blue-600 hover:text-blue-800"
+                                            onclick="showDetail(<?= htmlspecialchars(json_encode($leave)) ?>)">
                                             Detail
                                         </button>
                                     <?php endif; ?>
@@ -140,9 +158,10 @@
     </div>
 
     <!-- Tombol Kembali -->
-    <div class="mt-6">
-        <a href="/karyawan/dashboard" 
-           class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded transition duration-200">
+    <div class="mt-8">
+        <a href="<?= url('/admin/dashboard') ?>"
+            class="inline-block text-brand hover:text-brand-strong font-medium">
+            <i class="fa-solid fa-arrow-left-long mr-2"></i>
             Kembali ke Dashboard
         </a>
     </div>
@@ -166,21 +185,21 @@
 </div>
 
 <script>
-function showDetail(leave) {
-    const types = {
-        'annual': 'Tahunan',
-        'sick': 'Sakit',
-        'emergency': 'Darurat',
-        'unpaid': 'Tidak Dibayar'
-    };
-    
-    const status = {
-        'pending': '<span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Pending</span>',
-        'approved': '<span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Disetujui</span>',
-        'rejected': '<span class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Ditolak</span>'
-    };
-    
-    let content = `
+    function showDetail(leave) {
+        const types = {
+            'annual': 'Tahunan',
+            'sick': 'Sakit',
+            'emergency': 'Darurat',
+            'unpaid': 'Tidak Dibayar'
+        };
+
+        const status = {
+            'pending': '<span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Pending</span>',
+            'approved': '<span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Disetujui</span>',
+            'rejected': '<span class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Ditolak</span>'
+        };
+
+        let content = `
         <div><strong>Jenis Cuti:</strong> ${types[leave.leave_type]}</div>
         <div><strong>Tanggal Mulai:</strong> ${formatDate(leave.start_date)}</div>
         <div><strong>Tanggal Selesai:</strong> ${formatDate(leave.end_date)}</div>
@@ -188,38 +207,42 @@ function showDetail(leave) {
         <div><strong>Status:</strong> ${status[leave.status]}</div>
         <div><strong>Alasan:</strong> ${leave.reason}</div>
     `;
-    
-    if (leave.approved_by) {
-        content += `<div><strong>Diproses oleh:</strong> ${leave.approver_name || '-'}</div>`;
-    }
-    
-    if (leave.rejection_reason) {
-        content += `<div class="bg-red-50 p-3 rounded"><strong>Alasan Penolakan:</strong> ${leave.rejection_reason}</div>`;
-    }
-    
-    if (leave.attachment_file) {
-        content += `<div><strong>Lampiran:</strong> <a href="/uploads/leave_attachments/${leave.attachment_file}" target="_blank" class="text-blue-600">📎 Lihat File</a></div>`;
-    }
-    
-    document.getElementById('modalContent').innerHTML = content;
-    document.getElementById('detailModal').classList.remove('hidden');
-}
 
-function closeModal() {
-    document.getElementById('detailModal').classList.add('hidden');
-}
+        if (leave.approved_by) {
+            content += `<div><strong>Diproses oleh:</strong> ${leave.approver_name || '-'}</div>`;
+        }
 
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-}
+        if (leave.rejection_reason) {
+            content += `<div class="bg-red-50 p-3 rounded"><strong>Alasan Penolakan:</strong> ${leave.rejection_reason}</div>`;
+        }
 
-// Close modal when clicking outside
-document.getElementById('detailModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeModal();
+        if (leave.attachment_file) {
+            content += `<div><strong>Lampiran:</strong> <a href="/uploads/leave_attachments/${leave.attachment_file}" target="_blank" class="text-blue-600">Lihat File</a></div>`;
+        }
+
+        document.getElementById('modalContent').innerHTML = content;
+        document.getElementById('detailModal').classList.remove('hidden');
     }
-});
+
+    function closeModal() {
+        document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

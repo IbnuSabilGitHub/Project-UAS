@@ -2,10 +2,8 @@
 
 /* Flowbite */
 
-/* MINIMAL THEME */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
-@import "flowbite/src/themes/minimal";
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "flowbite/src/themes/default";
 /* Import the Flowbite plugin file */
 @plugin "flowbite/plugin";
 
