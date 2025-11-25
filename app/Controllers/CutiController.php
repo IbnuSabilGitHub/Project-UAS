@@ -92,7 +92,7 @@ class CutiController {
     }
 
     /**
-     * Hapus file dokumen
+     * Hapus file dokumen dari storage
      * 
      * @param string $fileName
      * @return bool
@@ -102,7 +102,7 @@ class CutiController {
             return true;
         }
 
-        $fullPath = __DIR__ . '/../../public/uploads/leave_attachments/' . $fileName;
+        $fullPath = __DIR__ . '/../../storage/leave_attachments/' . $fileName;
         if (file_exists($fullPath)) {
             return unlink($fullPath);
         }

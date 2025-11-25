@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Security: File Storage Migration] - 2024-11-25
+
+### 🔒 Security Fixes
+
+#### **Critical: Unauthorized File Access Prevention**
+- ✅ **SECURITY FIX**: Moved uploaded files from `public/uploads/` to `storage/` directory
+- ✅ Implemented authentication-based file download system
+- ✅ Added role-based access control for leave attachments
+- ✅ Prevented unauthorized direct file access via URL
+
+**Security Vulnerability:**
+- Files stored in `public/uploads/leave_attachments/` were accessible to anyone with direct URL
+- No authentication required to view sensitive leave documents
+- Potential data privacy violation for employee leave information
+
+**Solution Implemented:**
+
+1. **New Storage Directory:**
+   - Created `storage/leave_attachments/` (outside web root)
+   - Added `.gitkeep` for version control tracking
+   - Files no longer directly accessible via browser
+
+2. **Secure Download Controller** (`app/Controllers/DownloadController.php`):
+   - `ensureAuthenticated()`: Validates user session before file access
+   - `canAccessFile()`: Role-based permission checking
+     - Admin: Can access all leave attachments
+     - Karyawan: Can only access their own attachments
+   - `leaveAttachment($leaveId)`: Serves files with proper MIME headers
+   - HTTP Status Codes:
+     - 401: Unauthenticated access
+     - 403: Permission denied
+     - 404: File not found
+     - 400: Invalid request
+
+3. **Updated File Paths:**
+   - `app/Controllers/CutiController.php`:
+     - `uploadDocument()`: Changed to `storage/leave_attachments/`
+     - `deleteDocument()`: Updated path reference
+   - `app/Models/LeaveRequest.php`:
+     - Constructor `uploadDir`: Set to `storage/leave_attachments/`
+
+4. **Updated Download Links:**
+   - `app/Views/cuti/index.php`: Changed to `/download/leave/{id}` endpoint
+   - `app/Views/leave/index.php`: Changed to `/download/leave/{id}` endpoint
+   - All links now route through authenticated controller
+
+5. **Router Configuration** (`app/Core/Router.php`):
+   - Added route handler for `/download/leave/{id}` pattern
+   - Extracts leave ID from URL and dispatches to DownloadController
+
+
+---
+
 ## [Feature: Rejection Reason Modal] - 2024-11-25
 
 ### ✨ Added

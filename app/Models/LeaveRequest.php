@@ -8,7 +8,7 @@ class LeaveRequest {
     public function __construct() {
         $db = new Database();
         $this->conn = $db->getConnection();
-        $this->uploadDir = dirname(dirname(__DIR__)) . '/public/uploads/leave_attachments/';
+        $this->uploadDir = dirname(dirname(__DIR__)) . '/storage/leave_attachments/';
     }
 
     /**

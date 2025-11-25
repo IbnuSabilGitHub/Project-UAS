@@ -191,6 +191,24 @@ class Router {
             }
         }
 
+        // Routes untuk download file dengan authenticasi
+        if (strpos($uri, '/download/leave/') === 0) {
+            require_once __DIR__ . "/../Controllers/DownloadController.php";
+            $dc = new DownloadController();
+            
+            // Extract ID dari URL: /download/leave/{id}
+            $parts = explode('/', trim($uri, '/'));
+            if (isset($parts[2]) && is_numeric($parts[2])) {
+                $leaveId = (int)$parts[2];
+                $dc->leaveAttachment($leaveId);
+                return;
+            }
+            
+            http_response_code(400);
+            echo "Bad Request: Invalid download URL";
+            return;
+        }
+
         // 404 Not Found
         http_response_code(404);
         echo "<h1>404 - Halaman tidak ditemukan</h1>";

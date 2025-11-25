@@ -24,3 +24,5 @@ public/assets/css/output.css
 # uploaded cuti files
 public/uploads/cuti/
 public/uploads/leave_attachments/
+
+storage/leave_attachments/
