@@ -107,19 +107,27 @@
                                     ?>
                                 </td>
                                 <td class="px-6 py-4 text-sm">
-                                    <div><?= date('d/m/Y', strtotime($leave['start_date'])) ?></div>
-                                    <div class="text-gray-500">s/d <?= date('d/m/Y', strtotime($leave['end_date'])) ?></div>
+                                    <?php
+                                    $startDateValid = $leave['start_date'] && $leave['start_date'] !== '0000-00-00';
+                                    $endDateValid = $leave['end_date'] && $leave['end_date'] !== '0000-00-00';
+                                    ?>
+                                    <div>
+                                        <?= $startDateValid ? date('d/m/Y', strtotime($leave['start_date'])) : '<span class="text-red-500">Tanggal tidak valid</span>' ?>
+                                    </div>
+                                    <div class="text-gray-500">
+                                        s/d <?= $endDateValid ? date('d/m/Y', strtotime($leave['end_date'])) : '<span class="text-red-500">Tanggal tidak valid</span>' ?>
+                                    </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     <?= $leave['total_days'] ?> hari
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <?php if ($leave['status'] === 'pending'): ?>
-                                        <span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Pending</span>
+                                        <span class="bg-warning-soft text-fg-warning text-xs font-medium px-1.5 py-0.5 rounded">Pending</span>
                                     <?php elseif ($leave['status'] === 'approved'): ?>
-                                        <span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Disetujui</span>
+                                        <span class="bg-success-soft text-fg-success-strong text-xs font-medium px-1.5 py-0.5 rounded">Disetujui</span>
                                     <?php else: ?>
-                                        <span class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Ditolak</span>
+                                        <span class="bg-danger-soft text-fg-danger-strong text-xs font-medium px-1.5 py-0.5 rounded">Ditolak</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4">
