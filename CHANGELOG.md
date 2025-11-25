@@ -2,6 +2,81 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Refactor: remove CRUD Features in admin] - 2024-11-25
+
+### 🗑️ Removed
+
+#### **Admin Cuti Controller - Fitur CRUD Dihapus**
+Menghapus fitur CRUD (Create, Read, Update, Delete) dari admin karena fungsi pengajuan cuti sudah dialihkan sepenuhnya ke karyawan melalui fitur "Ajukan Cuti".
+
+**Removed Methods** (`app/Controllers/CutiController.php`):
+- ❌ `create()` - Form tambah pengajuan cuti (sementara untuk demo admin)
+- ❌ `store()` - Menyimpan pengajuan cuti baru dengan validasi & upload
+- ❌ `edit()` - Form edit pengajuan cuti
+- ❌ `update()` - Update data pengajuan cuti & ganti dokumen
+- ❌ `uploadDocument()` - Upload & validasi file dokumen (MASIH ADA untuk konsistensi)
+- ❌ `deleteDocument()` - Hapus file dari server (MASIH ADA untuk delete action)
+
+**Alasan Penghapusan:**
+- Fitur "Ajukan Cuti" untuk karyawan sudah lengkap dan terintegrasi
+- Admin tidak perlu membuat pengajuan atas nama karyawan
+- Mengurangi duplikasi kode dan kompleksitas
+- Fokus admin hanya pada review & approval pengajuan
+
+#### **Admin Cuti Routes - Removed**
+**Deleted Routes** (`app/Core/Router.php`):
+- ❌ GET `/admin/cuti/create` - Form tambah pengajuan
+- ❌ POST `/admin/cuti/store` - Simpan pengajuan baru
+- ❌ GET `/admin/cuti/edit` - Form edit pengajuan
+- ❌ POST `/admin/cuti/update` - Update pengajuan
+
+**Retained Routes** (Core admin functions):
+- ✅ GET `/admin/cuti` - List semua pengajuan cuti
+- ✅ POST `/admin/cuti/approve` - Approve pengajuan
+- ✅ POST `/admin/cuti/reject` - Reject pengajuan
+- ✅ POST `/admin/cuti/delete` - Hapus pengajuan (hard delete)
+
+#### **Admin Cuti Views - Removed**
+**Deleted Files**:
+- ❌ `app/Views/cuti/form.php` - Form tambah/edit pengajuan cuti
+  - Form dengan 185 baris kode (field karyawan, tipe cuti, tanggal, alasan, upload file)
+  - Auto-calculate duration dengan JavaScript
+  - Preview dokumen existing saat edit
+  
+**Updated Views** (`app/Views/cuti/index.php`):
+- ❌ Removed: Tombol "Tambah Pengajuan Cuti" di header
+- ❌ Removed: Link "Edit" di kolom aksi tabel
+- ❌ Removed: Header flex layout (karena tidak ada tombol lagi)
+- ✅ Simplified: Header langsung dengan `<h1>` tanpa wrapper flex
+- ✅ Retained: Tombol Approve/Reject untuk pengajuan pending
+- ✅ Retained: Tombol Delete untuk semua pengajuan
+- ✅ Retained: Statistik cards (Total, Pending, Approved, Rejected)
+- ✅ Retained: Search & filter functionality
+- ✅ Retained: Data table dengan semua informasi pengajuan
+
+### 🔄 Changed
+
+#### **Admin Role - Responsibility Shift**
+**Sebelumnya (Before)**:
+- Admin bisa membuat pengajuan cuti atas nama karyawan
+- Admin bisa edit detail pengajuan cuti
+- Admin bisa approve/reject/delete pengajuan
+- Fitur ini bersifat sementara untuk demo
+
+**Sekarang (After)**:
+- Karyawan mengajukan cuti sendiri melalui `/karyawan/leave`
+- Admin hanya review & approve/reject pengajuan dari karyawan
+- Admin bisa delete pengajuan jika diperlukan
+- Workflow lebih sesuai dengan business process yang sebenarnya
+
+
+**What Admin Can NO Longer Do**:
+- ❌ Create pengajuan cuti atas nama karyawan
+- ❌ Edit pengajuan cuti yang sudah dibuat
+- ❌ Upload dokumen untuk karyawan
+
+---
+
 ## [Attendance Management for Admin] - 2024-11-25
 
 ### ✨ Added

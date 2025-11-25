@@ -99,26 +99,6 @@ class Router {
                 return;
             }
 
-            if ($uri === '/admin/cuti/create' && $method === 'GET') {
-                $cc->create();
-                return;
-            }
-
-            if ($uri === '/admin/cuti/store' && $method === 'POST') {
-                $cc->store();
-                return;
-            }
-
-            if ($uri === '/admin/cuti/edit' && $method === 'GET') {
-                $cc->edit();
-                return;
-            }
-
-            if ($uri === '/admin/cuti/update' && $method === 'POST') {
-                $cc->update();
-                return;
-            }
-
             if ($uri === '/admin/cuti/approve' && $method === 'POST') {
                 $cc->approve();
                 return;

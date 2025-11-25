@@ -27,15 +27,8 @@
         </div>
         <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
-    <div class="flex items-center justify-between mb-6 ">
-        <h1 class="text-2xl font-bold text-heading">Daftar Pengajuan Cuti</h1>
+    <h1 class="text-2xl font-bold text-heading mb-6">Daftar Pengajuan Cuti</h1>
 
-        <!-- Fitur ini hanya untuk sementara untuk demonstrasi feature tambah pengajuan cuti (karena pengajuan cuti di bagian karyawan masih dalam pengembangan) -->
-        <a href="<?= url('/admin/cuti/create') ?>"
-            class="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-            Tambah Pengajuan Cuti
-        </a>
-    </div>
     <?php if (isset($statistics) && !empty($statistics)): ?>
         <div class="grid md:grid-cols-4 gap-4 mb-6">
             <div class="bg-neutral-primary-soft rounded-base shadow-xs p-4 border border-default">
@@ -205,10 +198,7 @@
                                     </form>
                                 <?php endif; ?>
 
-                                <a href="<?= url('/admin/cuti/edit') ?>?id=<?= $pc['id'] ?>"
-                                    class="font-medium text-fg-brand hover:underline text-sm mr-2">
-                                    Edit
-                                </a>
+
 
                                 <form action="<?= url('/admin/cuti/delete') ?>" method="post" class="inline">
                                     <input type="hidden" name="id" value="<?= $pc['id'] ?>">
