@@ -191,6 +191,24 @@ class Router {
             }
         }
 
+        // Routes untuk view/preview file dengan authenticasi
+        if (strpos($uri, '/file/leave/') === 0) {
+            require_once __DIR__ . "/../Controllers/FileController.php";
+            $fc = new FileController();
+            
+            // Extract ID dari URL: /file/leave/{id}
+            $parts = explode('/', trim($uri, '/'));
+            if (isset($parts[2]) && is_numeric($parts[2])) {
+                $leaveId = (int)$parts[2];
+                $fc->viewLeaveAttachment($leaveId);
+                return;
+            }
+            
+            http_response_code(400);
+            echo "Bad Request: Invalid file URL";
+            return;
+        }
+
         // 404 Not Found
         http_response_code(404);
         echo "<h1>404 - Halaman tidak ditemukan</h1>";

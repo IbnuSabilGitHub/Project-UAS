@@ -132,7 +132,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <?php if ($leave['attachment_file']): ?>
-                                        <a href="/uploads/leave_attachments/<?= htmlspecialchars($leave['attachment_file']) ?>"
+                                        <a href="<?= url('/file/leave/' . $leave['id']) ?>"
                                             target="_blank"
                                             class="text-blue-600 hover:text-blue-800">
                                             Lihat File
@@ -225,7 +225,7 @@
         }
 
         if (leave.attachment_file) {
-            content += `<div><strong>Lampiran:</strong> <a href="/uploads/leave_attachments/${leave.attachment_file}" target="_blank" class="text-blue-600">Lihat File</a></div>`;
+            content += `<div><strong>Lampiran:</strong> <a href="<?= url('/file/leave/') ?>${leave.id}" target="_blank" class="text-blue-600">Lihat File</a></div>`;
         }
 
         document.getElementById('modalContent').innerHTML = content;
