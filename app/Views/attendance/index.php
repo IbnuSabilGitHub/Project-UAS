@@ -31,20 +31,20 @@
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
         <h2 class="text-xl font-semibold mb-4 text-heading">Statistik Bulan Ini</h2>
         <div class="grid md:grid-cols-4 gap-4">
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium">
-                <p class="text-3xl font-bold text-blue-600"><?= $stats['total_days'] ?? 0 ?></p>
+            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
+                <p class="text-3xl font-bold text-heading"><?= $stats['total_days'] ?? 0 ?></p>
                 <p class="text-sm text-body">Total Hari Hadir</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium">
-                <p class="text-3xl font-bold text-green-600"><?= $stats['on_time'] ?? 0 ?></p>
+            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
+                <p class="text-3xl font-bold text-heading"><?= $stats['on_time'] ?? 0 ?></p>
                 <p class="text-sm text-body">Tepat Waktu</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium">
-                <p class="text-3xl font-bold text-yellow-600"><?= $stats['late'] ?? 0 ?></p>
+            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
+                <p class="text-3xl font-bold text-heading"><?= $stats['late'] ?? 0 ?></p>
                 <p class="text-sm text-body">Terlambat</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium">
-                <p class="text-3xl font-bold text-purple-600">
+            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
+                <p class="text-3xl font-bold text-heading">
                     <?= isset($stats['avg_hours']) && $stats['avg_hours'] ? number_format($stats['avg_hours'], 1) : '0' ?>
                 </p>
                 <p class="text-sm text-body">Rata-rata Jam Kerja</p>
@@ -61,7 +61,7 @@
                 <p class="text-body"><strong>Tanggal:</strong> <?= date('d F Y') ?></p>
                 <p class="text-body"><strong>Waktu Sekarang:</strong> <span id="currentTime"><?= date('H:i:s') ?></span></p>
             </div>
-            
+
             <?php if ($todayStatus): ?>
                 <div class="bg-neutral-secondary-medium border-l-4 border-blue-500 p-4 mb-4">
                     <p class="font-semibold text-blue-700">Check-in: <?= date('H:i:s', strtotime($todayStatus['check_in'])) ?></p>
@@ -70,14 +70,17 @@
                     <?php else: ?>
                         <p class="text-gray-600 text-sm mt-2">Belum check-out</p>
                     <?php endif; ?>
-                    
+
                     <?php if ($todayStatus['status'] === 'late'): ?>
-                        <span class="inline-block mt-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-base">Terlambat</span>
+                        <span class="bg-danger-soft text-fg-danger-strong text-xs font-medium px-1.5 py-0.5 rounded">Terlambat</span>
                     <?php endif; ?>
                 </div>
             <?php else: ?>
-                <div class="bg-gray-50 p-4 rounded-base">
-                    <p class="text-gray-600">Anda belum check-in hari ini</p>
+                <div class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-warning rounded-base bg-warning-soft border border-warning-subtle" role="alert">
+                    <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    <p><span class="font-medium me-1">Warning alert!</span>Anda belum check-in hari ini</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -85,18 +88,18 @@
         <!-- Form Check-in/out -->
         <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
             <h2 class="text-xl font-semibold mb-4 text-heading">Absensi</h2>
-            
+
             <?php if (!$todayStatus): ?>
                 <!-- Form Check-in -->
                 <form action="<?= url('/karyawan/attendance/checkin') ?>" method="POST">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-heading mb-2">Catatan (opsional)</label>
-                        <textarea name="notes" rows="3" 
-                                  class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow placeholder:text-body"
-                                  placeholder="Masukkan catatan jika ada"></textarea>
+                        <textarea name="notes" rows="3"
+                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow placeholder:text-body"
+                            placeholder="Masukkan catatan jika ada"></textarea>
                     </div>
-                    <button type="submit" 
-                            class="w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 shadow-xs font-medium rounded-base text-sm px-4 py-2.5">
+                    <button type="submit"
+                        class="w-full text-white text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
                         Check-in Sekarang
                     </button>
                 </form>
@@ -105,18 +108,16 @@
                 <form action="<?= url('/karyawan/attendance/checkout') ?>" method="POST">
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-heading mb-2">Catatan (opsional)</label>
-                        <textarea name="notes" rows="3" 
-                                  class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow placeholder:text-body"
-                                  placeholder="Masukkan catatan jika ada"></textarea>
+                        <textarea name="notes" rows="3"
+                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow placeholder:text-body"
+                            placeholder="Masukkan catatan jika ada"></textarea>
                     </div>
-                    <button type="submit" 
-                            class="w-full text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 shadow-xs font-medium rounded-base text-sm px-4 py-2.5">
-                        Check-out Sekarang
-                    </button>
+
+                    <button type="submit" class="w-full text-white bg-danger box-border border border-transparent hover:bg-danger-strong focus:ring-4 focus:ring-danger-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">Check-out Sekarang</button>
                 </form>
             <?php else: ?>
                 <div class="bg-neutral-secondary-medium p-4 rounded-base">
-                    <p class="text-green-600 font-medium">✓ Anda sudah check-in dan check-out hari ini</p>
+                    <p class="text-green-600 font-medium">Anda sudah check-in dan check-out hari ini</p>
                     <p class="text-sm text-body mt-2">Terima kasih sudah absen tepat waktu!</p>
                 </div>
             <?php endif; ?>
@@ -128,7 +129,7 @@
     <!-- Riwayat Absensi -->
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
         <h2 class="text-xl font-semibold mb-4 text-heading">Riwayat Absensi (30 Hari Terakhir)</h2>
-        
+
         <?php if (empty($history)): ?>
             <div class="text-center py-12">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -168,10 +169,10 @@
                                 <td class="px-6 py-4">
                                     <?php if ($record['check_out']): ?>
                                         <?php
-                                            $diff = strtotime($record['check_out']) - strtotime($record['check_in']);
-                                            $hours = floor($diff / 3600);
-                                            $minutes = floor(($diff % 3600) / 60);
-                                            echo "{$hours}j {$minutes}m";
+                                        $diff = strtotime($record['check_out']) - strtotime($record['check_in']);
+                                        $hours = floor($diff / 3600);
+                                        $minutes = floor(($diff % 3600) / 60);
+                                        echo "{$hours}j {$minutes}m";
                                         ?>
                                     <?php else: ?>
                                         <span class="text-gray-400">-</span>
@@ -179,11 +180,11 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <?php if ($record['status'] === 'present'): ?>
-                                        <span class="px-2 py-1 text-xs rounded-base bg-green-100 text-green-800">Hadir</span>
+                                        <span class="bg-success-soft text-fg-success-strong text-xs font-medium px-1.5 py-0.5 rounded">Hadir</span>
                                     <?php elseif ($record['status'] === 'late'): ?>
-                                        <span class="px-2 py-1 text-xs rounded-base bg-yellow-100 text-yellow-800">Terlambat</span>
+                                        <span class="bg-danger-soft text-fg-danger-strong text-xs font-medium px-1.5 py-0.5 rounded">Terlambat</span>
                                     <?php else: ?>
-                                        <span class="px-2 py-1 text-xs rounded-base bg-blue-100 text-blue-800">Half Day</span>
+                                        <span class="bg-warning-soft text-fg-warning text-xs font-medium px-1.5 py-0.5 rounded">Half Day</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
@@ -207,16 +208,16 @@
 </div>
 
 <script>
-// Update jam real-time
-function updateTime() {
-    const now = new Date();
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
-}
+    // Update jam real-time
+    function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+    }
 
-setInterval(updateTime, 1000);
+    setInterval(updateTime, 1000);
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

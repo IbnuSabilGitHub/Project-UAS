@@ -40,21 +40,21 @@
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
         <h2 class="text-xl font-semibold mb-4 text-heading">Ringkasan Cuti Tahun Ini</h2>
         <div class="grid md:grid-cols-3 gap-4">
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium text-center">
-                <p class="text-3xl font-bold text-blue-600"><?= $totalDaysUsed ?></p>
-                <p class="text-sm text-body">Hari Cuti Terpakai</p>
+            <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
+                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading "><?= $totalDaysUsed ?></p>
+                <p class="text-body">Hari Cuti Terpakai</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium text-center">
-                <p class="text-3xl font-bold text-green-600"><?= max(0, 12 - $totalDaysUsed) ?></p>
-                <p class="text-sm text-body">Hari Cuti Tersisa</p>
+            <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
+                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= max(0, 12 - $totalDaysUsed) ?></p>
+                <p class="text-body">Hari Cuti Tersisa</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-brand-medium text-center">
-                <p class="text-3xl font-bold text-yellow-600">
+            <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default ">
+                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading">
                     <?= count(array_filter($leaves, function ($l) {
                         return $l['status'] === 'pending';
                     })) ?>
                 </p>
-                <p class="text-sm text-body">Menunggu Persetujuan</p>
+                <p class="text-body">Menunggu Persetujuan</p>
             </div>
         </div>
     </div>
@@ -78,7 +78,7 @@
 
             <div class="orelative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default">
                 <table class="w-full text-sm text-left rtl:text-right text-body">
-                    <thead class="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
+                    <thead class="text-sm text-body bg-neutral-secondary-softborder-b rounded-base border-default">
                         <tr>
                             <th scope="col" class="px-6 py-3 font-medium">No</th>
                             <th scope="col" class="px-6 py-3 font-medium">Jenis Cuti</th>
