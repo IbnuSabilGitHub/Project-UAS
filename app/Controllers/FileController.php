@@ -4,10 +4,10 @@ require_once __DIR__ . '/../Models/LeaveRequest.php';
 require_once __DIR__ . '/../Models/PengajuanCuti.php';
 
 /**
- * Controller untuk download
- * File disimpan di storage/
+ * Controller untuk view/preview file
+ * File disimpan di storage/ untuk keamanan
  */
-class DownloadController {
+class FileController {
     
     /**
      * Pastikan user sudah login
@@ -56,11 +56,11 @@ class DownloadController {
     }
 
     /**
-     * Download file attachment cuti
+     * View/preview file attachment cuti
      * 
      * @param int $leaveId ID pengajuan cuti
      */
-    public function leaveAttachment($leaveId) {
+    public function viewLeaveAttachment($leaveId) {
         $this->ensureAuthenticated();
 
         // Validasi ID

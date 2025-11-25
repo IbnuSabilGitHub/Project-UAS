@@ -146,7 +146,7 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <?php if (!empty($pc['attachment_file'])): ?>
-                                        <a href="<?= url('/download/leave/' . htmlspecialchars($pc['id'])) ?>"
+                                        <a href="<?= url('/file/leave/' . htmlspecialchars($pc['id'])) ?>"
                                             target="_blank"
                                             class="inline-flex items-center text-xs font-medium px-2.5 py-1.5 rounded-base bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition-colors">
                                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

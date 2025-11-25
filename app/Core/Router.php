@@ -191,21 +191,21 @@ class Router {
             }
         }
 
-        // Routes untuk download file dengan authenticasi
-        if (strpos($uri, '/download/leave/') === 0) {
-            require_once __DIR__ . "/../Controllers/DownloadController.php";
-            $dc = new DownloadController();
+        // Routes untuk view/preview file dengan authenticasi
+        if (strpos($uri, '/file/leave/') === 0) {
+            require_once __DIR__ . "/../Controllers/FileController.php";
+            $fc = new FileController();
             
-            // Extract ID dari URL: /download/leave/{id}
+            // Extract ID dari URL: /file/leave/{id}
             $parts = explode('/', trim($uri, '/'));
             if (isset($parts[2]) && is_numeric($parts[2])) {
                 $leaveId = (int)$parts[2];
-                $dc->leaveAttachment($leaveId);
+                $fc->viewLeaveAttachment($leaveId);
                 return;
             }
             
             http_response_code(400);
-            echo "Bad Request: Invalid download URL";
+            echo "Bad Request: Invalid file URL";
             return;
         }
 
