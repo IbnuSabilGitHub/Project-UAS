@@ -9,7 +9,7 @@
 
     <!-- Jika di komputer kalian style flowbite tidak berfungsi gunakan aja cdn ini -->
     <!-- Flowbite tidak berfungsi mungkin karena htdoc selalu tricky dalam hal path-->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" /> -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" />
 
 </head>
 
