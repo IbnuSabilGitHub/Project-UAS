@@ -27,7 +27,7 @@
                 <input type="hidden" name="id" value="<?= htmlspecialchars($pc['id']) ?>">
             <?php endif; ?>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="mb-3">
                     <label for="karyawan_id" class="block mb-2.5 text-sm font-medium text-heading">Karyawan <span class="text-red-500">*</span></label>
                     <select name="karyawan_id" id="karyawan_id" 
@@ -44,13 +44,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="status" class="block mb-2.5 text-sm font-medium text-heading">Status <span class="text-red-500">*</span></label>
-                    <select name="status" id="status" 
+                    <label for="leave_type" class="block mb-2.5 text-sm font-medium text-heading">Jenis Cuti <span class="text-red-500">*</span></label>
+                    <select name="leave_type" id="leave_type" 
                             class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow"
                             required>
-                        <option value="pending" <?= (isset($pc['status']) && $pc['status'] === 'pending') ? 'selected' : '' ?>>Pending</option>
-                        <option value="approved" <?= (isset($pc['status']) && $pc['status'] === 'approved') ? 'selected' : '' ?>>Approved</option>
-                        <option value="rejected" <?= (isset($pc['status']) && $pc['status'] === 'rejected') ? 'selected' : '' ?>>Rejected</option>
+                        <option value="annual" <?= (isset($pc['leave_type']) && $pc['leave_type'] === 'annual') ? 'selected' : '' ?>>Cuti Tahunan</option>
+                        <option value="sick" <?= (isset($pc['leave_type']) && $pc['leave_type'] === 'sick') ? 'selected' : '' ?>>Cuti Sakit</option>
+                        <option value="emergency" <?= (isset($pc['leave_type']) && $pc['leave_type'] === 'emergency') ? 'selected' : '' ?>>Cuti Darurat</option>
+                        <option value="unpaid" <?= (isset($pc['leave_type']) && $pc['leave_type'] === 'unpaid') ? 'selected' : '' ?>>Cuti Tanpa Gaji</option>
                     </select>
                 </div>
 
@@ -70,6 +71,17 @@
                            required>
                 </div>
 
+                <div class="mb-3">
+                    <label for="status" class="block mb-2.5 text-sm font-medium text-heading">Status <span class="text-red-500">*</span></label>
+                    <select name="status" id="status" 
+                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow"
+                            required>
+                        <option value="pending" <?= (isset($pc['status']) && $pc['status'] === 'pending') ? 'selected' : '' ?>>Pending</option>
+                        <option value="approved" <?= (isset($pc['status']) && $pc['status'] === 'approved') ? 'selected' : '' ?>>Approved</option>
+                        <option value="rejected" <?= (isset($pc['status']) && $pc['status'] === 'rejected') ? 'selected' : '' ?>>Rejected</option>
+                    </select>
+                </div>
+
                 <div class="mb-3 md:col-span-2">
                     <label for="reason" class="block mb-2.5 text-sm font-medium text-heading">Alasan Cuti <span class="text-red-500">*</span></label>
                     <textarea name="reason" id="reason" rows="5" 
@@ -81,24 +93,24 @@
 
                 <div class="mb-3 md:col-span-2">
                     <label for="document" class="block mb-2.5 text-sm font-medium text-heading">
-                        Dokumen Pendukung (PDF)
-                        <?php if ($isEdit && !empty($pc['document_path'])): ?>
+                        Dokumen Pendukung (PDF/Gambar)
+                        <?php if ($isEdit && !empty($pc['attachment_file'])): ?>
                             <span class="text-green-600 text-xs ml-2">✓ File sudah diupload</span>
                         <?php endif; ?>
                     </label>
                     
-                    <?php if ($isEdit && !empty($pc['document_path'])): ?>
+                    <?php if ($isEdit && !empty($pc['attachment_file'])): ?>
                         <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-base">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
-                                    <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                     </svg>
                                     <span class="text-sm text-blue-800">Dokumen saat ini: </span>
-                                    <a href="<?= url('/' . htmlspecialchars($pc['document_path'])) ?>" 
+                                    <a href="<?= url('/uploads/leave_attachments/' . htmlspecialchars($pc['attachment_file'])) ?>" 
                                        target="_blank"
                                        class="text-sm text-blue-600 hover:underline ml-1 font-medium">
-                                        Lihat PDF
+                                        <?= htmlspecialchars($pc['attachment_file']) ?>
                                     </a>
                                 </div>
                                 <span class="text-xs text-blue-600">Upload file baru untuk mengganti</span>
@@ -109,10 +121,10 @@
                     <input type="file" 
                            name="document" 
                            id="document" 
-                           accept=".pdf"
+                           accept=".pdf,.jpg,.jpeg,.png"
                            class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow placeholder:text-body">
                     <p class="mt-2 text-sm text-body">
-                        <span class="font-medium">Opsional.</span> Upload surat keterangan dokter, undangan, atau dokumen pendukung lainnya (PDF, maksimal 5MB)
+                        <span class="font-medium">Opsional.</span> Upload surat keterangan dokter, undangan, atau dokumen pendukung lainnya (PDF/JPG/PNG, maksimal 5MB)
                     </p>
                 </div>
             </div>

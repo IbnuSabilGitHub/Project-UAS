@@ -37,10 +37,11 @@ class CutiController {
     }
 
     /**
-     * Upload file PDF dokumen pendukung
+     * Upload file PDF/Image dokumen pendukung
+     * Kompatibel dengan implementasi karyawan (leave_attachments)
      * 
      * @param array $file File dari $_FILES
-     * @return string|false Path file jika berhasil, false jika gagal
+     * @return string|false Filename jika berhasil, false jika gagal
      */
     private function uploadDocument($file) {
         // Validasi file
@@ -53,14 +54,14 @@ class CutiController {
             return false;
         }
 
-        // Validasi tipe file (hanya PDF)
-        $allowedTypes = ['application/pdf'];
+        // Validasi tipe file (PDF, JPG, PNG - kompatibel dengan fitur karyawan)
+        $allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
         $mimeType = finfo_file($finfo, $file['tmp_name']);
         finfo_close($finfo);
 
         if (!in_array($mimeType, $allowedTypes)) {
-            $_SESSION['error'] = 'Hanya file PDF yang diperbolehkan';
+            $_SESSION['error'] = 'Hanya file PDF, JPG, dan PNG yang diperbolehkan';
             return false;
         }
 
@@ -72,18 +73,18 @@ class CutiController {
         }
 
         // Generate nama file unik
-        $uploadDir = __DIR__ . '/../../public/uploads/cuti/';
+        $uploadDir = __DIR__ . '/../../public/uploads/leave_attachments/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
 
-        $extension = 'pdf';
-        $fileName = 'cuti_' . time() . '_' . uniqid() . '.' . $extension;
+        $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $fileName = 'leave_' . uniqid() . '_' . time() . '.' . $extension;
         $uploadPath = $uploadDir . $fileName;
 
         // Upload file
         if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-            return 'uploads/cuti/' . $fileName; // Return relative path
+            return $fileName; // Return filename only (kompatibel dengan LeaveRequest model)
         }
 
         $_SESSION['error'] = 'Gagal mengupload file';
@@ -93,15 +94,15 @@ class CutiController {
     /**
      * Hapus file dokumen
      * 
-     * @param string $filePath
+     * @param string $fileName
      * @return bool
      */
-    private function deleteDocument($filePath) {
-        if (empty($filePath)) {
+    private function deleteDocument($fileName) {
+        if (empty($fileName)) {
             return true;
         }
 
-        $fullPath = __DIR__ . '/../../public/' . $filePath;
+        $fullPath = __DIR__ . '/../../public/uploads/leave_attachments/' . $fileName;
         if (file_exists($fullPath)) {
             return unlink($fullPath);
         }
@@ -148,6 +149,7 @@ class CutiController {
 
         $data = [
             'karyawan_id' => (int)($_POST['karyawan_id'] ?? 0),
+            'leave_type' => trim($_POST['leave_type'] ?? 'annual'),
             'start_date' => trim($_POST['start_date'] ?? ''),
             'end_date' => trim($_POST['end_date'] ?? ''),
             'reason' => trim($_POST['reason'] ?? ''),
@@ -169,13 +171,14 @@ class CutiController {
             $errors[] = 'Alasan cuti harus diisi';
         }
         
-        // Validasi tanggal
+        // Validasi tanggal & hitung total hari
         if (!empty($data['start_date']) && !empty($data['end_date'])) {
             $startDate = new DateTime($data['start_date']);
             $endDate = new DateTime($data['end_date']);
             if ($endDate < $startDate) {
                 $errors[] = 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai';
             }
+            $data['total_days'] = $this->model->calculateDays($data['start_date'], $data['end_date']);
         }
 
         if (!empty($errors)) {
@@ -184,18 +187,18 @@ class CutiController {
         }
 
         // Handle file upload
+        $data['attachment_file'] = null;
         if (isset($_FILES['document']) && $_FILES['document']['error'] !== UPLOAD_ERR_NO_FILE) {
             $uploadResult = $this->uploadDocument($_FILES['document']);
             if ($uploadResult === false) {
                 redirect('/admin/cuti/create');
             }
-            $data['document_path'] = $uploadResult;
+            $data['attachment_file'] = $uploadResult;
         }
 
         $insertId = $this->model->create($data);
         if ($insertId) {
-            $days = $this->model->calculateDays($data['start_date'], $data['end_date']);
-            $_SESSION['success'] = "Pengajuan cuti berhasil dibuat ({$days} hari)";
+            $_SESSION['success'] = "Pengajuan cuti berhasil dibuat ({$data['total_days']} hari)";
         } else {
             $_SESSION['error'] = 'Gagal menyimpan pengajuan cuti';
         }
@@ -244,6 +247,7 @@ class CutiController {
 
         $data = [
             'karyawan_id' => (int)($_POST['karyawan_id'] ?? 0),
+            'leave_type' => trim($_POST['leave_type'] ?? 'annual'),
             'start_date' => trim($_POST['start_date'] ?? ''),
             'end_date' => trim($_POST['end_date'] ?? ''),
             'reason' => trim($_POST['reason'] ?? ''),
@@ -265,13 +269,14 @@ class CutiController {
             $errors[] = 'Alasan cuti harus diisi';
         }
 
-        // Validasi tanggal
+        // Validasi tanggal & hitung total hari
         if (!empty($data['start_date']) && !empty($data['end_date'])) {
             $startDate = new DateTime($data['start_date']);
             $endDate = new DateTime($data['end_date']);
             if ($endDate < $startDate) {
                 $errors[] = 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai';
             }
+            $data['total_days'] = $this->model->calculateDays($data['start_date'], $data['end_date']);
         }
 
         if (!empty($errors)) {
@@ -281,7 +286,7 @@ class CutiController {
 
         // Get existing data for file handling
         $existingData = $this->model->find($id);
-        $data['document_path'] = $existingData['document_path'] ?? null;
+        $data['attachment_file'] = $existingData['attachment_file'] ?? null;
 
         // Handle file upload
         if (isset($_FILES['document']) && $_FILES['document']['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -290,10 +295,10 @@ class CutiController {
                 redirect('/admin/cuti/edit?id=' . $id);
             }
             // Delete old file if exists
-            if (!empty($existingData['document_path'])) {
-                $this->deleteDocument($existingData['document_path']);
+            if (!empty($existingData['attachment_file'])) {
+                $this->deleteDocument($existingData['attachment_file']);
             }
-            $data['document_path'] = $uploadResult;
+            $data['attachment_file'] = $uploadResult;
         }
 
         if ($this->model->update($id, $data)) {
@@ -319,7 +324,8 @@ class CutiController {
             redirect('/admin/cuti');
         }
 
-        if ($this->model->updateStatus($id, 'approved')) {
+        // Update dengan approved_by
+        if ($this->model->updateStatus($id, 'approved', $_SESSION['user_id'])) {
             $_SESSION['success'] = 'Pengajuan cuti berhasil disetujui';
         } else {
             $_SESSION['error'] = 'Gagal menyetujui pengajuan cuti';
@@ -342,7 +348,10 @@ class CutiController {
             redirect('/admin/cuti');
         }
 
-        if ($this->model->updateStatus($id, 'rejected')) {
+        $rejectionReason = trim($_POST['rejection_reason'] ?? 'Ditolak oleh admin');
+
+        // Update dengan approved_by dan rejection_reason
+        if ($this->model->updateStatus($id, 'rejected', $_SESSION['user_id'], $rejectionReason)) {
             $_SESSION['success'] = 'Pengajuan cuti berhasil ditolak';
         } else {
             $_SESSION['error'] = 'Gagal menolak pengajuan cuti';
@@ -369,9 +378,9 @@ class CutiController {
         $pengajuan = $this->model->find($id);
         
         if ($this->model->delete($id)) {
-            // Delete file if exists
-            if (!empty($pengajuan['document_path'])) {
-                $this->deleteDocument($pengajuan['document_path']);
+            // Delete file if exists (kompatibel dengan attachment_file)
+            if (!empty($pengajuan['attachment_file'])) {
+                $this->deleteDocument($pengajuan['attachment_file']);
             }
             $_SESSION['success'] = 'Pengajuan cuti berhasil dihapus';
         } else {
@@ -380,6 +389,4 @@ class CutiController {
 
         redirect('/admin/cuti');
     }
-
-
 }
