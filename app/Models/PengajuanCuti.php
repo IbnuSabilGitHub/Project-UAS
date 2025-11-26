@@ -196,6 +196,70 @@ class PengajuanCuti {
     }
 
     /**
+     * Mengambil data pengajuan cuti dengan filter
+     * 
+     * @param string $search - Nama karyawan
+     * @param array $statusFilter - Array status ['approved', 'pending', 'rejected']
+     * @param string $dateFilter - Range tanggal (7, 30, 60 hari)
+     * @return array
+     */
+    public function getWithFilters($search = '', $statusFilter = [], $dateFilter = '') {
+        $sql = "SELECT lr.*, k.nik, k.name AS karyawan_name, k.position,
+                       u.username as approver_name
+                FROM leave_requests lr
+                INNER JOIN karyawan k ON lr.karyawan_id = k.id
+                LEFT JOIN users u ON lr.approved_by = u.id
+                WHERE 1=1";
+        
+        $params = [];
+        $types = '';
+        
+        // Filter search berdasarkan nama karyawan
+        if (!empty($search)) {
+            $sql .= " AND k.name LIKE ?";
+            $params[] = '%' . $search . '%';
+            $types .= 's';
+        }
+        
+        // Filter berdasarkan status (checkbox - bisa multiple)
+        if (!empty($statusFilter) && is_array($statusFilter)) {
+            $placeholders = implode(',', array_fill(0, count($statusFilter), '?'));
+            $sql .= " AND lr.status IN ($placeholders)";
+            foreach ($statusFilter as $status) {
+                $params[] = $status;
+                $types .= 's';
+            }
+        }
+        
+        // Filter berdasarkan tanggal (last 7, 30, 60 hari)
+        if (!empty($dateFilter) && in_array($dateFilter, ['7', '30', '60'])) {
+            $sql .= " AND lr.created_at >= DATE_SUB(NOW(), INTERVAL ? DAY)";
+            $params[] = (int)$dateFilter;
+            $types .= 'i';
+        }
+        
+        $sql .= " ORDER BY lr.created_at DESC";
+        
+        // Execute query
+        if (!empty($params)) {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $result = $this->conn->query($sql);
+        }
+        
+        $rows = [];
+        if ($result) {
+            while ($r = $result->fetch_assoc()) {
+                $rows[] = $r;
+            }
+        }
+        return $rows;
+    }
+
+    /**
      * Mengambil statistik pengajuan cuti
      * 
      * @return array

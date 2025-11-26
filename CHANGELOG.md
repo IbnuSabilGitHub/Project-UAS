@@ -2,6 +2,162 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Feature: Filter and Search for Leave Requests] - 2024-11-26
+
+### ✨ Added
+
+#### **Advanced Filtering System for Leave Requests**
+Admin dapat memfilter pengajuan cuti dengan 3 jenis filter yang bisa dikombinasikan untuk pencarian yang lebih spesifik.
+
+**Changes in Files:**
+
+- `app/Controllers/CutiController.php`:
+  - Updated `index()` to accept and process filter parameters
+  - Added `$currentSearch`, `$currentStatus`, `$currentDateFilter` to view data
+  
+- `app/Models/PengajuanCuti.php`:
+  - Added `getWithFilters($search, $statusFilter, $dateFilter)` method
+  - Dynamic SQL query building dengan conditional WHERE clauses
+  - Prepared statements dengan proper type binding ('s', 'i')
+  
+- `app/Views/cuti/index.php`:
+  - Added filter UI components (dropdown date, dropdown status, search form)
+  - Added JavaScript for auto-filtering
+  - Maintain filter state dengan PHP variables
+  - Checkbox/radio checked state berdasarkan current filter
+
+
+**Filter Features:**
+
+1. **Search by Employee Name** 📝
+   - Input: Text field dengan placeholder "Cari nama karyawan..."
+   - Query: MySQL LIKE dengan wildcard `%nama%`
+   - Case-insensitive partial match
+   - Real-time filter saat submit form atau tekan Enter
+   - Value maintained setelah filter applied
+   
+2. **Filter by Status** ✅
+   - Checkbox multiple selection (Approved, Pending, Rejected)
+   - Default: Semua status checked (tampilkan semua data)
+   - Uncheck status tertentu untuk filter
+   - Auto-apply filter saat checkbox berubah
+   - State maintained - checkbox tetap checked/unchecked setelah reload
+   - Query: SQL IN clause `status IN ('approved', 'pending')`
+   
+3. **Filter by Date Range** 📅
+   - Radio button selection dengan 4 opsi:
+     - **7 Hari Terakhir** - Pengajuan dalam 7 hari terakhir
+     - **30 Hari Terakhir** - Pengajuan dalam 30 hari terakhir
+     - **60 Hari Terakhir** - Pengajuan dalam 60 hari terakhir
+     - **Semua** (Default) - Tampilkan semua tanggal
+   - Query: MySQL `DATE_SUB(NOW(), INTERVAL ? DAY)`
+   - Filter berdasarkan `created_at` (tanggal pengajuan dibuat)
+   - Auto-apply saat radio button berubah
+   - State maintained setelah reload
+
+
+**User Experience:**
+
+- ✅ Real-time filtering tanpa perlu klik tombol "Apply"
+- ✅ Filter state preserved setelah reload page
+- ✅ Kombinasi multiple filter untuk pencarian spesifik
+- ✅ Clear search untuk reset filter (hapus value + submit)
+- ✅ Performance optimized dengan prepared statements
+- ✅ Scalable - efficient untuk ribuan data pengajuan
+
+
+
+---
+
+## [Refactor: Karyawan Management UI/UX] - 2024-11-26
+
+### 🎨 Refactored
+
+#### **Dropdown Actions for Employee Management**
+Mengubah kolom aksi tabel karyawan dari text links menjadi dropdown menu dengan Flowbite components untuk UI yang lebih clean dan konsisten.
+
+**Before:**
+- Text links: "Edit" dan "Hapus Permanen" (super admin)
+- Button "Aktifkan Akun" / "Nonaktifkan Akun" di kolom Akun
+- Kolom Akun berisi badge + button (crowded)
+
+**After:**
+- 3-dot dropdown button untuk semua aksi
+- Kolom Akun hanya badge status (Aktif/Belum Ada/Wajib Ganti)
+- Semua aksi terpusat di dropdown menu
+
+**Dropdown Menu Items:**
+
+1. **Edit Karyawan** (selalu ada)
+   - Icon: fa-pen-to-square
+   - Link ke form edit
+   - Color: default heading
+
+2. **Separator** (horizontal line)
+
+3. **Aktifkan Akun** (jika belum ada user_id)
+   - Icon: fa-user-check
+   - Color: Success green
+   - Form POST dengan konfirmasi
+   - Action: Create user account untuk karyawan
+   
+   OR
+   
+   **Nonaktifkan Akun** (jika ada user_id & status active)
+   - Icon: fa-user-slash
+   - Color: Warning yellow
+   - Form POST dengan konfirmasi
+   - Action: Soft delete akun
+
+4. **Separator** (hanya untuk super admin)
+
+5. **Hapus Permanen** (super admin only)
+   - Icon: fa-trash
+   - Color: Danger red
+   - Form POST dengan konfirmasi
+   - Separated dengan border-top
+   - Action: Hard delete karyawan + akun
+
+**Implementation Details:**
+
+- **Dropdown ID Pattern**: `dropdownButton<?= $k['id'] ?>` dan `dropdown<?= $k['id'] ?>`
+  - Konsisten dengan pattern di halaman Pengajuan Cuti
+  - Unique ID per row untuk multiple dropdowns di satu halaman
+
+- **Form Structure**:
+  ```php
+  <form class="block">
+    <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2">
+  ```
+  - `class="block"` pada form untuk full-width
+  - `class="w-full text-left"` pada button
+  - Flex layout untuk icon + text
+
+- **Conditional Rendering**:
+  - Aktifkan Akun: `if (empty($k['user_id']))`
+  - Nonaktifkan Akun: `if (!empty($k['user_id']) && $k['employment_status'] === 'active')`
+  - Hapus Permanen: `if ($_SESSION['role'] === 'super_admin')`
+
+**Changes in Files:**
+
+- `app/Views/karyawan/index.php`:
+  - Removed action buttons dari kolom Akun
+  - Simplified kolom Akun - hanya badge status
+  - Added dropdown button di kolom Aksi
+  - Added dropdown menu dengan conditional items
+  - Konsisten dengan UI di `app/Views/cuti/index.php`
+
+**Benefits:**
+
+- ✅ Cleaner UI - less cluttered table
+- ✅ Better mobile responsiveness
+- ✅ Konsisten dengan design system Flowbite
+- ✅ Grouped actions in one place
+- ✅ Icon visual cues untuk setiap aksi
+- ✅ Color coding untuk action severity
+
+---
+
 ## [Security: File Storage Migration] - 2024-11-25
 
 ### 🔒 Security Fixes

@@ -110,17 +110,36 @@ class CutiController {
     }
 
     /**
-     * Menampilkan daftar pengajuan cuti
+     * Menampilkan daftar pengajuan cuti dengan filter
      */
     public function index() {
         $this->ensureAdmin();
-        $pengajuanCuti = $this->model->allWithKaryawan();
+        
+        // Ambil parameter filter dari GET
+        $search = $_GET['search'] ?? '';
+        $statusFilter = $_GET['status'] ?? []; // Array dari checkbox
+        $dateFilter = $_GET['date_filter'] ?? ''; // 7, 30, 60 hari
+        
+        // Convert status filter jika string (dari checkbox)
+        if (!empty($_GET['status'])) {
+            if (is_string($_GET['status'])) {
+                $statusFilter = explode(',', $_GET['status']);
+            } else {
+                $statusFilter = $_GET['status'];
+            }
+        }
+        
+        // Get data dengan filter
+        $pengajuanCuti = $this->model->getWithFilters($search, $statusFilter, $dateFilter);
         $statistics = $this->model->getStatistics();
         
         $this->render('cuti/index', [
             'title' => 'Pengajuan Cuti',
             'pengajuanCuti' => $pengajuanCuti,
-            'statistics' => $statistics
+            'statistics' => $statistics,
+            'currentSearch' => $search,
+            'currentStatus' => $statusFilter,
+            'currentDateFilter' => $dateFilter
         ]);
     }
 
