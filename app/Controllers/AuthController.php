@@ -159,7 +159,7 @@ class AuthController {
             'success' => $_SESSION['success'] ?? null
         ];
         unset($_SESSION['success']);
-        $this->render('dashboard/admin', $data);
+        $this->render('admin/dashboard', $data);
     }
 
     public function employeeDashboard() {
@@ -176,7 +176,7 @@ class AuthController {
             'success' => $_SESSION['success'] ?? null
         ];
         unset($_SESSION['success']);
-        $this->render('dashboard/employee', $data);
+        $this->render('employee/dashboard', $data);
     }
 
     public function changePasswordPage() {

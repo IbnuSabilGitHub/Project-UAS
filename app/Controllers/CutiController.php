@@ -133,7 +133,7 @@ class CutiController {
         $pengajuanCuti = $this->model->getWithFilters($search, $statusFilter, $dateFilter);
         $statistics = $this->model->getStatistics();
         
-        $this->render('cuti/index', [
+        $this->render('admin/leave/index', [
             'title' => 'Pengajuan Cuti',
             'pengajuanCuti' => $pengajuanCuti,
             'statistics' => $statistics,

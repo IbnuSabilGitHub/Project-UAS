@@ -49,24 +49,22 @@
 </button>
 
 <!-- Dropdown menu -->
-<div id="dropdownDots" class="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44">
-    <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownMenuIconButton">
+<div id="dropdownDots" class="z-10 hidden bg-neutral-primary-soft divide-y divide-neutral-secondary-soft rounded-base shadow w-44">
+    <ul class="py-2 text-sm text-heading" aria-labelledby="dropdownMenuIconButton">
       <li>
-        <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Dashboard</a>
+        <a href="#" class="block px-4 py-2 hover:bg-neutral-secondary-soft">Dashboard</a>
       </li>
       <li>
-        <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Settings</a>
+        <a href="#" class="block px-4 py-2 hover:bg-neutral-secondary-soft">Settings</a>
       </li>
       <li>
-        <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Earnings</a>
+        <a href="#" class="block px-4 py-2 hover:bg-neutral-secondary-soft">Earnings</a>
       </li>
     </ul>
-    <div class="p-2 text-sm text-body font-medium border-t border-default-medium">
-      <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded">Separated link</a>
+    <div class="py-2">
+      <a href="#" class="block px-4 py-2 text-sm text-heading hover:bg-neutral-secondary-soft">Separated link</a>
     </div>
 </div>
-
-
-
 </div>
+
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

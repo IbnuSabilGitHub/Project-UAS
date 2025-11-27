@@ -57,7 +57,7 @@ class LeaveController {
         ];
 
         unset($_SESSION['success'], $_SESSION['error']);
-        $this->render('leave/index', $data);
+        $this->render('employee/leave/index', $data);
     }
 
     /**
@@ -72,7 +72,7 @@ class LeaveController {
         ];
 
         unset($_SESSION['error']);
-        $this->render('leave/form', $data);
+        $this->render('employee/leave/create', $data);
     }
 
     /**

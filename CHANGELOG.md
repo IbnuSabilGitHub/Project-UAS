@@ -2,6 +2,106 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Refactoring: Views Structure] - 2024-11-27
+
+### 🔄 Changed
+
+#### **Major Views Refactoring - Role-Based Structure**
+Melakukan refactoring besar-besaran pada struktur folder views untuk meningkatkan maintainability dan readability kode.
+
+
+**New Structure:**
+```
+app/Views/
+├── admin/               # Admin-only views
+│   ├── dashboard.php
+│   ├── attendance/
+│   │   └── index.php
+│   ├── employees/
+│   │   ├── index.php
+│   │   └── form.php
+│   └── leave/
+│       └── index.php
+├── employee/            # Employee-only views
+│   ├── dashboard.php
+│   ├── attendance.php
+│   └── leave/
+│       ├── index.php
+│       └── create.php
+├── auth/                # Public authentication
+│   ├── login.php
+│   └── change_password.php
+├── layouts/             #  Templates & Components
+│   ├── header.php
+│   ├── footer.php
+│   └── components/
+│       ├── alerts.php   # NEW: Reusable alert component
+│       └── pagination.php # NEW: Reusable pagination
+└── errors/              # NEW: Error pages
+    ├── 404.php
+    └── 403.php
+```
+
+**Migration Details:**
+
+1. **File Movements:**
+   - `attendance/admin.php` → `admin/attendance/index.php`
+   - `attendance/index.php` → `employee/attendance.php`
+   - `dashboard/admin.php` → `admin/dashboard.php`
+   - `dashboard/employee.php` → `employee/dashboard.php`
+   - `karyawan/index.php` → `admin/employees/index.php`
+   - `karyawan/form.php` → `admin/employees/form.php`
+   - `cuti/index.php` → `admin/leave/index.php`
+   - `leave/index.php` → `employee/leave/index.php`
+   - `leave/form.php` → `employee/leave/create.php`
+
+2. **Controller Updates:**
+   -  `AuthController.php` - Updated dashboard paths
+   -  `AttendanceController.php` - Updated attendance view paths
+   -  `KaryawanController.php` - Updated employees view paths
+   -  `CutiController.php` - Updated admin leave path
+   -  `LeaveController.php` - Updated employee leave paths
+
+3. **New Components Created:**
+   - **`layouts/components/alerts.php`**
+     - Reusable component untuk success, error, warning, info alerts
+     - Konsisten styling across all pages
+     - Reduce code duplication
+   
+   - **`layouts/components/pagination.php`**
+     - Reusable pagination component
+     - Support custom URLs and query params
+     - Flexible configuration
+   
+   - **`errors/404.php`**
+     - Custom 404 Not Found page
+     - User-friendly design dengan navigation options
+   
+   - **`errors/403.php`**
+     - Custom 403 Forbidden page
+     - Clear messaging untuk access denied
+
+4. **Deleted Files:**
+    - app/Views/attendance/admin.php
+    - app/Views/attendance/index.php
+    - app/Views/cuti/index.php
+    - app/Views/dashboard/admin.php
+    - app/Views/dashboard/employee.php
+    - app/Views/dashboard/index.php
+    - app/Views/karyawan/form.php
+    - app/Views/karyawan/index.php
+    - app/Views/leave/form.php
+    - app/Views/leave/index.php
+
+**Breaking Changes:**
+- ⚠️ Semua view paths telah berubah
+
+**Backward Compatibility:**
+- File view lama tidak lagi tersedia
+- Semua controllers telah diperbarui untuk menggunakan path baru
+
+---
+
 ## [Feature: Leave Quota Validation] - 2024-11-26
 
 ### ✨ Added

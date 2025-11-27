@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layouts/header.php'; ?>
+<?php require_once __DIR__ . '/../../layouts/header.php'; ?>
 
 <div class="max-w-7xl mx-auto py-8 px-4">
     <div class="flex justify-between items-center mb-6">
@@ -9,8 +9,6 @@
             Ajukan Cuti Baru
         </a>
     </div>
-
-
 
     <?php if (!empty($success)): ?>
         <div class="flex items-center p-4 mb-4 text-green-800 rounded-base bg-green-50" role="alert">
@@ -143,7 +141,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <?php if ($leave['status'] === 'pending'): ?>
-                                        <form action="/karyawan/leave/delete" method="POST"
+                                        <form action="<?= url('/karyawan/leave/delete') ?>" method="POST"
                                             onsubmit="return confirm('Yakin ingin membatalkan pengajuan cuti ini?')">
                                             <input type="hidden" name="id" value="<?= $leave['id'] ?>">
                                             <button type="submit" class="text-red-600 hover:text-red-800">
@@ -253,4 +251,4 @@
     });
 </script>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

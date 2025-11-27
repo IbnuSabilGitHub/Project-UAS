@@ -72,7 +72,7 @@ class AttendanceController {
         ];
 
         unset($_SESSION['success'], $_SESSION['error']);
-        $this->render('attendance/index', $data);
+        $this->render('employee/attendance', $data);
     }
 
     /**
@@ -190,7 +190,7 @@ class AttendanceController {
         ];
 
         unset($_SESSION['success'], $_SESSION['error']);
-        $this->render('attendance/admin', $data);
+        $this->render('admin/attendance/index', $data);
     }
 
     /**

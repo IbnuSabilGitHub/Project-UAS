@@ -39,7 +39,7 @@ class KaryawanController {
     public function index() {
         $this->ensureAdmin();
         $karyawans = $this->model->allWithUser();
-        $this->render('karyawan/index', ['title' => 'List Karyawan', 'karyawans' => $karyawans]);
+        $this->render('admin/employees/index', ['title' => 'List Karyawan', 'karyawans' => $karyawans]);
     }
 
     /**
@@ -47,7 +47,7 @@ class KaryawanController {
      */
     public function create() {
         $this->ensureAdmin();
-        $this->render('karyawan/form', ['title' => 'Tambah Karyawan', 'karyawan' => null]);
+        $this->render('admin/employees/form', ['title' => 'Tambah Karyawan', 'karyawan' => null]);
     }
 
     /**
@@ -103,7 +103,7 @@ class KaryawanController {
             $_SESSION['error'] = 'Karyawan tidak ditemukan';
             redirect('/admin/karyawan');
         }
-        $this->render('karyawan/form', ['title' => 'Edit Karyawan', 'karyawan' => $karyawan]);
+        $this->render('admin/employees/form', ['title' => 'Edit Karyawan', 'karyawan' => $karyawan]);
     }
 
     /**
