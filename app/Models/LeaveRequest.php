@@ -13,6 +13,10 @@ class LeaveRequest {
 
     /**
      * Buat pengajuan cuti baru
+     * 
+     * @param array $data
+     * @param array|null $file
+     * @return array
      */
     public function create($data, $file = null) {
         $attachmentFile = null;
@@ -56,6 +60,9 @@ class LeaveRequest {
 
     /**
      * Upload file attachment
+     * 
+     * @param array $file
+     * @return string|false Filename yang diupload atau false jika gagal
      */
     private function uploadFile($file) {
         // Validasi ukuran (max 5MB)
@@ -92,6 +99,9 @@ class LeaveRequest {
 
     /**
      * Ambil semua pengajuan cuti karyawan
+     * 
+     * @param int $karyawanId
+     * @return array
      */
     public function getByKaryawan($karyawanId) {
         $stmt = $this->conn->prepare("
@@ -115,6 +125,8 @@ class LeaveRequest {
 
     /**
      * Ambil semua pengajuan cuti (untuk admin)
+     * @param string|null $status
+     * @return array
      */
     public function getAll($status = null) {
         $sql = "
@@ -150,6 +162,9 @@ class LeaveRequest {
 
     /**
      * Ambil detail pengajuan cuti
+     * 
+     * @param int $id
+     * @return array|null
      */
     public function find($id) {
         $stmt = $this->conn->prepare("
@@ -168,6 +183,10 @@ class LeaveRequest {
 
     /**
      * Approve pengajuan cuti (admin)
+     * 
+     * @param int $id
+     * @param int $approvedBy
+     * @return bool
      */
     public function approve($id, $approvedBy) {
         $stmt = $this->conn->prepare("
@@ -183,6 +202,11 @@ class LeaveRequest {
 
     /**
      * Reject pengajuan cuti (admin)
+     * 
+     * @param int $id
+     * @param int $approvedBy
+     * @param string $reason
+     * @return bool
      */
     public function reject($id, $approvedBy, $reason) {
         $stmt = $this->conn->prepare("
@@ -199,6 +223,9 @@ class LeaveRequest {
 
     /**
      * Hapus pengajuan cuti (beserta file)
+     * 
+     * @param int $id
+     * @return bool
      */
     public function delete($id) {
         // Ambil data untuk hapus file
@@ -220,6 +247,8 @@ class LeaveRequest {
 
     /**
      * Hitung total hari cuti yang sudah diambil tahun ini
+     * @param int $karyawanId
+     * @return int
      */
     public function getTotalDaysThisYear($karyawanId) {
         $year = date('Y');
@@ -238,6 +267,12 @@ class LeaveRequest {
 
     /**
      * Cek apakah ada overlap tanggal cuti
+     * 
+     * @param int $karyawanId
+     * @param string $startDate
+     * @param string $endDate
+     * @param int|null $excludeId
+     * @return bool
      */
     public function hasOverlap($karyawanId, $startDate, $endDate, $excludeId = null) {
         $sql = "

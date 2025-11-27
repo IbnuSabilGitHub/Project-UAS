@@ -9,11 +9,21 @@ class AttendanceController {
         $this->model = new Attendance();
     }
 
+
+    /**
+     * Render halaman berserta data nya
+     * 
+     * @param string $view
+     * @param array $data
+     */
     private function render($view, $data = []) {
         extract($data);
         require __DIR__ . "/../Views/{$view}.php";
     }
 
+    /**
+     * Pastikan user adalah karyawan
+     */
     private function ensureKaryawan() {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -122,6 +132,8 @@ class AttendanceController {
 
         redirect('/karyawan/attendance');
     }
+
+
 
     // ===== ADMIN METHODS =====
 

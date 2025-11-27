@@ -11,6 +11,9 @@ class Attendance {
 
     /**
      * Check apakah karyawan sudah check-in hari ini
+     * 
+     * @param int $karyawanId
+     * @return array|null
      */
     public function hasCheckedInToday($karyawanId) {
         $today = date('Y-m-d');
@@ -29,6 +32,10 @@ class Attendance {
 
     /**
      * Check-in karyawan
+     * 
+     * @param int $karyawanId
+     * @param string $notes
+     * @return bool
      */
     public function checkIn($karyawanId, $notes = '') {
         // Cek sudah check-in hari ini?
@@ -39,11 +46,28 @@ class Attendance {
         $checkIn = date('Y-m-d H:i:s');
         $status = 'present';
         
-        // Cek kalau terlambat (misal setelah jam 09:00)
+        // Aturan untuk menentukan status kehadiran:
+        // - Hadir tepat waktu (present): Check-in sebelum atau tepat jam 09:00
+        // - Half day: Check-in antara jam 09:01 sampai 09:15 (toleransi 15 menit)
+        // - Terlambat (late): Check-in setelah jam 09:15
+
         $hour = (int)date('H');
         $minute = (int)date('i');
-        if ($hour > 9 || ($hour == 9 && $minute > 0)) {
+        
+        // Konversi ke menit untuk perbandingan yang lebih akurat
+        $currentTimeInMinutes = ($hour * 60) + $minute;
+        $onTimeLimit = (9 * 60); // 09:00 = 540 menit
+        $toleranceLimit = (9 * 60) + 15; // 09:15 = 555 menit
+        
+        if ($currentTimeInMinutes > $toleranceLimit) {
+            // Setelah jam 09:15 = terlambat
             $status = 'late';
+        } elseif ($currentTimeInMinutes > $onTimeLimit) {
+            // Antara 09:01 - 09:15 = half day (toleransi)
+            $status = 'half_day';
+        } else {
+            // Sebelum atau tepat 09:00 = hadir tepat waktu
+            $status = 'present';
         }
 
         $stmt = $this->conn->prepare("
@@ -56,6 +80,10 @@ class Attendance {
 
     /**
      * Check-out karyawan
+     * 
+     * @param int $karyawanId
+     * @param string $notes
+     * @return bool
      */
     public function checkOut($karyawanId, $notes = '') {
         $today = date('Y-m-d');
@@ -75,6 +103,10 @@ class Attendance {
 
     /**
      * Ambil riwayat absensi karyawan
+     * 
+     * @param int $karyawanId
+     * @param int $limit
+     * @return array
      */
     public function getHistory($karyawanId, $limit = 30) {
         $stmt = $this->conn->prepare("
@@ -96,6 +128,9 @@ class Attendance {
 
     /**
      * Ambil semua absensi (untuk admin)
+     * @param int $limit
+     * @return array
+     * 
      */
     public function getAll($limit = 100) {
         $sql = "
@@ -119,6 +154,9 @@ class Attendance {
 
     /**
      * Statistik kehadiran karyawan bulan ini
+     * 
+     * @param int $karyawanId
+     * @return array
      */
     public function getMonthlyStats($karyawanId) {
         $startOfMonth = date('Y-m-01');
@@ -196,6 +234,11 @@ class Attendance {
 
     /**
      * Hitung total record dengan filter untuk pagination
+     * 
+     * @param string $date
+     * @param string $searchName
+     * @param string $status
+     * @return int
      */
     public function countAllWithFilter($date = '', $searchName = '', $status = '') {
         $sql = "
@@ -239,6 +282,9 @@ class Attendance {
 
     /**
      * Statistik absensi untuk admin
+     * 
+     * @param string $date
+     * @return array
      */
     public function getAdminStats($date = '') {
         $sql = "

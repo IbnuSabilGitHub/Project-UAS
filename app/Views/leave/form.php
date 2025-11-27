@@ -1,6 +1,6 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
 
-<div class="max-w-2xl mx-auto py-8 px-4">
+<div class="container mx-auto px-4 py-8">
 
     <?php if (!empty($error)): ?>
         <div class="flex items-center p-4 mb-4 text-red-800 rounded-base bg-red-50" role="alert">
@@ -91,23 +91,14 @@
 
             <!-- Upload File -->
             <div class="mb-4">
-                <label for="attachment" class="block text-sm font-medium text-heading mb-2">
-                    Lampiran File (Opsional)
-                </label>
-                <div class="flex items-center justify-center w-full ">
-                    <label for="attachment" class="flex flex-col items-center justify-center w-full h-64 bg-neutral-secondary-medium border border-dashed border-default-strong rounded-base cursor-pointer hover:bg-neutral-tertiary-medium">
-                        <div class="flex flex-col items-center justify-center text-body pt-5 pb-6">
-                            <i class="fa-solid fa-upload text-2xl w-8 h-8 mb-4"></i>
-                            <p class="mb-2 text-sm"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p class="text-xs">PDF, JPG, PNG (MAX. 5MB)</p>
-                        </div>
-                        <input type="file" name="attachment" id="attachment" accept=".pdf,.jpg,.jpeg,.png" class="hidden" />
-                    </label>
-                </div>
-                <p class="text-sm text-body mt-2">
-                    Untuk cuti sakit, lampirkan surat keterangan dokter.
-                </p>
+                <label class="block mb-2.5 text-sm font-medium text-heading" for="attachment">Lampiran File</label>
+                <input class="cursor-pointer bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body" aria-describedby="file_input_help" id="attachment" type="file">
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" type="file" name="attachment" id="attachment" accept=".pdf,.jpg,.jpeg,.png">PDF, JPG, PNG (MAX. 5MB)</p>
             </div>
+
+
+
+
 
 
             <!-- Buttons -->
@@ -140,22 +131,17 @@
         const startDate = startDateInput.value;
         const endDate = endDateInput.value;
 
-        console.log('Start date:', startDate, 'End date:', endDate); // Debug
 
         if (startDate && endDate) {
             // Parse tanggal format yyyy-mm-dd
             const start = new Date(startDate);
             const end = new Date(endDate);
 
-            console.log('Start object:', start, 'End object:', end); // Debug
 
             if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
                 if (end >= start) {
                     const diffTime = end.getTime() - start.getTime();
                     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    
-                    console.log('Calculated days:', diffDays); // Debug
-                    
                     totalDaysSpan.textContent = diffDays + ' hari';
                     totalDaysInput.value = diffDays;
                 } else {

@@ -1,18 +1,22 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
 
-class Karyawan {
+class Karyawan
+{
     private $conn;
 
-    public function __construct() {
+    public function __construct()
+    {
         $db = new Database();
         $this->conn = $db->getConnection();
     }
 
     /**
      * Mengambil semua data karyawan
+     * @return array
      */
-    public function all() {
+    public function all()
+    {
         $sql = "SELECT * FROM karyawan ORDER BY id DESC";
         $result = $this->conn->query($sql);
         $rows = [];
@@ -26,8 +30,11 @@ class Karyawan {
 
     /**
      * Mengambil semua data karyawan beserta info akun (jika ada)
+     * 
+     * @return array
      */
-    public function allWithUser() {
+    public function allWithUser()
+    {
         $sql = "SELECT k.*, u.id AS user_id, u.username, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
         $result = $this->conn->query($sql);
         $rows = [];
@@ -45,7 +52,8 @@ class Karyawan {
      * @param int $id
      * @return array|null
      */
-    public function find($id) {
+    public function find($id)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM karyawan WHERE id = ? LIMIT 1");
         $stmt->bind_param('i', $id);
         $stmt->execute();
@@ -59,7 +67,8 @@ class Karyawan {
      * @param array $data
      * @return int|false ID karyawan baru atau false jika gagal
      */
-    public function create($data) {
+    public function create($data)
+    {
         $stmt = $this->conn->prepare("INSERT INTO karyawan (nik, name, email, phone, position, join_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param('sssssss', $data['nik'], $data['name'], $data['email'], $data['phone'], $data['position'], $data['join_date'], $data['status']);
         if ($stmt->execute()) {
@@ -75,7 +84,8 @@ class Karyawan {
      * @param array $data
      * @return bool
      */
-    public function update($id, $data) {
+    public function update($id, $data)
+    {
         $stmt = $this->conn->prepare("UPDATE karyawan SET nik = ?, name = ?, email = ?, phone = ?, position = ?, join_date = ?, status = ? WHERE id = ?");
         $stmt->bind_param('sssssssi', $data['nik'], $data['name'], $data['email'], $data['phone'], $data['position'], $data['join_date'], $data['status'], $id);
         return $stmt->execute();
@@ -87,7 +97,8 @@ class Karyawan {
      * @param int $id
      * @return bool
      */
-    public function delete($id) {
+    public function delete($id)
+    {
         $stmt = $this->conn->prepare("DELETE FROM karyawan WHERE id = ?");
         $stmt->bind_param('i', $id);
         return $stmt->execute();
@@ -102,7 +113,8 @@ class Karyawan {
      * @param string $role
      * @return bool
      */
-    public function createAccount($karyawanId, $username, $password, $role = 'karyawan') {
+    public function createAccount($karyawanId, $username, $password, $role = 'karyawan')
+    {
         if ($this->getUserByKaryawanId($karyawanId)) {
             return false; // sudah punya akun
         }
@@ -118,8 +130,12 @@ class Karyawan {
 
     /**
      * Ambil akun user berdasarkan karyawan_id
+     * 
+     * @param int $karyawanId
+     * @return array|null
      */
-    public function getUserByKaryawanId($karyawanId) {
+    public function getUserByKaryawanId($karyawanId)
+    {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE karyawan_id = ? LIMIT 1");
         $stmt->bind_param('i', $karyawanId);
         $stmt->execute();
@@ -127,8 +143,12 @@ class Karyawan {
         return $res->fetch_assoc();
     }
 
-    /** Nonaktifkan karyawan (soft) + disable akun */
-    public function deactivate($id) {
+    /** Nonaktifkan karyawan (soft) + disable akun 
+     * @param int $id
+     * @return bool
+     */
+    public function deactivate($id)
+    {
         // set employment_status resigned dan status inactive
         $stmt = $this->conn->prepare("UPDATE karyawan SET employment_status='resigned' WHERE id = ?");
         $stmt->bind_param('i', $id);
@@ -143,8 +163,12 @@ class Karyawan {
         return $ok;
     }
 
-    /** Hard delete karyawan + user account */
-    public function deleteWithUser($id) {
+    /** Hard delete karyawan + user account
+     * @param int $id
+     * @return bool
+     */
+    public function deleteWithUser($id)
+    {
         $stmt1 = $this->conn->prepare("DELETE FROM users WHERE karyawan_id = ?");
         $stmt1->bind_param('i', $id);
         $stmt1->execute();

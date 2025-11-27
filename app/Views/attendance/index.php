@@ -118,7 +118,14 @@
             <?php else: ?>
                 <div class="bg-neutral-secondary-medium p-4 rounded-base">
                     <p class="text-green-600 font-medium">Anda sudah check-in dan check-out hari ini</p>
-                    <p class="text-sm text-body mt-2">Terima kasih sudah absen tepat waktu!</p>
+                    <?php if ($todayStatus['status'] === 'present'): ?>
+                        <p class="text-sm text-body mt-2">Terima kasih sudah absen tepat waktu!</p>
+                    <?php elseif ($todayStatus['status'] === 'late'): ?>
+                        <p class="text-sm text-body mt-2">Anda terlambat hari ini. Mohon perhatikan waktu absensi selanjutnya.</p>
+                    <?php else: ?>
+                        <p class="text-sm text-body mt-2">Anda melakukan half day hari ini.</p>
+                    <?php endif; ?>
+
                 </div>
             <?php endif; ?>
         </div>
@@ -209,14 +216,17 @@
 
 <script>
     // Update jam real-time
+
     function updateTime() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const witaTime = new Date(now.toLocaleString('en-US', {
+            timeZone: 'Asia/Makassar'
+        }));
+        const hours = String(witaTime.getHours()).padStart(2, '0');
+        const minutes = String(witaTime.getMinutes()).padStart(2, '0');
+        const seconds = String(witaTime.getSeconds()).padStart(2, '0');
         document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
     }
-
+    updateTime();
     setInterval(updateTime, 1000);
 </script>
 

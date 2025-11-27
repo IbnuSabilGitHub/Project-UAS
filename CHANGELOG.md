@@ -2,7 +2,146 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Feature: Filter and Search for Leave Requests] - 2024-11-26
+## [Feature: Leave Quota Validation] - 2024-11-26
+
+### ✨ Added
+
+#### **Validasi Jatah Cuti Tahunan untuk Karyawan**
+Sistem sekarang memvalidasi jatah cuti karyawan sebelum mengajukan cuti tahunan untuk mencegah pengajuan melebihi kuota yang tersedia.
+
+**Database Schema Update:**
+
+1. **Tabel Karyawan** - New Column:
+   - `annual_leave_quota INT NOT NULL DEFAULT 12`
+   - Default jatah: 12 hari per tahun (sesuai standar Indonesia)
+   - Admin bisa mengatur jatah berbeda untuk setiap karyawan
+   - Fleksibel untuk karyawan dengan jatah khusus (senior, kontrak, dll)
+
+**Backend Implementation:**
+
+1. **LeaveRequest Model** - New Methods:
+   - `getLeaveQuota($karyawanId)` - Ambil jatah cuti tahunan dari tabel karyawan
+   - `getRemainingQuota($karyawanId)` - Hitung sisa jatah (quota - used days)
+   - `getPendingDaysThisYear($karyawanId)` - Hitung total pending leave (belum approved/rejected)
+   - Perhitungan akurat: `Sisa = Jatah - Terpakai - Pending`
+
+2. **LeaveController** - Validation Logic:
+   - **Validasi hanya untuk Annual Leave**:
+     - Cuti Sakit, Darurat, dan Tanpa Gaji **TIDAK** dibatasi kuota
+     - Validasi dilakukan sebelum menyimpan ke database
+   - **Error Message Detail**:
+     - Menampilkan jatah total, terpakai, pending, dan sisa
+     - Contoh: "Jatah cuti tidak mencukupi. Jatah: 12 hari, Terpakai: 8 hari, Pending: 2 hari, Sisa: 2 hari. Anda mengajukan 5 hari."
+   - **Smart Calculation**:
+     - Pending days dikurangi dari available quota
+     - Mencegah over-booking saat ada pending leaves
+     - Formula: `Available = Quota - Approved - Pending`
+
+**Frontend Display:**
+
+1. **Leave History Page** - Enhanced Summary Cards:
+   - **Before**: 3 cards (Terpakai, Tersisa, Pending Count)
+   - **After**: 4 cards dengan info lengkap:
+     - **Jatah Cuti Tahunan** - Total quota dari database
+     - **Hari Cuti Terpakai** - Approved leaves tahun ini
+     - **Pending (Belum Disetujui)** - Pending leaves (dalam hitungan hari)
+     - **Sisa Jatah Tersedia** - Available quota untuk diajukan
+       - Warna hijau jika masih ada sisa
+       - Warna merah jika sudah habis
+
+2. **Warning Alerts**:
+   - **Quota Habis** (remaining = 0):
+     - Alert kuning dengan icon warning
+     - "Jatah cuti tahunan Anda sudah habis. Anda masih bisa mengajukan cuti sakit, darurat, atau cuti tanpa gaji."
+   - **Quota Hampir Habis** (remaining ≤ 3):
+     - Alert kuning dengan icon info
+     - "Sisa jatah cuti tahunan Anda tinggal X hari. Gunakan dengan bijak."
+
+**Business Logic:**
+
+1. **Annual Leave** (Cuti Tahunan):
+   - ✅ Dibatasi oleh quota
+   - ✅ Validasi sebelum submit
+   - ✅ Pending leaves mengurangi available quota
+   - ✅ Reset setiap tahun (per calendar year)
+
+2. **Other Leave Types** (Sick, Emergency, Unpaid):
+   - ❌ **TIDAK** dibatasi quota
+   - ✅ Tetap bisa diajukan meski quota habis
+   - ✅ Sesuai regulasi ketenagakerjaan Indonesia
+
+**Changes in Files:**
+
+- `database/query.sql`:
+  - Added `annual_leave_quota` column to karyawan table
+  - Default value: 12 days
+  
+- `app/Models/LeaveRequest.php`:
+  - Added `getLeaveQuota()` method
+  - Added `getRemainingQuota()` method
+  - Added `getPendingDaysThisYear()` method
+  
+- `app/Controllers/LeaveController.php`:
+  - Added quota validation in `store()` method (annual leave only)
+  - Updated `index()` to pass quota info to view
+  - Detailed error messages for quota exceeded
+  
+- `app/Views/leave/index.php`:
+  - Updated summary cards from 3 to 4 cards
+  - Added quota, pending, and remaining displays
+  - Added warning alerts for low/zero quota
+  - Color coding for remaining quota (green/red)
+
+**Migration Steps:**
+
+Untuk database yang sudah ada, jalankan query berikut:
+```sql
+ALTER TABLE karyawan 
+ADD COLUMN annual_leave_quota INT NOT NULL DEFAULT 12 
+COMMENT 'Jatah cuti tahunan (hari)';
+```
+
+**Example Scenarios:**
+
+1. **Karyawan dengan jatah cukup**:
+   - Jatah: 12 hari
+   - Terpakai: 5 hari (approved)
+   - Pending: 2 hari
+   - Sisa: 5 hari
+   - Ajukan 3 hari → ✅ **Berhasil**
+
+2. **Karyawan dengan jatah hampir habis**:
+   - Jatah: 12 hari
+   - Terpakai: 10 hari
+   - Pending: 0 hari
+   - Sisa: 2 hari
+   - Ajukan 5 hari → ❌ **Ditolak** (sisa hanya 2 hari)
+
+3. **Karyawan dengan pending leaves**:
+   - Jatah: 12 hari
+   - Terpakai: 5 hari
+   - Pending: 4 hari (belum disetujui)
+   - Sisa: 3 hari (12 - 5 - 4)
+   - Ajukan 5 hari → ❌ **Ditolak** (available hanya 3 hari)
+
+4. **Cuti sakit (tidak ada batasan)**:
+   - Jatah: 12 hari (untuk annual leave)
+   - Terpakai: 12 hari
+   - Sisa: 0 hari
+   - Ajukan cuti sakit 3 hari → ✅ **Berhasil** (sick leave tidak dibatasi)
+
+**Benefits:**
+
+- ✅ Mencegah over-booking cuti tahunan
+- ✅ Transparansi jatah cuti untuk karyawan
+- ✅ Fleksibilitas untuk cuti sakit/darurat
+- ✅ Real-time quota tracking
+- ✅ Warning dini untuk quota rendah
+- ✅ Sesuai regulasi ketenagakerjaan
+
+---
+
+## [Feature: Filter & Search for Leave Requests] - 2024-11-26
 
 ### ✨ Added
 
