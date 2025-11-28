@@ -1,6 +1,6 @@
 <?php require_once __DIR__ . '/../../layouts/header.php'; ?>
 
-<div class="max-w-7xl mx-auto py-8 px-4">
+<div class="p-4 sm:ml-64 mt-14">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-heading">Riwayat Cuti Saya</h1>
         <a href="<?= url('/karyawan/leave/create') ?>"
@@ -163,14 +163,6 @@
         <?php endif; ?>
     </div>
 
-    <!-- Tombol Kembali -->
-    <div class="mt-8">
-        <a href="<?= url('/admin/dashboard') ?>"
-            class="inline-block text-brand hover:text-brand-strong font-medium">
-            <i class="fa-solid fa-arrow-left-long mr-2"></i>
-            Kembali ke Dashboard
-        </a>
-    </div>
 </div>
 
 <!-- Modal Detail -->

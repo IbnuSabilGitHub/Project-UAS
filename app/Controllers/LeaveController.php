@@ -1,28 +1,15 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/LeaveRequest.php';
 
-class LeaveController {
+class LeaveController extends BaseController {
     private $model;
 
     public function __construct() {
         $this->model = new LeaveRequest();
     }
 
-    private function render($view, $data = []) {
-        extract($data);
-        require __DIR__ . "/../Views/{$view}.php";
-    }
-
-    private function ensureKaryawan() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
-            $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');
-        }
-    }
 
     private function getKaryawanId() {
         $conn = (new Database())->getConnection();

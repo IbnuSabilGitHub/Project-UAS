@@ -1,5 +1,7 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
-<div class="container mx-auto px-4 py-8">
+<?php require_once __DIR__ . '/../layouts/sidebar.php'; ?>
+
+<div class="p-4 sm:ml-64 mt-14">
     <?php if (!empty($success)): ?>
         <div class="flex items-center p-4 mb-6 text-green-600 rounded-base bg-neutral-primary-soft" role="alert">
             <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">

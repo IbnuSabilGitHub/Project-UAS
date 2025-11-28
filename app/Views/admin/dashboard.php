@@ -1,70 +1,44 @@
-<?php require_once __DIR__ . '/../layouts/header.php'; ?>
-<div class="container mx-auto px-4 py-8">
-    <?php if (!empty($success)): ?>
-        <div class="flex items-center p-4 mb-6 text-green-600 rounded-base bg-neutral-primary-soft" role="alert">
-            <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-            </svg>
-            <div class="ms-3 text-sm font-medium"><?= htmlspecialchars($success) ?></div>
-        </div>
-    <?php endif; ?>
-    
-    <div class="bg-neutral-primary-soft shadow-xs rounded-base p-8 border border-default">
-        <h1 class="text-3xl font-bold text-heading mb-4">Admin Dashboard</h1>
-        <p class="mb-8 text-body">Selamat datang, <strong class="text-heading"><?= htmlspecialchars($username) ?></strong> 
-            <span class="inline-block bg-brand-soft text-brand px-3 py-1 rounded-full text-sm font-medium ml-2"><?= htmlspecialchars($role) ?></span>
-        </p>
-        
-        <div class="grid md:grid-cols-3 gap-6">
-            <a href="<?= url('/admin/karyawan') ?>" 
-               class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
-                <h2 class="text-xl font-semibold text-heading mb-2">Manajemen Karyawan</h2>
-                <p class="text-sm text-body">Lihat, tambah, nonaktifkan, hapus permanen karyawan.</p>
-            </a>
-
-            <a href="<?= url('/admin/cuti') ?>" 
-               class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
-                <h2 class="text-xl font-semibold text-heading mb-2">Pengajuan Cuti</h2>
-                <p class="text-sm text-body">Kelola pengajuan cuti karyawan dan approve/reject.</p>
-            </a>
-            
-            <a href="<?= url('/admin/attendance') ?>" 
-               class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
-                <h2 class="text-xl font-semibold text-heading mb-2">Absensi</h2>
-                <p class="text-sm text-body">Lihat, filter, dan export data absensi karyawan.</p>
-            </a>
-
-        </div>
-        
-        <div class="mt-8 border-t border-default pt-6">
-            <a href="<?= url('/logout') ?>" 
-               class="inline-block bg-red-600 hover:bg-red-700 text-white font-medium px-5 py-2.5 rounded-base shadow-xs transition duration-200">
-                Logout
-            </a>
-        </div>
+<div class="p-4 sm:ml-64 mt-14">
+  <?php if (!empty($success)): ?>
+    <div class="flex items-center p-4 mb-6 text-green-600 rounded-base bg-neutral-primary-soft" role="alert">
+      <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+      </svg>
+      <div class="ms-3 text-sm font-medium"><?= htmlspecialchars($success) ?></div>
     </div>
-    
-<button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots" class="text-heading bg-neutral-primary box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium leading-5 rounded-base text-sm p-2 focus:outline-none" type="button">
-  <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="3" d="M12 6h.01M12 12h.01M12 18h.01"/></svg>
-</button>
+  <?php endif; ?>
 
-<!-- Dropdown menu -->
-<div id="dropdownDots" class="z-10 hidden bg-neutral-primary-soft divide-y divide-neutral-secondary-soft rounded-base shadow w-44">
-    <ul class="py-2 text-sm text-heading" aria-labelledby="dropdownMenuIconButton">
-      <li>
-        <a href="#" class="block px-4 py-2 hover:bg-neutral-secondary-soft">Dashboard</a>
-      </li>
-      <li>
-        <a href="#" class="block px-4 py-2 hover:bg-neutral-secondary-soft">Settings</a>
-      </li>
-      <li>
-        <a href="#" class="block px-4 py-2 hover:bg-neutral-secondary-soft">Earnings</a>
-      </li>
-    </ul>
-    <div class="py-2">
-      <a href="#" class="block px-4 py-2 text-sm text-heading hover:bg-neutral-secondary-soft">Separated link</a>
+  <div class="bg-neutral-primary-soft shadow-xs rounded-base p-8 border border-default">
+    <h1 class="text-3xl font-bold text-heading mb-4">Admin Dashboard</h1>
+    <p class="mb-8 text-body">Selamat datang, <strong class="text-heading"><?= htmlspecialchars($username) ?></strong>
+      <span class="inline-block bg-brand-soft text-brand px-3 py-1 rounded-full text-sm font-medium ml-2"><?= htmlspecialchars($role) ?></span>
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <a href="<?= url('/admin/karyawan') ?>"
+        class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
+        <h2 class="text-xl font-semibold text-heading mb-2">Manajemen Karyawan</h2>
+        <p class="text-sm text-body">Lihat, tambah, nonaktifkan, hapus permanen karyawan.</p>
+      </a>
+
+      <a href="<?= url('/admin/cuti') ?>"
+        class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
+        <h2 class="text-xl font-semibold text-heading mb-2">Pengajuan Cuti</h2>
+        <p class="text-sm text-body">Kelola pengajuan cuti karyawan dan approve/reject.</p>
+      </a>
+
+      <a href="<?= url('/admin/attendance') ?>"
+        class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
+        <h2 class="text-xl font-semibold text-heading mb-2">Absensi</h2>
+        <p class="text-sm text-body">Lihat, filter, dan export data absensi karyawan.</p>
+      </a>
+
     </div>
-</div>
-</div>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+    <div class="mt-8 border-t border-default pt-6">
+      <a href="<?= url('/logout') ?>"
+        class="inline-block bg-red-600 hover:bg-red-700 text-white font-medium px-5 py-2.5 rounded-base shadow-xs transition duration-200">
+        Logout
+      </a>
+    </div>
+  </div>

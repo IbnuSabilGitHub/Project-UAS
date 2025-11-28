@@ -1,6 +1,6 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
 
-<div class="max-w-6xl mx-auto py-8 px-4">
+<div class="p-4 sm:ml-64 mt-14">
     <h1 class="text-3xl font-bold mb-6 text-heading">Absensi Saya</h1>
 
     <?php if (!empty($success)): ?>
@@ -203,14 +203,6 @@
                 </table>
             </div>
         <?php endif; ?>
-    </div>
-
-    <div class="mt-8">
-        <a href="<?= url('/karyawan/dashboard') ?>"
-            class="inline-block text-brand hover:text-brand-strong font-medium">
-            <i class="fa-solid fa-arrow-left-long mr-2"></i>
-            Kembali ke Dashboard
-        </a>
     </div>
 </div>
 

@@ -1,6 +1,7 @@
 <?php require_once __DIR__ . '/../../layouts/header.php'; ?>
+<?php require_once __DIR__ . '/../../layouts/sidebar.php'; ?>
 
-<div class="container mx-auto px-4 py-8 flex flex-col min-h-screen">
+<div class="p-4 sm:ml-64 mt-14">
 
     <?php if (isset($_SESSION['success'])): ?>
         <div id="alert-success" class="flex items-center p-4 mb-4 text-green-800 rounded-base bg-neutral-primary-soft" role="alert">
@@ -85,7 +86,7 @@
                             <li>
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
-                                        <input id="helper-radio-7" name="date-filter-radio" type="radio" value="7" 
+                                        <input id="helper-radio-7" name="date-filter-radio" type="radio" value="7"
                                             class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (isset($currentDateFilter) && $currentDateFilter === '7') ? 'checked' : '' ?>>
                                     </div>
@@ -99,7 +100,7 @@
                             <li>
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
-                                        <input id="helper-radio-30" name="date-filter-radio" type="radio" value="30" 
+                                        <input id="helper-radio-30" name="date-filter-radio" type="radio" value="30"
                                             class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (isset($currentDateFilter) && $currentDateFilter === '30') ? 'checked' : '' ?>>
                                     </div>
@@ -113,7 +114,7 @@
                             <li>
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
-                                        <input id="helper-radio-60" name="date-filter-radio" type="radio" value="60" 
+                                        <input id="helper-radio-60" name="date-filter-radio" type="radio" value="60"
                                             class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (isset($currentDateFilter) && $currentDateFilter === '60') ? 'checked' : '' ?>>
                                     </div>
@@ -127,7 +128,7 @@
                             <li>
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
-                                        <input id="helper-radio-all" name="date-filter-radio" type="radio" value="" 
+                                        <input id="helper-radio-all" name="date-filter-radio" type="radio" value=""
                                             class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (empty($currentDateFilter)) ? 'checked' : '' ?>>
                                     </div>
@@ -165,7 +166,7 @@
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
                                         <input id="helper-checkbox-1" type="checkbox" value="approved" name="status-filter"
-                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft" 
+                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
                                             <?= (empty($currentStatus) || in_array('approved', $currentStatus)) ? 'checked' : '' ?>>
                                     </div>
                                     <label for="helper-checkbox-1" class="ms-2 text-sm select-none font-medium text-heading">
@@ -179,7 +180,7 @@
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
                                         <input id="helper-checkbox-2" type="checkbox" value="pending" name="status-filter"
-                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft" 
+                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
                                             <?= (empty($currentStatus) || in_array('pending', $currentStatus)) ? 'checked' : '' ?>>
                                     </div>
                                     <label for="helper-checkbox-2" class="ms-2 text-sm select-none font-medium text-heading">
@@ -193,7 +194,7 @@
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
                                         <input id="helper-checkbox-3" type="checkbox" value="rejected" name="status-filter"
-                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft" 
+                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
                                             <?= (empty($currentStatus) || in_array('rejected', $currentStatus)) ? 'checked' : '' ?>>
                                     </div>
                                     <label for="helper-checkbox-3" class="ms-2 text-sm select-none font-medium text-heading">
@@ -245,6 +246,7 @@
 
                 <tbody>
                     <?php if (empty($pengajuanCuti)): ?>
+                        <!-- Ui Jika data pengajuan cuti kosong -->
                         <tr class="bg-neutral-primary border-b border-default">
                             <td colspan="11" class="px-6 py-4 text-center text-body">
                                 Belum ada data pengajuan cuti
@@ -267,6 +269,7 @@
                                 $statusClass = 'bg-warning-soft text-fg-warning';
                             }
                             ?>
+
                             <tr class="bg-neutral-primary border-b border-default">
                                 <td class="px-6 py-4"><?= htmlspecialchars($pc['id']) ?></td>
                                 <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
@@ -441,15 +444,6 @@
             </table>
         </div>
     </div>
-
-    <!-- Tombol Kembali -->
-    <div class="mt-8">
-        <a href="<?= url('/admin/dashboard') ?>"
-            class="inline-block text-brand hover:text-brand-strong font-medium">
-            <i class="fa-solid fa-arrow-left-long mr-2"></i>
-            Kembali ke Dashboard
-        </a>
-    </div>
 </div>
 
 <script>
@@ -486,7 +480,7 @@ ${reason}
             const checkedStatuses = Array.from(statusCheckboxes)
                 .filter(cb => cb.checked)
                 .map(cb => cb.value);
-            
+
             if (checkedStatuses.length > 0 && checkedStatuses.length < 3) {
                 checkedStatuses.forEach(status => {
                     url.searchParams.append('status[]', status);

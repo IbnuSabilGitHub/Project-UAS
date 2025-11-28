@@ -1,38 +1,15 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/Attendance.php';
 
-class AttendanceController {
-    private $model;
+class AttendanceController extends BaseController {
+    private $model;        
 
     public function __construct() {
         $this->model = new Attendance();
     }
 
-
-    /**
-     * Render halaman berserta data nya
-     * 
-     * @param string $view
-     * @param array $data
-     */
-    private function render($view, $data = []) {
-        extract($data);
-        require __DIR__ . "/../Views/{$view}.php";
-    }
-
-    /**
-     * Pastikan user adalah karyawan
-     */
-    private function ensureKaryawan() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
-            $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');
-        }
-    }
 
     /**
      * Halaman attendance karyawan
@@ -137,15 +114,7 @@ class AttendanceController {
 
     // ===== ADMIN METHODS =====
 
-    private function ensureAdmin() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-            $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');
-        }
-    }
+
 
     /**
      * Halaman attendance untuk admin (melihat semua data)
@@ -185,6 +154,8 @@ class AttendanceController {
                 'total' => $totalPages,
                 'totalRecords' => $total
             ],
+            'username' => $_SESSION['username'] ?? null,
+            'role' => $_SESSION['role'] ?? null,
             'success' => $_SESSION['success'] ?? null,
             'error' => $_SESSION['error'] ?? null
         ];

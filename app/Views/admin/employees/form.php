@@ -1,6 +1,5 @@
-<?php require_once __DIR__ . '/../../layouts/header.php'; ?>
 
-<div class="container mx-auto px-4 py-8">
+<div class="p-4 sm:ml-64 mt-14">
     <h1 class="text-2xl font-bold mb-4 text-heading"><?= $title ?></h1>
 
     <div class="max-w-4xl  bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
@@ -91,5 +90,3 @@
         </form>
     </div>
 </div>
-
-<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

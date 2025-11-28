@@ -1,8 +1,4 @@
-<?php require_once __DIR__ . '/../../layouts/header.php'; ?>
-
-<div class="container mx-auto px-4 py-8">
-
-
+<div class="p-4 sm:ml-64 mt-14">
     <?php if (isset($_SESSION['success'])): ?>
         <div id="alert-success" class="flex items-center p-4 mb-4 text-green-800 rounded-base bg-green-50" role="alert">
             <svg class="flex-shrink-0 w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
@@ -29,7 +25,7 @@
 
     <div class="overflow-y-auto overflow-x-auto shadow-md sm:rounded-base bg-neutral-secondary-soft p-4 space-y-4">
         <div class="flex flex-row items-center justify-between w-full">
-            <h1 class="text-2xl font-bold text-heading">List Karyawan</h1>
+            <h1 class="text-2xl font-bold text-heading">List Karyawan </h1>
             <a href="<?= url('/admin/karyawan/create') ?>"
                 class="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
                 Tambah Karyawan
@@ -94,13 +90,17 @@
                             <!-- Account Status -->
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    <?php if (!empty($k['user_id'])): ?>
+                                    <?php if (!empty($k['user_id']) && $k['employment_status'] === 'active'): ?>
                                         <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-success-soft text-success-strong">
                                             Aktif
                                         </span>
                                         <?php if (!empty($k['must_change_password'])): ?>
                                             <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-warning-soft text-warning-strong">Wajib Ganti</span>
                                         <?php endif; ?>
+                                    <?php elseif ($k['employment_status'] === 'resigned'): ?>
+                                        <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-danger-soft text-danger-strong">
+                                            Nonaktif
+                                        </span>
                                     <?php else: ?>
                                         <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-neutral-secondary-soft text-body">
                                             Belum Ada
@@ -190,20 +190,10 @@
                                     </ul>
                                 </div>
                             </td>
-
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
-    <div class="mt-8">
-        <a href="<?= url('/admin/dashboard') ?>"
-            class="inline-block text-brand hover:text-brand-strong font-medium">
-            <i class="fa-solid fa-arrow-left-long mr-2"></i>
-            Kembali ke Dashboard
-        </a>
-    </div>
 </div>
-
-<?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

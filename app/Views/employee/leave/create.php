@@ -1,6 +1,6 @@
 <?php require_once __DIR__ . '/../../layouts/header.php'; ?>
 
-<div class="container mx-auto px-4 py-8">
+<div class="p-4 sm:ml-64 mt-14">
 
     <?php if (!empty($error)): ?>
         <div class="flex items-center p-4 mb-4 text-red-800 rounded-base bg-red-50" role="alert">
@@ -92,14 +92,9 @@
             <!-- Upload File -->
             <div class="mb-4">
                 <label class="block mb-2.5 text-sm font-medium text-heading" for="attachment">Lampiran File</label>
-                <input class="cursor-pointer bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body" aria-describedby="file_input_help" id="attachment" type="file">
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" type="file" name="attachment" id="attachment" accept=".pdf,.jpg,.jpeg,.png">PDF, JPG, PNG (MAX. 5MB)</p>
+                <input class="cursor-pointer bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body" type="file" name="attachment" id="attachment" accept=".pdf,.jpg,.jpeg,.png">
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" >PDF, JPG, PNG (MAX. 5MB)</p>
             </div>
-
-
-
-
-
 
             <!-- Buttons -->
             <div class="flex gap-4">

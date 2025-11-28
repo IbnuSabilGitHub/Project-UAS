@@ -2,15 +2,16 @@
 
 /* Flowbite */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-@import "flowbite/src/themes/default";
 /* Import the Flowbite plugin file */
 @plugin "flowbite/plugin";
 
 /* Configure the source files of Flowbite */
-@source "C:/xampp/htdocs/HRIS/node_modules/flowbite"; /* Paksan path absolut (karena htdoc tricky) */
+@source "./node_modules/flowbite";
 
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* DEFAULT THEME */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "flowbite/src/themes/default";
 

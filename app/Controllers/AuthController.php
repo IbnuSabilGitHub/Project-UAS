@@ -1,18 +1,15 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/BaseController.php';
 
-class AuthController {
+class AuthController extends BaseController {
     private $db;
 
     public function __construct() {
         $this->db = new Database();
     }
 
-    // Render halaman view
-    private function render($view, $data = []) {
-        extract($data); // Konversi array data menjadi variabel
-        require __DIR__ . "/../Views/{$view}.php";
-    }
+
 
     
     // Menampilkan halaman login
@@ -40,7 +37,7 @@ class AuthController {
 
         unset($_SESSION['error'], $_SESSION['success']);
 
-        $this->render('auth/login', $data);
+        $this->renderWithoutSidebar('auth/login', $data);
     }
 
     // Proses login
@@ -105,6 +102,7 @@ class AuthController {
         // Login berhasil
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
+        $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['success'] = 'Login berhasil!';
 

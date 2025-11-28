@@ -1,5 +1,3 @@
-<?php require_once __DIR__ . '/../layouts/header.php'; ?>
-
 <div class="flex items-center justify-center min-h-screen w-full">
     <div class="w-full max-w-sm bg-neutral-primary-soft p-6 border border-default rounded-base shadow-xs">
         <?php if (isset($error)): ?>
@@ -47,4 +45,3 @@
         </form>
     </div>
 </div>
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

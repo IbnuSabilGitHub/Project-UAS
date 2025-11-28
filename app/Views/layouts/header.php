@@ -13,5 +13,5 @@
 
 </head>
 
-<body class="dark bg-neutral-primary">
+<body class=" bg-neutral-primary">
 

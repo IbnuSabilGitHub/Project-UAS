@@ -211,7 +211,9 @@ class Router {
 
         // 404 Not Found
         http_response_code(404);
-        echo "<h1>404 - Halaman tidak ditemukan</h1>";
+        require_once __DIR__ . "/../Views/errors/404.php";
+        exit;
+        
     }
 }
 

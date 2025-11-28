@@ -24,8 +24,8 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
   - Aktivasi/Nonaktifkan akun karyawan
   - Generate temporary password otomatis
   - Soft delete (nonaktifkan) & Hard delete (hapus permanen - super_admin only)
-- **Absensi Karyawan** (check-in/check-out, 1x per hari) - *dalam jadi*
-- **Pengajuan Cuti** (karyawan) + Approve/Reject (admin) - *dalam jadi*
+- **Absensi Karyawan** (check-in/check-out, 1x per hari)
+- **Pengajuan Cuti** (karyawan) + Approve/Reject (admin)
 - super_admin role feature (masih di pertimbangkan)
 
 ## Arsitektur

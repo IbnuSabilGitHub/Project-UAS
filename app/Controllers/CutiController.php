@@ -1,9 +1,10 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/PengajuanCuti.php';
 require_once __DIR__ . '/../Models/Karyawan.php';
 
-class CutiController {
+class CutiController extends BaseController {
     private $model;
     private $karyawanModel;
 
@@ -15,26 +16,7 @@ class CutiController {
     /**
      * Render view dengan data
      * 
-     * @param string $view
-     * @param array $data
-     */
-    private function render($view, $data = []) {
-        extract($data);
-        require __DIR__ . "/../Views/{$view}.php";
-    }
 
-    /**
-     * Pastikan user adalah admin
-     */
-    private function ensureAdmin() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-            $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');
-        }
-    }
 
     /**
      * Upload file PDF/Image dokumen pendukung

@@ -1,28 +1,36 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
-
-<div class="min-h-screen flex items-center justify-center bg-neutral-secondary-soft px-4">
-    <div class="max-w-md w-full bg-neutral-primary-soft shadow-md rounded-base p-8 text-center">
-        <div class="mb-6">
-            <svg class="mx-auto h-24 w-24 text-neutral-tertiary-medium" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+<div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
+    <div class="max-w-5xl w-full flex flex-row items-center justify-center gap-16">
+        <div class="flex-shrink-0">
+            <img
+                src="<?= asset('img/404.png') ?>"
+                alt="404 illustration"
+                class="h-96 object-cover" />
         </div>
-        
-        <h1 class="text-6xl font-bold text-heading mb-4">404</h1>
-        <h2 class="text-2xl font-semibold text-heading mb-4">Halaman Tidak Ditemukan</h2>
-        <p class="text-body mb-8">
-            Maaf, halaman yang Anda cari tidak dapat ditemukan atau telah dipindahkan.
-        </p>
-        
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="javascript:history.back()"
-                class="inline-block bg-neutral-secondary-medium hover:bg-neutral-tertiary-soft text-heading font-medium px-6 py-3 rounded-base border border-default transition duration-200">
-                Kembali
-            </a>
-            <a href="<?= url('/') ?>"
-                class="inline-block bg-brand hover:bg-brand-strong text-white font-medium px-6 py-3 rounded-base shadow-xs transition duration-200">
-                Ke Halaman Utama
-            </a>
+
+        <div class="text-left">
+            <h1 class="text-9xl font-bold text-heading mb-4">404</h1>
+            <h2 class="text-3xl font-semibold text-heading mb-3">
+                Halaman Tidak Ditemukan
+            </h2>
+            <p class="text-body text-lg mb-8 max-w-md">
+                Halaman ini tidak ditemukan atau Anda salah memasukkan tautan.
+            </p>
+            <div class="space-x-6">
+                <a
+                    href="<?= url('/') ?>"
+                    class="inline-flex items-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-nonel">
+                    <i class="fa-solid fa-house me-1.5 -ms-0.5"></i>
+                    Go to Homepage
+                </a>
+                <a href="javascript:history.back()"
+                    class="inline-flex items-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                    <i class="fa-solid fa-angle-left me-1.5 -ms-0.5"></i>
+                    Kembali
+                </a>
+            </div>
+
+
         </div>
     </div>
 </div>
