@@ -176,4 +176,46 @@ class Karyawan
         $stmt2->bind_param('i', $id);
         return $stmt2->execute();
     }
+
+    /**
+     * Mengambil statistik karyawan untuk dashboard
+     * 
+     * @return array
+     */
+    public function getStatistics()
+    {
+        $stats = [];
+
+        // Total karyawan
+        $result = $this->conn->query("SELECT COUNT(*) as total FROM karyawan");
+        $stats['total_karyawan'] = $result->fetch_assoc()['total'];
+
+        // Karyawan berdasarkan status
+        $result = $this->conn->query("SELECT status, COUNT(*) as count FROM karyawan GROUP BY status");
+        $stats['by_status'] = [];
+        while ($row = $result->fetch_assoc()) {
+            $stats['by_status'][$row['status']] = (int)$row['count'];
+        }
+
+        // Karyawan berdasarkan posisi/jabatan
+        $result = $this->conn->query("SELECT position, COUNT(*) as count FROM karyawan GROUP BY position ORDER BY count DESC LIMIT 10");
+        $stats['by_position'] = [];
+        while ($row = $result->fetch_assoc()) {
+            $stats['by_position'][$row['position']] = (int)$row['count'];
+        }
+
+        // Karyawan dengan akun aktif
+        $result = $this->conn->query("SELECT COUNT(*) as total FROM users WHERE status = 'active'");
+        $stats['total_akun_aktif'] = $result->fetch_assoc()['total'];
+
+        // Karyawan tanpa akun
+        $result = $this->conn->query("SELECT COUNT(*) as total FROM karyawan WHERE id NOT IN (SELECT karyawan_id FROM users WHERE karyawan_id IS NOT NULL)");
+        $stats['total_tanpa_akun'] = $result->fetch_assoc()['total'];
+
+        // Karyawan bergabung bulan ini
+        $result = $this->conn->query("SELECT COUNT(*) as total FROM karyawan WHERE MONTH(join_date) = MONTH(CURRENT_DATE()) AND YEAR(join_date) = YEAR(CURRENT_DATE())");
+        $stats['bergabung_bulan_ini'] = $result->fetch_assoc()['total'];
+
+        return $stats;
+    }
 }

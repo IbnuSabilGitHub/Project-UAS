@@ -274,4 +274,57 @@ class PengajuanCuti {
         $result = $this->conn->query($sql);
         return $result ? $result->fetch_assoc() : [];
     }
+
+    /**
+     * Mengambil statistik cuti untuk karyawan tertentu
+     * 
+     * @param int $karyawanId
+     * @return array
+     */
+    public function getEmployeeStats($karyawanId) {
+        $stats = [];
+
+        // Total pengajuan cuti
+        $stmt = $this->conn->prepare("SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending,
+                    SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved,
+                    SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected,
+                    SUM(CASE WHEN status = 'approved' THEN total_days ELSE 0 END) as total_days_approved
+                FROM leave_requests WHERE karyawan_id = ?");
+        $stmt->bind_param('i', $karyawanId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stats = $result->fetch_assoc();
+
+        // Cuti berdasarkan tipe
+        $stmt = $this->conn->prepare("SELECT leave_type, COUNT(*) as count, SUM(total_days) as total_days 
+                FROM leave_requests 
+                WHERE karyawan_id = ? AND status = 'approved' 
+                GROUP BY leave_type");
+        $stmt->bind_param('i', $karyawanId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stats['by_type'] = [];
+        while ($row = $result->fetch_assoc()) {
+            $stats['by_type'][$row['leave_type']] = [
+                'count' => (int)$row['count'],
+                'total_days' => (int)$row['total_days']
+            ];
+        }
+
+        // Cuti tahun ini
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as total, SUM(total_days) as total_days 
+                FROM leave_requests 
+                WHERE karyawan_id = ? 
+                AND YEAR(start_date) = YEAR(CURRENT_DATE()) 
+                AND status = 'approved'");
+        $stmt->bind_param('i', $karyawanId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $thisYear = $result->fetch_assoc();
+        $stats['tahun_ini'] = $thisYear;
+
+        return $stats;
+    }
 }

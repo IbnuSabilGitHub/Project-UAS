@@ -314,4 +314,64 @@ class Attendance {
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
+
+    /**
+     * Statistik absensi untuk karyawan tertentu
+     * 
+     * @param int $karyawanId
+     * @return array
+     */
+    public function getEmployeeStats($karyawanId) {
+        $stats = [];
+
+        // Absensi bulan ini
+        $startOfMonth = date('Y-m-01');
+        $endOfMonth = date('Y-m-t');
+        $stmt = $this->conn->prepare("
+            SELECT 
+                COUNT(*) as total_attendance,
+                SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) as on_time,
+                SUM(CASE WHEN status = 'late' THEN 1 ELSE 0 END) as late,
+                SUM(CASE WHEN status = 'half_day' THEN 1 ELSE 0 END) as half_day,
+                SUM(CASE WHEN check_out IS NULL THEN 1 ELSE 0 END) as not_checkout
+            FROM attendance 
+            WHERE karyawan_id = ? 
+            AND DATE(check_in) BETWEEN ? AND ?
+        ");
+        $stmt->bind_param('iss', $karyawanId, $startOfMonth, $endOfMonth);
+        $stmt->execute();
+        $stats['bulan_ini'] = $stmt->get_result()->fetch_assoc();
+
+        // Total absensi keseluruhan
+        $stmt = $this->conn->prepare("
+            SELECT 
+                COUNT(*) as total_attendance,
+                SUM(CASE WHEN status = 'present' THEN 1 ELSE 0 END) as on_time,
+                SUM(CASE WHEN status = 'late' THEN 1 ELSE 0 END) as late,
+                SUM(CASE WHEN status = 'half_day' THEN 1 ELSE 0 END) as half_day
+            FROM attendance 
+            WHERE karyawan_id = ?
+        ");
+        $stmt->bind_param('i', $karyawanId);
+        $stmt->execute();
+        $stats['keseluruhan'] = $stmt->get_result()->fetch_assoc();
+
+        // Absensi 7 hari terakhir
+        $stmt = $this->conn->prepare("
+            SELECT DATE(check_in) as tanggal, status, check_in, check_out
+            FROM attendance 
+            WHERE karyawan_id = ? 
+            AND DATE(check_in) >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
+            ORDER BY check_in DESC
+        ");
+        $stmt->bind_param('i', $karyawanId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stats['tujuh_hari_terakhir'] = [];
+        while ($row = $result->fetch_assoc()) {
+            $stats['tujuh_hari_terakhir'][] = $row;
+        }
+
+        return $stats;
+    }
 }

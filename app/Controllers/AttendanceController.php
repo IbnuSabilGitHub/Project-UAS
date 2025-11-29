@@ -112,9 +112,7 @@ class AttendanceController extends BaseController {
 
 
 
-    // ===== ADMIN METHODS =====
-
-
+    // ADMIN METHODS
 
     /**
      * Halaman attendance untuk admin (melihat semua data)

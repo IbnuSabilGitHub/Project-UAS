@@ -8,37 +8,15 @@
     </div>
   <?php endif; ?>
 
-  <div class="bg-neutral-primary-soft shadow-xs rounded-base p-8 border border-default">
-    <h1 class="text-3xl font-bold text-heading mb-4">Admin Dashboard</h1>
-    <p class="mb-8 text-body">Selamat datang, <strong class="text-heading"><?= htmlspecialchars($username) ?></strong>
-      <span class="inline-block bg-brand-soft text-brand px-3 py-1 rounded-full text-sm font-medium ml-2"><?= htmlspecialchars($role) ?></span>
-    </p>
+  <div class="text-body ">
+    <p class="font-bold text-lg mb-2">Statistik Karyawan:</p>
+    <pre><?= json_encode($statsKaryawan, JSON_PRETTY_PRINT) ?></pre>
 
-    <div class="grid md:grid-cols-3 gap-6">
-      <a href="<?= url('/admin/karyawan') ?>"
-        class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
-        <h2 class="text-xl font-semibold text-heading mb-2">Manajemen Karyawan</h2>
-        <p class="text-sm text-body">Lihat, tambah, nonaktifkan, hapus permanen karyawan.</p>
-      </a>
+    <p class="font-bold text-lg mb-2 mt-6">Statistik Cuti:</p>
+    <pre><?= json_encode($statsLeave, JSON_PRETTY_PRINT) ?></pre>
 
-      <a href="<?= url('/admin/cuti') ?>"
-        class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
-        <h2 class="text-xl font-semibold text-heading mb-2">Pengajuan Cuti</h2>
-        <p class="text-sm text-body">Kelola pengajuan cuti karyawan dan approve/reject.</p>
-      </a>
-
-      <a href="<?= url('/admin/attendance') ?>"
-        class="block bg-neutral-secondary-medium shadow-xs hover:shadow-md transition-all duration-200 rounded-base p-6 border border-default hover:border-brand">
-        <h2 class="text-xl font-semibold text-heading mb-2">Absensi</h2>
-        <p class="text-sm text-body">Lihat, filter, dan export data absensi karyawan.</p>
-      </a>
-
-    </div>
-
-    <div class="mt-8 border-t border-default pt-6">
-      <a href="<?= url('/logout') ?>"
-        class="inline-block bg-red-600 hover:bg-red-700 text-white font-medium px-5 py-2.5 rounded-base shadow-xs transition duration-200">
-        Logout
-      </a>
-    </div>
+    <p class="font-bold text-lg mb-2 mt-6">Statistik Absensi:</p>
+    <pre><?= json_encode($statsAttendance, JSON_PRETTY_PRINT) ?></pre>
   </div>
+>
+</div>

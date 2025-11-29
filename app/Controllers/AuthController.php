@@ -1,19 +1,57 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/BaseController.php';
+require_once __DIR__ . '/../Models/PengajuanCuti.php';
+require_once __DIR__ . '/../Models/Attendance.php';
+require_once __DIR__ . '/../Models/Karyawan.php';
 
-class AuthController extends BaseController {
+class AuthController extends BaseController
+{
     private $db;
+    private $modelLeave;
+    private $modelAttendance;
+    private $modelKaryawan;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->db = new Database();
+        $this->modelLeave = new PengajuanCuti();
+        $this->modelAttendance = new Attendance();
+        $this->modelKaryawan = new Karyawan();
+    }
+
+    /**
+     * Pastikan user adalah admin/super_admin
+     */
+    protected function ensureAdmin()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'super_admin'])) {
+            $_SESSION['error'] = 'Akses ditolak';
+            redirect('/login');
+        }
+    }
+
+    /**
+     * Pastikan user adalah karyawan
+     */
+    protected function ensureKaryawan()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
+            $_SESSION['error'] = 'Akses ditolak';
+            redirect('/login');
+        }
     }
 
 
-
-    
     // Menampilkan halaman login
-    public function loginPage() {
+    public function loginPage()
+    {
         // Start session di controller
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -21,7 +59,7 @@ class AuthController extends BaseController {
 
         if (isset($_SESSION['user_id'])) {
             // Jika sudah login, redirect ke dashboard sesuai role
-            if (in_array($_SESSION['role'], ['admin','super_admin'])) {
+            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
                 redirect('/admin/dashboard');
             } else {
                 redirect('/karyawan/dashboard');
@@ -41,11 +79,12 @@ class AuthController extends BaseController {
     }
 
     // Proses login
-    public function login() {
+    public function login()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('/login');
         }
@@ -81,11 +120,11 @@ class AuthController extends BaseController {
         if ($result->num_rows === 0) {
             $invalid_login();
         }
-        
+
         // Ambil data user dengan fetch_assoc
         $user = $result->fetch_assoc();
 
-    
+
         // Cek status akun
         if ($user['status'] !== 'active') {
             $_SESSION['error'] = 'Akun dinonaktifkan';
@@ -119,7 +158,8 @@ class AuthController extends BaseController {
     }
 
     // Logout user
-    public function logout() {
+    public function logout()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -129,55 +169,98 @@ class AuthController extends BaseController {
     }
 
     // Legacy dashboard route: redirect ke role dashboard
-    public function dashboard() {
+    /**
+     * Render halaman dashboard sesuai role
+     */
+    public function dashboard()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
             redirect('/login');
         }
-        if (in_array($_SESSION['role'], ['admin','super_admin'])) {
+        if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
             redirect('/admin/dashboard');
         } else {
             redirect('/karyawan/dashboard');
         }
     }
 
-    public function adminDashboard() {
+    /**
+     * Render halaman dashboard admin
+     */
+    public function adminDashboard()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin','super_admin'])) {
-            redirect('/login');
-        }
+
+        $this->ensureAdmin();
+        $statsLeave = $this->modelLeave->getStatistics();
+        $statsAttendance = $this->modelAttendance->getAdminStats();
+        $statsKaryawan = $this->modelKaryawan->getStatistics();
+        
+
         $data = [
             'title' => 'Admin Dashboard',
             'username' => $_SESSION['username'],
             'role' => $_SESSION['role'],
-            'success' => $_SESSION['success'] ?? null
+            'success' => $_SESSION['success'] ?? null,
+            'statsLeave' => $statsLeave,
+            'statsAttendance' => $statsAttendance,
+            'statsKaryawan' => $statsKaryawan
         ];
         unset($_SESSION['success']);
         $this->render('admin/dashboard', $data);
     }
 
-    public function employeeDashboard() {
+    /**
+     * Render halaman dashboard karyawan
+     */
+    public function employeeDashboard()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
-            redirect('/login');
+        
+        $this->ensureKaryawan();
+
+        // Ambil karyawan_id dari session user
+        $conn = $this->db->getConnection();
+        $stmt = $conn->prepare("SELECT karyawan_id FROM users WHERE id = ?");
+        $stmt->bind_param('i', $_SESSION['user_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $user = $result->fetch_assoc();
+        $karyawanId = $user['karyawan_id'] ?? null;
+
+        // Ambil statistik personal karyawan
+        $statsLeave = [];
+        $statsAttendance = [];
+        
+        if ($karyawanId) {
+            $statsLeave = $this->modelLeave->getEmployeeStats($karyawanId);
+            $statsAttendance = $this->modelAttendance->getEmployeeStats($karyawanId);
         }
+
         $data = [
             'title' => 'Karyawan Dashboard',
             'username' => $_SESSION['username'],
             'role' => $_SESSION['role'],
-            'success' => $_SESSION['success'] ?? null
+            'success' => $_SESSION['success'] ?? null,
+            'statsLeave' => $statsLeave,
+            'statsAttendance' => $statsAttendance
         ];
         unset($_SESSION['success']);
         $this->render('employee/dashboard', $data);
     }
 
-    public function changePasswordPage() {
+    /**
+     * Render halaman ganti password
+     */
+    public function changePasswordPage()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -195,7 +278,11 @@ class AuthController extends BaseController {
         $this->render('auth/change_password', $data);
     }
 
-    public function changePassword() {
+    /**
+     * Proses ganti password
+     */
+    public function changePassword()
+    {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

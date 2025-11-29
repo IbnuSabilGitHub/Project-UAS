@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file.
 
+## [feat: Admin & Employee Dashboard Stats] - 2024-11-29
+
+### 🔄 Changed
+1. **Model Karyawan (Karyawan.php)**
+Ditambahkan method getStatistics() yang mengembalikan:
+- Total karyawan
+- Breakdown berdasarkan status (active/inactive/resigned)
+- Breakdown berdasarkan posisi/jabatan (top 10)
+- Total akun aktif
+- Total karyawan tanpa akun
+- Karyawan bergabung bulan ini
+
+2. **Model PengajuanCuti (PengajuanCuti.php)**
+Ditambahkan method getEmployeeStats($karyawanId) untuk statistik personal karyawan:
+- Total pengajuan (pending, approved, rejected)
+- Total hari cuti yang disetujui
+- Breakdown berdasarkan tipe cuti
+- Statistik cuti tahun ini
+3. **Model Attendance (Attendance.php)**
+Ditambahkan method getEmployeeStats($karyawanId) untuk statistik absensi personal:
+- Statistik bulan ini (total, tepat waktu, terlambat, half day)
+- Statistik keseluruhan
+- Detail absensi 7 hari terakhir
+4. **AuthController (AuthController.php)**
+-  Import model Karyawan
+- Update adminDashboard() - menambahkan statsKaryawan
+- Update employeeDashboard() - menambahkan statsLeave dan statsAttendance
+##  📊 Struktur Data yang Tersedia
+**Dashboard Admin:**
+`statsKaryawan` - Statistik manajemen karyawan
+`statLeave` - Statistik cuti keseluruhan
+`statsAttendance` - Statistik absensi keseluruhan
+
+**Dashboard Karyawan:**
+`statsLeave` - Statistik cuti personal (termasuk by_type dan tahun_ini)
+`statsAttendance` - Statistik absensi personal (bulan_ini, keseluruhan, 7 hari terakhir)
+
 ## [Refactoring: Views Structure] - 2024-11-27
 
 ### 🔄 Changed
