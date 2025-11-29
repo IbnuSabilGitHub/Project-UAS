@@ -106,7 +106,7 @@ Dashboard admin menyediakan 3 kategori statistik dalam format JSON:
 │                                                     │
 │  Karyawan Berdasarkan Status                       │
 │  ┌─────────────────────────────────────────┐       │
-│  │ [Pie Chart atau Bar Chart]              │       │
+│  │             │       │
 │  │ Active: 20 | Inactive: 3 | Resigned: 2  │       │
 │  └─────────────────────────────────────────┘       │
 │                                                     │

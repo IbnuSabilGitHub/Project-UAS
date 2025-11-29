@@ -3,14 +3,49 @@
 class Router {
     public function resolve($uri, $method) {
 
-        // Route untuk halaman login (GET)
-        if ($uri === "/" || ($uri === "/login" && $method === "GET")) {
+        // Route untuk halaman index (pilihan login)
+        if ($uri === "/") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->index();
+            return;
+        }
+
+        // Route untuk halaman login admin (GET)
+        if ($uri === "/admin/login" && $method === "GET") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->adminLoginPage();
+            return;
+        }
+
+        // Route untuk proses login admin (POST)
+        if ($uri === "/admin/login" && $method === "POST") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->adminLogin();
+            return;
+        }
+
+        // Route untuk halaman login karyawan (GET)
+        if ($uri === "/karyawan/login" && $method === "GET") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->karyawanLoginPage();
+            return;
+        }
+
+        // Route untuk proses login karyawan (POST)
+        if ($uri === "/karyawan/login" && $method === "POST") {
+            require_once __DIR__ . "/../Controllers/AuthController.php";
+            (new AuthController())->karyawanLogin();
+            return;
+        }
+
+        // Route untuk halaman login lama (backward compatibility)
+        if ($uri === "/login" && $method === "GET") {
             require_once __DIR__ . "/../Controllers/AuthController.php";
             (new AuthController())->loginPage();
             return;
         }
 
-        // Route untuk proses login (POST)
+        // Route untuk proses login lama (POST)
         if ($uri === "/login" && $method === "POST") {
             require_once __DIR__ . "/../Controllers/AuthController.php";
             (new AuthController())->login();

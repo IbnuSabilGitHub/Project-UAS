@@ -2,7 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## [feat: Separated Login for Admin & Employee] - 2024-11-29
+
+### 🔄 Changed
+**Views( 3 new files ):**
+1. `index.php` - Landing page dengan 2 pilihan card login
+2. `login-admin.php` - Form login admin
+3. `login-karyawan.php` - Form login karyawan
+
+**Controller:**
+1. `AuthController.php` - Ditambahkan 5 method baru:
+2. `index()` - Render landing page
+3. `adminLoginPage()` - Render form login admin
+4. `karyawanLoginPage()` - Render form login karyawan
+5. `adminLogin()` - Process login admin dengan validasi role
+6. `karyawanLogin()` - Process login karyawan dengan validasi role
+Update ensureAdmin() dan ensureKaryawan() redirect ke login masing-masing
+
+**Router:  Ditambahkan route**
+1. `GET /` - `index()`
+2. `GET /admin/login` - `adminLoginPage()`
+3. `POST /admin/login` - `adminLogin()`
+4. `GET /karyawan/login` - `karyawanLoginPage()`
+5. `POST /karyawan/login` - `karyawanLogin()`
 ## [feat: Admin & Employee Dashboard Stats] - 2024-11-29
+
+Dokumentasi:
+`SEPARATED_LOGIN.md` - Dokumentasi fitur login terpisah untuk admin dan karyawan
+
+### Backcompatibility
+- Login lama di `/login` tetap berfungsi
+- Setelah login lama, redirect ke dashboard sesuai role
 
 ### 🔄 Changed
 1. **Model Karyawan (Karyawan.php)**

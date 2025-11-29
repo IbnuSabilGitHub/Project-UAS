@@ -30,7 +30,7 @@ class AuthController extends BaseController
         }
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'super_admin'])) {
             $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');
+            redirect('/admin/login');
         }
     }
 
@@ -44,8 +44,221 @@ class AuthController extends BaseController
         }
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
             $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');
+            redirect('/karyawan/login');
         }
+    }
+
+    /**
+     * Halaman index - pilihan login
+     */
+    public function index()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Jika sudah login, redirect ke dashboard sesuai role
+        if (isset($_SESSION['user_id'])) {
+            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
+                redirect('/admin/dashboard');
+            } else {
+                redirect('/karyawan/dashboard');
+            }
+        }
+
+        $data = [
+            'title' => 'HRIS - Pilih Login'
+        ];
+
+        $this->renderWithoutSidebar('index', $data);
+    }
+
+    /**
+     * Halaman login admin
+     */
+    public function adminLoginPage()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (isset($_SESSION['user_id'])) {
+            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
+                redirect('/admin/dashboard');
+            } else {
+                redirect('/karyawan/dashboard');
+            }
+        }
+
+        $data = [
+            'error' => $_SESSION['error'] ?? null,
+            'success' => $_SESSION['success'] ?? null,
+            'title' => 'Login Admin - HRIS'
+        ];
+
+        unset($_SESSION['error'], $_SESSION['success']);
+
+        $this->renderWithoutSidebar('auth/login-admin', $data);
+    }
+
+    /**
+     * Halaman login karyawan
+     */
+    public function karyawanLoginPage()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (isset($_SESSION['user_id'])) {
+            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
+                redirect('/admin/dashboard');
+            } else {
+                redirect('/karyawan/dashboard');
+            }
+        }
+
+        $data = [
+            'error' => $_SESSION['error'] ?? null,
+            'success' => $_SESSION['success'] ?? null,
+            'title' => 'Login Karyawan - HRIS'
+        ];
+
+        unset($_SESSION['error'], $_SESSION['success']);
+
+        $this->renderWithoutSidebar('auth/login-karyawan', $data);
+    }
+
+    /**
+     * Proses login admin
+     */
+    public function adminLogin()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('/admin/login');
+        }
+
+        $username = trim($_POST['username'] ?? '');
+        $username = filter_var($username, FILTER_SANITIZE_SPECIAL_CHARS);
+        $username = preg_replace('/[^a-zA-Z0-9_\-.@]/', '', $username);
+        $password = $_POST['password'] ?? '';
+
+        if (empty($username) || empty($password)) {
+            $_SESSION['error'] = 'Username dan password harus diisi';
+            redirect('/admin/login');
+        }
+
+        $conn = $this->db->getConnection();
+        $stmt = $conn->prepare("SELECT id, username, password_hash, role, must_change_password, status FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            $_SESSION['error'] = 'Username atau password salah';
+            redirect('/admin/login');
+        }
+
+        $user = $result->fetch_assoc();
+
+        // Cek apakah user adalah admin/super_admin
+        if (!in_array($user['role'], ['admin', 'super_admin'])) {
+            $_SESSION['error'] = 'Anda tidak memiliki akses admin';
+            redirect('/admin/login');
+        }
+
+        if ($user['status'] !== 'active') {
+            $_SESSION['error'] = 'Akun dinonaktifkan';
+            redirect('/admin/login');
+        }
+
+        if (!password_verify($password, $user['password_hash'])) {
+            $_SESSION['error'] = 'Username atau password salah';
+            redirect('/admin/login');
+        }
+
+        session_regenerate_id(true);
+
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role'];
+        $_SESSION['success'] = 'Login berhasil!';
+
+        if (!empty($user['must_change_password'])) {
+            redirect('/change-password');
+        }
+
+        redirect('/admin/dashboard');
+    }
+
+    /**
+     * Proses login karyawan
+     */
+    public function karyawanLogin()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('/karyawan/login');
+        }
+
+        $username = trim($_POST['username'] ?? '');
+        $username = filter_var($username, FILTER_SANITIZE_SPECIAL_CHARS);
+        $username = preg_replace('/[^a-zA-Z0-9_\-.@]/', '', $username);
+        $password = $_POST['password'] ?? '';
+
+        if (empty($username) || empty($password)) {
+            $_SESSION['error'] = 'Username dan password harus diisi';
+            redirect('/karyawan/login');
+        }
+
+        $conn = $this->db->getConnection();
+        $stmt = $conn->prepare("SELECT id, username, password_hash, role, must_change_password, status FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows === 0) {
+            $_SESSION['error'] = 'Username atau password salah';
+            redirect('/karyawan/login');
+        }
+
+        $user = $result->fetch_assoc();
+
+        // Cek apakah user adalah karyawan
+        if ($user['role'] !== 'karyawan') {
+            $_SESSION['error'] = 'Gunakan halaman login admin untuk akun administrator';
+            redirect('/karyawan/login');
+        }
+
+        if ($user['status'] !== 'active') {
+            $_SESSION['error'] = 'Akun dinonaktifkan';
+            redirect('/karyawan/login');
+        }
+
+        if (!password_verify($password, $user['password_hash'])) {
+            $_SESSION['error'] = 'Username atau password salah';
+            redirect('/karyawan/login');
+        }
+
+        session_regenerate_id(true);
+
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role'];
+        $_SESSION['success'] = 'Login berhasil!';
+
+        if (!empty($user['must_change_password'])) {
+            redirect('/change-password');
+        }
+
+        redirect('/karyawan/dashboard');
     }
 
 
@@ -86,7 +299,7 @@ class AuthController extends BaseController
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/login');
+            redirect('/login'); //backward compatibility
         }
 
         // Sanitas input username
@@ -99,7 +312,7 @@ class AuthController extends BaseController
 
         if (empty($username) || empty($password)) {
             $_SESSION['error'] = 'Username dan password harus diisi';
-            redirect('/login');
+            redirect('/login');//backward compatibility
         }
 
         // Konksi db
@@ -113,7 +326,7 @@ class AuthController extends BaseController
 
         $invalid_login = function () {
             $_SESSION['error'] = 'Username atau password salah';
-            redirect('/login');
+            redirect('/login');//backward compatibility
         };
 
         // Cek apakah user ditemukan atau tidak
@@ -128,7 +341,7 @@ class AuthController extends BaseController
         // Cek status akun
         if ($user['status'] !== 'active') {
             $_SESSION['error'] = 'Akun dinonaktifkan';
-            redirect('/login');
+            redirect('/login');//backward compatibility
         }
 
         // Verifikasi password
@@ -165,7 +378,20 @@ class AuthController extends BaseController
         }
         // Hapus semua data session
         session_destroy();
-        redirect('/login');
+        redirect('/login');//backward compatibility
+    }
+
+    public function indexPage()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if(isset($_SESSION['user_id'])) {
+            redirect('/dashboard');
+        } else {
+            $this->render('/', ['title' => 'HRIS']);
+        }
     }
 
     // Legacy dashboard route: redirect ke role dashboard
@@ -178,7 +404,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            redirect('/login');
+            redirect('/login');//backward compatibility
         }
         if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
             redirect('/admin/dashboard');
@@ -265,7 +491,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            redirect('/login');
+            redirect('/login');//backward compatibility
         }
         $data = [
             'title' => 'Ganti Password',
@@ -287,7 +513,7 @@ class AuthController extends BaseController
             session_start();
         }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
-            redirect('/login');
+            redirect('/login');//backward compatibility
         }
         $new = $_POST['new_password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';

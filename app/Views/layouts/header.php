@@ -16,5 +16,5 @@
 
 </head>
 
-<body class=" bg-neutral-primary">
+<body class=" bg-neutral-primary text-heading">
 
