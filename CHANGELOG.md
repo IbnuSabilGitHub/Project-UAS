@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [fix: File Upload Size Limit Increased to 10MB] - 2024-11-30
+
+### 🐛 Fixed
+- Meningkatkan batas ukuran file upload untuk lampiran cuti dari 5MB menjadi 10MB
+- Memperbarui validasi di `LeaveController.php` dan pesan error di `create.php`
+- Memperbarui validasi frontend di form pengajuan cuti
+- Membuat code validasi penjagaan lebih rapi
+
+### 🔄 Changed
+- `app/Controllers/LeaveController.php`: Ubah batas ukuran file dari 5MB ke 10MB
+- `app/Views/employee/leave/create.php`: Ubah pesan error validasi ukuran file dari 5MB ke 10MB
+
 ## [feat: Separated Login for Admin & Employee] - 2024-11-29
 
 ### 🔄 Changed

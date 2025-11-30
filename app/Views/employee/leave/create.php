@@ -93,7 +93,7 @@
             <div class="mb-4">
                 <label class="block mb-2.5 text-sm font-medium text-heading" for="attachment">Lampiran File</label>
                 <input class="cursor-pointer bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full shadow-xs placeholder:text-body" type="file" name="attachment" id="attachment" accept=".pdf,.jpg,.jpeg,.png">
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" >PDF, JPG, PNG (MAX. 5MB)</p>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">PDF, JPG, PNG (MAX. 10MB)</p>
             </div>
 
             <!-- Buttons -->
@@ -116,99 +116,93 @@
 </div>
 
 <script>
-    // Auto calculate total days
+    // Element references
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
     const totalDaysSpan = document.getElementById('totalDays');
     const totalDaysInput = document.getElementById('totalDaysInput');
+    const attachmentInput = document.getElementById('attachment');
+    const leaveForm = document.getElementById('leaveForm');
 
+    // Helper Function
+    const setTotalDays = (days) => {
+        totalDaysSpan.textContent = `${days} hari`;
+        totalDaysInput.value = days;
+    };
+
+    // Hitung total hari
     function calculateDays() {
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
+        const start = new Date(startDateInput.value);
+        const end = new Date(endDateInput.value);
 
-
-        if (startDate && endDate) {
-            // Parse tanggal format yyyy-mm-dd
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-
-
-            if (!isNaN(start.getTime()) && !isNaN(end.getTime())) {
-                if (end >= start) {
-                    const diffTime = end.getTime() - start.getTime();
-                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                    totalDaysSpan.textContent = diffDays + ' hari';
-                    totalDaysInput.value = diffDays;
-                } else {
-                    totalDaysSpan.textContent = '0 hari';
-                    totalDaysInput.value = 0;
-                }
-            } else {
-                console.error('Invalid date format'); // Debug
-                totalDaysSpan.textContent = '0 hari';
-                totalDaysInput.value = 0;
-            }
-        } else {
-            totalDaysSpan.textContent = '0 hari';
-            totalDaysInput.value = 0;
+        if (!startDateInput.value || !endDateInput.value) {
+            return setTotalDays(0);
         }
+
+        if (isNaN(start) || isNaN(end) || end < start) {
+            return setTotalDays(0);
+        }
+
+        const diffDays = Math.floor((end - start) / 86400000) + 1; // 86400000 = 1000 * 60 * 60 * 24
+        setTotalDays(diffDays);
     }
 
-    // Trigger calculation saat datepicker berubah
-    startDateInput.addEventListener('changeDate', calculateDays);
-    endDateInput.addEventListener('changeDate', calculateDays);
-    startDateInput.addEventListener('change', calculateDays);
-    endDateInput.addEventListener('change', calculateDays);
-    startDateInput.addEventListener('input', calculateDays);
-    endDateInput.addEventListener('input', calculateDays);
-
-    // Update min date for end_date when start_date changes
-    startDateInput.addEventListener('change', function() {
-        endDateInput.min = this.value;
+    // Listener tanggal
+    ['change', 'input', 'changeDate'].forEach(evt => {
+        startDateInput.addEventListener(evt, calculateDays);
+        endDateInput.addEventListener(evt, calculateDays);
     });
 
-    // Validasi file size
-    document.getElementById('attachment').addEventListener('change', function(e) {
+    // Update min end date
+    startDateInput.addEventListener('change', () => {
+        endDateInput.min = startDateInput.value;
+    });
+
+    // Validasi File
+    attachmentInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
-        if (file && file.size > 5 * 1024 * 1024) {
-            alert('Ukuran file maksimal 5MB');
-            this.value = '';
+        if (!file) return;
+
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        const allowedExtensions = /\.(pdf|jpg|jpeg|png)$/i;
+
+        if (file.size > maxSize) {
+            alert('Ukuran file maksimal 10MB');
+            return attachmentInput.value = '';
+        }
+
+        if (!allowedExtensions.test(file.name)) {
+            alert('Format file tidak valid. Hanya: PDF, JPG, JPEG, PNG');
+            return attachmentInput.value = '';
         }
     });
 
     // Validasi sebelum submit
-    document.getElementById('leaveForm').addEventListener('submit', function(e) {
+    leaveForm.addEventListener('submit', (e) => {
         const startDate = startDateInput.value;
         const endDate = endDateInput.value;
 
-        console.log('Submit - Form data:', {
-            start_date: startDate,
-            end_date: endDate,
-            total_days: totalDaysInput.value
-        });
-
         if (!startDate || !endDate) {
             e.preventDefault();
-            alert('Silakan pilih tanggal mulai dan tanggal selesai');
-            return false;
+            return alert('Silakan pilih tanggal mulai dan tanggal selesai');
         }
 
-        // Recalculate sebelum submit untuk memastikan
+        // Pastikan hitungan terbaru
         calculateDays();
 
         if (parseInt(totalDaysInput.value) <= 0) {
             e.preventDefault();
-            alert('Total hari cuti harus lebih dari 0. Total: ' + totalDaysInput.value);
-            return false;
+            return alert(`Total hari cuti harus lebih dari 0. Total: ${totalDaysInput.value}`);
         }
     });
 
-    // Trigger calculation saat page load jika sudah ada nilai
-    window.addEventListener('load', function() {
+    // Init saat load
+    window.addEventListener('load', () => {
         if (startDateInput.value && endDateInput.value) {
             calculateDays();
         }
     });
+    F
 </script>
 
 <?php require_once __DIR__ . '/../../layouts/footer.php'; ?>

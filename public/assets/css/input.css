@@ -6,7 +6,8 @@
 @plugin "flowbite/plugin";
 
 /* Configure the source files of Flowbite */
-@source "./node_modules/flowbite";
+
+@source "C:/xampp/htdocs/HRIS/node_modules/flowbite"; /* Paksa Flowbite untuk menggunakan path absolut di Windows */
 
 
 @custom-variant dark (&:where(.dark, .dark *));
