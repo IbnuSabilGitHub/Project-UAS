@@ -72,7 +72,7 @@
         </a>
         <ul class="space-y-2 font-medium">
             <li>
-                <a href="<?= url('/admin/dashboard') ?>" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
+                <a href="<?= url('/karyawan/dashboard') ?>" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                     <i class="fa-solid fa-chart-pie transition duration-75 group-hover:text-fg-brand"></i>
                     <span class="ms-3">Dashboard</span>
                 </a>
