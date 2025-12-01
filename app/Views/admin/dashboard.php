@@ -18,5 +18,12 @@
     <p class="font-bold text-lg mb-2 mt-6">Statistik Absensi:</p>
     <pre><?= json_encode($statsAttendance, JSON_PRETTY_PRINT) ?></pre>
   </div>
->
+  >
 </div>
+
+<script>
+  const nikResult = validateNIK('3201234567890123');
+  if (!nikResult.valid) {
+    alertError(nikResult.message);
+  }
+</script>

@@ -4,11 +4,22 @@ require_once __DIR__ . '/../Core/Database.php';
 class Karyawan
 {
     private $conn;
+    private $lastError = '';
 
     public function __construct()
     {
         $db = new Database();
         $this->conn = $db->getConnection();
+    }
+
+    /**
+     * Mendapatkan pesan error terakhir
+     * 
+     * @return string
+     */
+    public function getLastError()
+    {
+        return $this->lastError;
     }
 
     /**
@@ -69,11 +80,17 @@ class Karyawan
      */
     public function create($data)
     {
+        $this->lastError = '';
         $stmt = $this->conn->prepare("INSERT INTO karyawan (nik, name, email, phone, position, join_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            $this->lastError = $this->conn->error;
+            return false;
+        }
         $stmt->bind_param('sssssss', $data['nik'], $data['name'], $data['email'], $data['phone'], $data['position'], $data['join_date'], $data['status']);
         if ($stmt->execute()) {
             return $this->conn->insert_id;
         }
+        $this->lastError = $stmt->error;
         return false;
     }
 
@@ -86,9 +103,18 @@ class Karyawan
      */
     public function update($id, $data)
     {
+        $this->lastError = '';
         $stmt = $this->conn->prepare("UPDATE karyawan SET nik = ?, name = ?, email = ?, phone = ?, position = ?, join_date = ?, status = ? WHERE id = ?");
+        if (!$stmt) {
+            $this->lastError = $this->conn->error;
+            return false;
+        }
         $stmt->bind_param('sssssssi', $data['nik'], $data['name'], $data['email'], $data['phone'], $data['position'], $data['join_date'], $data['status'], $id);
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return true;
+        }
+        $this->lastError = $stmt->error;
+        return false;
     }
 
     /**

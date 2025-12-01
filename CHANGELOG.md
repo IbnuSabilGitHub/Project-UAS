@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Refactor: form ui add employee] - 2024-11-30
+
+### 🎨 Refactored
+#### **Improved Add Employee Form UI/UX**
+- Mendesain ulang form "Tambah Karyawan" untuk meningkatkan kegunaan dan estetika
+**Perubahan di `app/Views/karyawan/form.php`:**
+- Menggunakan komponen form Flowbite untuk gaya yang konsisten
+- Memperbaiki spasi dan perataan untuk keterbacaan yang lebih baik
+- Menambahkan teks bantuan untuk bidang seperti NIK dan Email
+
+
 ## [fix: File Upload Size Limit Increased to 10MB] - 2024-11-30
 
 ### 🐛 Fixed

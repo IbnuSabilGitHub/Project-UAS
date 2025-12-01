@@ -48,6 +48,12 @@ class KaryawanController extends BaseController {
             'status' => $_POST['status'] ?? 'active'
         ];
 
+        // Validasi data yang diperlukan
+        if (empty($data['nik']) || empty($data['name']) || empty($data['email'])) {
+            $_SESSION['error'] = 'NIK, Nama, dan Email wajib diisi';
+            redirect('/admin/karyawan');
+        }
+
         $insertId = $this->model->create($data);
         if ($insertId) {
             if (!empty($_POST['create_account'])) {
@@ -62,7 +68,8 @@ class KaryawanController extends BaseController {
                 $_SESSION['success'] = 'Karyawan berhasil dibuat';
             }
         } else {
-            $_SESSION['error'] = 'Gagal menyimpan data karyawan';
+            $error = $this->model->getLastError();
+            $_SESSION['error'] = 'Gagal menyimpan data karyawan' . ($error ? ': ' . $error : '');
         }
 
         redirect('/admin/karyawan');
@@ -109,10 +116,17 @@ class KaryawanController extends BaseController {
             'status' => $_POST['status'] ?? 'active'
         ];
 
+        // Validasi data yang diperlukan
+        if (empty($data['nik']) || empty($data['name']) || empty($data['email'])) {
+            $_SESSION['error'] = 'NIK, Nama, dan Email wajib diisi';
+            redirect('/admin/karyawan');
+        }
+
         if ($this->model->update($id, $data)) {
             $_SESSION['success'] = 'Data karyawan diperbarui';
         } else {
-            $_SESSION['error'] = 'Gagal memperbarui data';
+            $error = $this->model->getLastError();
+            $_SESSION['error'] = 'Gagal memperbarui data' . ($error ? ': ' . $error : '');
         }
         redirect('/admin/karyawan');
     }

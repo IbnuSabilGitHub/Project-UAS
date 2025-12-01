@@ -14,7 +14,12 @@
     <!-- Cegah FOUC(flash of unstyled content) – terapkan tema sedini mungkin -->
     <script src="<?= asset('js/apply-theme.js') ?>"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body class=" bg-neutral-primary text-heading">
+
+<!-- Alert Handler untuk session flash messages -->
+<?php include __DIR__ . '/components/swal-alert-handler.php'; ?>
 
