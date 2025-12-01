@@ -425,8 +425,17 @@ class AuthController extends BaseController
         $this->ensureAdmin();
         $statsLeave = $this->modelLeave->getStatistics();
         $statsAttendance = $this->modelAttendance->getAdminStats();
-        $statsKaryawan = $this->modelKaryawan->getStatistics();
+        $allStats = $this->modelKaryawan->getStatistics();
         
+        // Format statsKaryawan untuk kompatibilitas dengan view
+        $statsKaryawan = [
+            'total' => $allStats['total_karyawan'] ?? 0,
+            'active' => $allStats['by_status']['active'] ?? 0,
+            'inactive' => $allStats['by_status']['inactive'] ?? 0,
+            'resigned' => 0, // Data dari employment_status
+            'new_this_month' => $allStats['bergabung_bulan_ini'] ?? 0,
+            'by_position' => $allStats['by_position'] ?? []
+        ];
 
         $data = [
             'title' => 'Admin Dashboard',
