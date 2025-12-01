@@ -5,8 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Determine user role and include appropriate sidebar
-if (isset($_SESSION['role']) && isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
+if (isset($_SESSION['role']) && isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];
     $role = $_SESSION['role'];
     
     // Include appropriate sidebar based on role

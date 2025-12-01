@@ -106,7 +106,7 @@ class LeaveRequest {
     public function getByKaryawan($karyawanId) {
         $stmt = $this->conn->prepare("
             SELECT lr.*, 
-                   u.username as approver_name
+                   u.email as approver_name
             FROM leave_requests lr
             LEFT JOIN users u ON lr.approved_by = u.id
             WHERE lr.karyawan_id = ?
@@ -132,7 +132,7 @@ class LeaveRequest {
         $sql = "
             SELECT lr.*, 
                    k.nik, k.name as karyawan_name,
-                   u.username as approver_name
+                   u.email as approver_name
             FROM leave_requests lr
             JOIN karyawan k ON lr.karyawan_id = k.id
             LEFT JOIN users u ON lr.approved_by = u.id
@@ -170,7 +170,7 @@ class LeaveRequest {
         $stmt = $this->conn->prepare("
             SELECT lr.*, 
                    k.nik, k.name as karyawan_name, k.email,
-                   u.username as approver_name
+                   u.email as approver_name
             FROM leave_requests lr
             JOIN karyawan k ON lr.karyawan_id = k.id
             LEFT JOIN users u ON lr.approved_by = u.id

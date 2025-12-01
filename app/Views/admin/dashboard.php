@@ -20,10 +20,3 @@
   </div>
   >
 </div>
-
-<script>
-  const nikResult = validateNIK('3201234567890123');
-  if (!nikResult.valid) {
-    alertError(nikResult.message);
-  }
-</script>

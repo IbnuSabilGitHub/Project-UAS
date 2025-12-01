@@ -20,6 +20,4 @@
 
 <body class=" bg-neutral-primary text-heading">
 
-<!-- Alert Handler untuk session flash messages -->
-<?php include __DIR__ . '/components/swal-alert-handler.php'; ?>
 

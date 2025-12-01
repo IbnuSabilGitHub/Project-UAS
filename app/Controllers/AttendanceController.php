@@ -152,7 +152,7 @@ class AttendanceController extends BaseController {
                 'total' => $totalPages,
                 'totalRecords' => $total
             ],
-            'username' => $_SESSION['username'] ?? null,
+            'email' => $_SESSION['email'] ?? null,
             'role' => $_SESSION['role'] ?? null,
             'success' => $_SESSION['success'] ?? null,
             'error' => $_SESSION['error'] ?? null

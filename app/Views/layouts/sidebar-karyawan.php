@@ -37,10 +37,10 @@
                     <div class="z-50 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44" id="dropdown-user">
                         <div class="px-4 py-3 border-b border-default-medium" role="none">
                             <p class="text-sm font-medium text-heading" role="none">
-                                <?= htmlspecialchars($username) ?>
+                                <?= htmlspecialchars($email) ?>
                             </p>
                             <p class="text-sm text-body truncate" role="none">
-                                ibnu@gmail.com
+                                Karyawan
                             </p>
                         </div>
                         <ul class="p-2 text-sm text-body font-medium" role="none">

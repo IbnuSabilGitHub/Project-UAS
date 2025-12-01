@@ -21,7 +21,7 @@ require_once dirname(__DIR__) . '/app/Core/Database.php';
 
 $db = new Database();
 $conn = $db->getConnection();
-$username = 'ibnu';
+$email = 'ibnu@gmail.com';
 $password = 'ibnu123';
 $role = 'admin'; // atau 'karyawan'
 
@@ -36,12 +36,12 @@ $password_hash = password_hash($password, PASSWORD_BCRYPT);
 
 # statemen insert
 $stmt = $conn->prepare("
-    INSERT INTO users (username, password_hash, role, karyawan_id)
+    INSERT INTO users (email, password_hash, role, karyawan_id)
     VALUES (?, ?, ?, ?)"
 );
 
-// bind parameter dan eksekusi, u
-$stmt->bind_param("sssi", $username, $password_hash, $role, $karyawan_id);
+// bind parameter dan eksekusi
+$stmt->bind_param("sssi", $email, $password_hash, $role, $karyawan_id);
 
 if ($stmt->execute()) {
     echo "User berhasil ditambahkan. ID: " . $stmt->insert_id;

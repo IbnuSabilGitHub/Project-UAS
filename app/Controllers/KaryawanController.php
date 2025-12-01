@@ -57,10 +57,10 @@ class KaryawanController extends BaseController {
         $insertId = $this->model->create($data);
         if ($insertId) {
             if (!empty($_POST['create_account'])) {
-                $username = $data['nik'] ?: $data['email'];
+                $email = $data['email'];
                 $tempPassword = $this->generateTempPassword();
-                if ($this->model->createAccount($insertId, $username, $tempPassword)) {
-                    $_SESSION['success'] = 'Karyawan & akun dibuat. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
+                if ($this->model->createAccount($insertId, $email, $tempPassword)) {
+                    $_SESSION['success'] = 'Karyawan & akun dibuat. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
                 } else {
                     $_SESSION['success'] = 'Karyawan dibuat (akun sudah ada sebelumnya)';
                 }
@@ -179,10 +179,10 @@ class KaryawanController extends BaseController {
             $_SESSION['error'] = 'Karyawan sudah memiliki akun';
             redirect('/admin/karyawan');
         }
-        $username = $karyawan['nik'] ?: $karyawan['email'];
+        $email = $karyawan['email'];
         $tempPassword = $this->generateTempPassword();
-        if ($this->model->createAccount($karyawanId, $username, $tempPassword)) {
-            $_SESSION['success'] = 'Akun diaktifkan. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
+        if ($this->model->createAccount($karyawanId, $email, $tempPassword)) {
+            $_SESSION['success'] = 'Akun diaktifkan. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
         } else {
             $_SESSION['error'] = 'Gagal mengaktifkan akun';
         }

@@ -207,7 +207,7 @@
     `;
 
         if (leave.approved_by) {
-            content += `<div><strong>Diproses oleh:</strong> ${leave.approver_name || '-'}</div>`;
+            content += `<div><strong>Diproses oleh:</strong> ${leave.approver_email || '-'}</div>`;
         }
 
         if (leave.rejection_reason) {

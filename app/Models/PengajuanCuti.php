@@ -20,7 +20,7 @@ class PengajuanCuti {
      */
     public function allWithKaryawan() {
         $sql = "SELECT lr.*, k.nik, k.name AS karyawan_name, k.position,
-                       u.username as approver_name
+                       u.email as approver_email
                 FROM leave_requests lr
                 INNER JOIN karyawan k ON lr.karyawan_id = k.id
                 LEFT JOIN users u ON lr.approved_by = u.id
@@ -43,7 +43,7 @@ class PengajuanCuti {
      */
     public function find($id) {
         $stmt = $this->conn->prepare("SELECT lr.*, k.nik, k.name AS karyawan_name, k.position,
-                                              u.username as approver_name
+                                              u.email as approver_email
                                         FROM leave_requests lr
                                         INNER JOIN karyawan k ON lr.karyawan_id = k.id
                                         LEFT JOIN users u ON lr.approved_by = u.id
@@ -205,7 +205,7 @@ class PengajuanCuti {
      */
     public function getWithFilters($search = '', $statusFilter = [], $dateFilter = '') {
         $sql = "SELECT lr.*, k.nik, k.name AS karyawan_name, k.position,
-                       u.username as approver_name
+                       u.email as approver_name
                 FROM leave_requests lr
                 INNER JOIN karyawan k ON lr.karyawan_id = k.id
                 LEFT JOIN users u ON lr.approved_by = u.id

@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## **[Fix: Email Login & NIK Update] - 2024-12-01**
+
+### 🔄 **Database Schema Changes**
+
+**Tabel `users`:**
+
+* Kolom `username` diubah menjadi `email` (VARCHAR(150))
+* Nilai ENUM `status` diperbarui menjadi hanya (`active`, `disabled`) — opsi `locked` dihapus
+* Proses login kini menggunakan email, bukan username
+
+**Tabel `karyawan`:**
+
+* Kolom `nik` diubah dari VARCHAR(50) menjadi CHAR(16) sesuai standar KTP Indonesia
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+
+* `AuthController.php`: Seluruh metode login diperbarui untuk menggunakan autentikasi email
+
+  * `adminLogin()`, `karyawanLogin()`, `login()` sekarang memvalidasi email, bukan username
+  * Penyimpanan session diperbarui menjadi `$_SESSION['email']` menggantikan `$_SESSION['username']`
+
+**Models:**
+
+* `PengajuanCuti.php`: Diubah menggunakan `approver_email` menggantikan `approver_name`
+
+**Scripts:**
+
+* `register.php`: Diperbarui agar pembuatan user baru memakai email, bukan username
+
+**Views:**
+
+* Seluruh form login (`login-admin.php`, `login-karyawan.php`, `login.php`) diubah menjadi input email
+* Template sidebar diperbarui untuk menampilkan email menggantikan username
+* `sidebar.php`, `sidebar-admin.php`, `sidebar-karyawan.php`: kini memakai `$_SESSION['email']`
+
+### ⚠️ **Catatan Migrasi**
+
+* User yang sudah ada perlu mengonversi username mereka menjadi format email
+* Jalankan migration database sebelum melakukan deployment
+* Field NIK kini wajib 16 karakter sesuai format KTP
+
+
+---
+
+
 ## [Refactor: form ui add employee] - 2024-11-30
 
 ### 🎨 Refactored
