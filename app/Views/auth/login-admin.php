@@ -1,17 +1,5 @@
 <div class="flex items-center justify-center min-h-screen w-full">
     <div class="w-full max-w-sm bg-neutral-primary-soft p-6 border border-default rounded-base shadow-xs">
-        <?php if (isset($error)): ?>
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-base mb-4">
-                <?= htmlspecialchars($error ?? '', ENT_QUOTES, 'UTF-8') ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($success)): ?>
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-base mb-4">
-                <?= htmlspecialchars($success ?? '', ENT_QUOTES, 'UTF-8') ?>
-            </div>
-        <?php endif; ?>
-
         <form method="POST" action="<?= url('/admin/login') ?>" class="space-y-6">
             <div class="text-center mb-6">
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-brand-soft rounded-full mb-4">

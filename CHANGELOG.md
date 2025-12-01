@@ -2,7 +2,138 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Refactor: form ui add employee] - 2024-11-30
+
+## [Feature: Toast Notification System] - 2024-12-01
+
+### Added
+
+#### **Sistem Notifikasi Toast yang Konsisten**
+Mengimplementasikan sistem flash message dan toast notification yang mengatasi masalah alert lama yang persist antar page dan bertahan terlalu lama.
+
+**Core Components:**
+
+1. **Helper Functions** (`app/Core/Helpers.php`)
+   - `setFlash($type, $message)` - Set flash message untuk page berikutnya
+   - `getFlash()` - Ambil dan hapus flash message dari session
+   - Tipe: `success`, `error`, `warning`, `info`
+   - Auto-cleanup setelah ditampilkan (tidak persist)
+
+2. **Toast Component** (`app/Views/layouts/components/toast.php`)
+   - Template HTML untuk toast notifications
+   - Support multiple toast stack vertikal
+   - Animasi slide-in dan slide-out yang smooth
+   - Responsive design (pojok kanan bawah)
+
+3. **Toast Manager JavaScript** (`public/assets/js/toast.js`)
+   - `ToastManager.show(type, message, duration)` - Tampilkan toast
+   - Shorthand: `ToastManager.success()`, `ToastManager.error()`, dll
+   - Alias: `showToast()` untuk kemudahan
+   - Auto-dismiss default 5 detik (customizable)
+   - Manual close dengan tombol X
+   - `dismissAll()` - Tutup semua toast sekaligus
+
+4. **Auto-Integration** (`app/Views/layouts/footer.php`)
+   - Include toast component otomatis
+   - Auto-render flash message dari PHP session
+   - Tidak perlu code tambahan di setiap view
+
+**Features:**
+- Toast otomatis muncul di pojok kanan bawah
+- Auto-dismiss setelah 5 detik (default)
+- Manual close dengan tombol X
+- Multiple toast support (bertumpuk vertikal)
+- Smooth animations (slide-in/slide-out)
+- **TIDAK persist antar page** - hanya muncul 1x
+- Color-coded berdasarkan tipe (success/error/warning/info)
+- Icon visual untuk setiap tipe toast
+
+
+
+### 🔄 Changed
+
+#### **Migrasi dari Inline Alerts ke Toast System**
+
+**Updated Files:**
+1. `app/Controllers/BaseController.php`
+   - `ensureAuthenticated()`: `$_SESSION['error']` → `setFlash('error', ...)`
+   - `ensureAdmin()`: `$_SESSION['error']` → `setFlash('error', ...)`
+   - `ensureKaryawan()`: `$_SESSION['error']` → `setFlash('error', ...)`
+
+2. `app/Views/auth/login-admin.php`
+   - ❌ Removed: Inline alert divs untuk error/success
+   - ✅ Toast otomatis muncul dari footer.php
+
+3. `app/Views/auth/login-karyawan.php`
+   - ❌ Removed: Inline alert divs untuk error/success
+   - ✅ Toast otomatis muncul dari footer.php
+
+4. `app/Views/admin/attendance/index.php`
+   - ❌ Removed: Inline alert divs (green/red backgrounds)
+   - ✅ Toast otomatis muncul dari footer.php
+
+5. `app/Views/admin/leave/index.php`
+   - ❌ Removed: Inline alert divs
+   - ❌ Removed: Manual `unset($_SESSION['error/success'])`
+   - ✅ Toast otomatis muncul dari footer.php
+
+**Before (Old Way):**
+```php
+// Di Controller
+$_SESSION['error'] = 'Error message';
+$_SESSION['success'] = 'Success message';
+
+// Di View
+<?php if (isset($error)): ?>
+    <div class="bg-red-100 border...">
+        <?= $error ?>
+    </div>
+<?php endif; ?>
+
+$data['error'] = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
+```
+
+**After (New Way):**
+```php
+// Di Controller
+setFlash('error', 'Error message');
+setFlash('success', 'Success message');
+redirect('/page');
+
+// Di View - TIDAK PERLU CODE!
+// Toast otomatis muncul dari footer.php
+```
+
+
+### 🗑️ Deprecated
+
+**Cara Lama (Jangan Digunakan Lagi):**
+- ❌ `$_SESSION['error'] = 'message'`
+- ❌ `$_SESSION['success'] = 'message'`
+- ❌ Inline alert divs di view files
+- ❌ Manual `unset($_SESSION['error'])`
+- ❌ Passing error/success ke view data
+
+**Gunakan Cara Baru:**
+- ✅ `setFlash('type', 'message')`
+- ✅ Toast otomatis dari footer.php
+
+
+
+
+```
+
+### 🔒 Backward Compatibility
+
+- File lama dengan `$_SESSION['error']` **masih berfungsi**
+- Migrasi bisa dilakukan **bertahap**
+- Tidak ada breaking changes untuk existing code
+- Controllers yang belum diupdate tetap kompatibel
+
+
+---
+
+## [Refactor: form ui add employee] - 2024-12-01
 
 ### 🎨 Refactored
 #### **Improved Add Employee Form UI/UX**

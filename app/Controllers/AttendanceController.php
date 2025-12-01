@@ -26,7 +26,7 @@ class AttendanceController extends BaseController {
         $karyawanId = $result['karyawan_id'];
 
         if (!$karyawanId) {
-            $_SESSION['error'] = 'Data karyawan tidak ditemukan';
+            setFlash('error', 'Data karyawan tidak ditemukan');
             redirect('/karyawan/dashboard');
         }
 
@@ -73,9 +73,9 @@ class AttendanceController extends BaseController {
         $notes = trim($_POST['notes'] ?? '');
 
         if ($this->model->checkIn($karyawanId, $notes)) {
-            $_SESSION['success'] = 'Check-in berhasil!';
+            setFlash('success', 'Check-in berhasil!');
         } else {
-            $_SESSION['error'] = 'Anda sudah check-in hari ini';
+            setFlash('error', 'Anda sudah check-in hari ini');
         }
 
         redirect('/karyawan/attendance');
@@ -102,9 +102,9 @@ class AttendanceController extends BaseController {
         $notes = trim($_POST['notes'] ?? '');
 
         if ($this->model->checkOut($karyawanId, $notes)) {
-            $_SESSION['success'] = 'Check-out berhasil!';
+            setFlash('success', 'Check-out berhasil!');
         } else {
-            $_SESSION['error'] = 'Anda belum check-in atau sudah check-out hari ini';
+            setFlash('error', 'Anda belum check-in atau sudah check-out hari ini');
         }
 
         redirect('/karyawan/attendance');

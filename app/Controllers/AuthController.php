@@ -29,7 +29,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-            $_SESSION['error'] = 'Akses ditolak';
+            setFlash('error', 'Akses ditolak');
             redirect('/admin/login');
         }
     }
@@ -43,7 +43,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
-            $_SESSION['error'] = 'Akses ditolak';
+            setFlash('error', 'Akses ditolak');
             redirect('/karyawan/login');
         }
     }
@@ -148,7 +148,7 @@ class AuthController extends BaseController
         $password = $_POST['password'] ?? '';
 
         if (empty($username) || empty($password)) {
-            $_SESSION['error'] = 'Username dan password harus diisi';
+            setFlash('error', 'Username dan password harus diisi');
             redirect('/admin/login');
         }
 
@@ -159,7 +159,7 @@ class AuthController extends BaseController
         $result = $stmt->get_result();
 
         if ($result->num_rows === 0) {
-            $_SESSION['error'] = 'Username atau password salah';
+            setFlash('error', 'Username atau password salah');
             redirect('/admin/login');
         }
 
@@ -167,17 +167,17 @@ class AuthController extends BaseController
 
         // Cek apakah user adalah admin/super_admin
         if (!in_array($user['role'], ['admin', 'super_admin'])) {
-            $_SESSION['error'] = 'Anda tidak memiliki akses admin';
+            setFlash('error', 'Anda tidak memiliki akses admin');
             redirect('/admin/login');
         }
 
         if ($user['status'] !== 'active') {
-            $_SESSION['error'] = 'Akun dinonaktifkan';
+            setFlash('error', 'Akun dinonaktifkan');
             redirect('/admin/login');
         }
 
         if (!password_verify($password, $user['password_hash'])) {
-            $_SESSION['error'] = 'Username atau password salah';
+            setFlash('error', 'Username atau password salah');
             redirect('/admin/login');
         }
 
@@ -186,7 +186,7 @@ class AuthController extends BaseController
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
-        $_SESSION['success'] = 'Login berhasil!';
+        setFlash('success', 'Login berhasil!');
 
         if (!empty($user['must_change_password'])) {
             redirect('/change-password');
@@ -214,7 +214,7 @@ class AuthController extends BaseController
         $password = $_POST['password'] ?? '';
 
         if (empty($username) || empty($password)) {
-            $_SESSION['error'] = 'Username dan password harus diisi';
+            setFlash('error', 'Username dan password harus diisi');
             redirect('/karyawan/login');
         }
 
@@ -225,7 +225,7 @@ class AuthController extends BaseController
         $result = $stmt->get_result();
 
         if ($result->num_rows === 0) {
-            $_SESSION['error'] = 'Username atau password salah';
+            setFlash('error', 'Username atau password salah');
             redirect('/karyawan/login');
         }
 
@@ -233,17 +233,17 @@ class AuthController extends BaseController
 
         // Cek apakah user adalah karyawan
         if ($user['role'] !== 'karyawan') {
-            $_SESSION['error'] = 'Gunakan halaman login admin untuk akun administrator';
+            setFlash('error', 'Gunakan halaman login admin untuk akun administrator');
             redirect('/karyawan/login');
         }
 
         if ($user['status'] !== 'active') {
-            $_SESSION['error'] = 'Akun dinonaktifkan';
+            setFlash('error', 'Akun dinonaktifkan');
             redirect('/karyawan/login');
         }
 
         if (!password_verify($password, $user['password_hash'])) {
-            $_SESSION['error'] = 'Username atau password salah';
+            setFlash('error', 'Username atau password salah');
             redirect('/karyawan/login');
         }
 
@@ -252,7 +252,7 @@ class AuthController extends BaseController
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         $_SESSION['role'] = $user['role'];
-        $_SESSION['success'] = 'Login berhasil!';
+        setFlash('success', 'Login berhasil!');
 
         if (!empty($user['must_change_password'])) {
             redirect('/change-password');
@@ -311,8 +311,8 @@ class AuthController extends BaseController
         $password = $_POST['password'] ?? '';
 
         if (empty($username) || empty($password)) {
-            $_SESSION['error'] = 'Username dan password harus diisi';
-            redirect('/login');//backward compatibility
+            setFlash('error', 'Username dan password harus diisi');
+            redirect('/login'); //backward compatibility
         }
 
         // Konksi db
@@ -325,8 +325,8 @@ class AuthController extends BaseController
         $result = $stmt->get_result();
 
         $invalid_login = function () {
-            $_SESSION['error'] = 'Username atau password salah';
-            redirect('/login');//backward compatibility
+            setFlash('error', 'Username atau password salah');
+            redirect('/login'); //backward compatibility
         };
 
         // Cek apakah user ditemukan atau tidak
@@ -340,8 +340,8 @@ class AuthController extends BaseController
 
         // Cek status akun
         if ($user['status'] !== 'active') {
-            $_SESSION['error'] = 'Akun dinonaktifkan';
-            redirect('/login');//backward compatibility
+            setFlash('error', 'Akun dinonaktifkan');
+            redirect('/login'); //backward compatibility
         }
 
         // Verifikasi password
@@ -356,7 +356,7 @@ class AuthController extends BaseController
         $_SESSION['username'] = $user['username'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
-        $_SESSION['success'] = 'Login berhasil!';
+        setFlash('success', 'Login berhasil!');
 
         // Redirect jika wajib ganti password
         if (!empty($user['must_change_password'])) {
@@ -378,7 +378,7 @@ class AuthController extends BaseController
         }
         // Hapus semua data session
         session_destroy();
-        redirect('/login');//backward compatibility
+        redirect('/login'); //backward compatibility
     }
 
     public function indexPage()
@@ -387,7 +387,7 @@ class AuthController extends BaseController
             session_start();
         }
 
-        if(isset($_SESSION['user_id'])) {
+        if (isset($_SESSION['user_id'])) {
             redirect('/dashboard');
         } else {
             $this->render('/', ['title' => 'HRIS']);
@@ -404,7 +404,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            redirect('/login');//backward compatibility
+            redirect('/login'); //backward compatibility
         }
         if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
             redirect('/admin/dashboard');
@@ -426,7 +426,7 @@ class AuthController extends BaseController
         $statsLeave = $this->modelLeave->getStatistics();
         $statsAttendance = $this->modelAttendance->getAdminStats();
         $statsKaryawan = $this->modelKaryawan->getStatistics();
-        
+
 
         $data = [
             'title' => 'Admin Dashboard',
@@ -449,7 +449,7 @@ class AuthController extends BaseController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         $this->ensureKaryawan();
 
         // Ambil karyawan_id dari session user
@@ -464,7 +464,7 @@ class AuthController extends BaseController
         // Ambil statistik personal karyawan
         $statsLeave = [];
         $statsAttendance = [];
-        
+
         if ($karyawanId) {
             $statsLeave = $this->modelLeave->getEmployeeStats($karyawanId);
             $statsAttendance = $this->modelAttendance->getEmployeeStats($karyawanId);
@@ -491,7 +491,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            redirect('/login');//backward compatibility
+            redirect('/login'); //backward compatibility
         }
         $data = [
             'title' => 'Ganti Password',
@@ -513,16 +513,16 @@ class AuthController extends BaseController
             session_start();
         }
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
-            redirect('/login');//backward compatibility
+            redirect('/login'); //backward compatibility
         }
         $new = $_POST['new_password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
         if (strlen($new) < 8) {
-            $_SESSION['error'] = 'Password minimal 8 karakter';
+            setFlash('error', 'Password minimal 8 karakter');
             redirect('/change-password');
         }
         if ($new !== $confirm) {
-            $_SESSION['error'] = 'Konfirmasi password tidak cocok';
+            setFlash('error', 'Konfirmasi password tidak cocok');
             redirect('/change-password');
         }
         $hash = password_hash($new, PASSWORD_BCRYPT);
@@ -530,10 +530,10 @@ class AuthController extends BaseController
         $stmt = $conn->prepare("UPDATE users SET password_hash = ?, must_change_password = 0, password_last_changed = NOW() WHERE id = ?");
         $stmt->bind_param('si', $hash, $_SESSION['user_id']);
         if ($stmt->execute()) {
-            $_SESSION['success'] = 'Password berhasil diubah';
+            setFlash('success', 'Password berhasil diubah');
             redirect('/dashboard');
         } else {
-            $_SESSION['error'] = 'Gagal mengubah password';
+            setFlash('error', 'Gagal mengubah password');
             redirect('/change-password');
         }
     }

@@ -50,7 +50,7 @@ class KaryawanController extends BaseController {
 
         // Validasi data yang diperlukan
         if (empty($data['nik']) || empty($data['name']) || empty($data['email'])) {
-            $_SESSION['error'] = 'NIK, Nama, dan Email wajib diisi';
+            setFlash('error', 'NIK, Nama, dan Email wajib diisi');
             redirect('/admin/karyawan');
         }
 
@@ -60,16 +60,16 @@ class KaryawanController extends BaseController {
                 $username = $data['nik'] ?: $data['email'];
                 $tempPassword = $this->generateTempPassword();
                 if ($this->model->createAccount($insertId, $username, $tempPassword)) {
-                    $_SESSION['success'] = 'Karyawan & akun dibuat. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
+                    setFlash('success', 'Karyawan & akun dibuat. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
                 } else {
-                    $_SESSION['success'] = 'Karyawan dibuat (akun sudah ada sebelumnya)';
+                    setFlash('success', 'Karyawan dibuat (akun sudah ada sebelumnya)');
                 }
             } else {
-                $_SESSION['success'] = 'Karyawan berhasil dibuat';
+                setFlash('success', 'Karyawan berhasil dibuat');
             }
         } else {
             $error = $this->model->getLastError();
-            $_SESSION['error'] = 'Gagal menyimpan data karyawan' . ($error ? ': ' . $error : '');
+            setFlash('error', 'Gagal menyimpan data karyawan' . ($error ? ': ' . $error : ''));
         }
 
         redirect('/admin/karyawan');
@@ -86,7 +86,7 @@ class KaryawanController extends BaseController {
         }
         $karyawan = $this->model->find($id);
         if (!$karyawan) {
-            $_SESSION['error'] = 'Karyawan tidak ditemukan';
+            setFlash('error', 'Karyawan tidak ditemukan');
             redirect('/admin/karyawan');
         }
         $this->render('admin/employees/form', ['title' => 'Edit Karyawan', 'karyawan' => $karyawan]);
@@ -102,7 +102,7 @@ class KaryawanController extends BaseController {
         }
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
         if (!$id) {
-            $_SESSION['error'] = 'ID tidak valid';
+            setFlash('error', 'ID tidak valid');
             redirect('/admin/karyawan');
         }
 
@@ -118,15 +118,15 @@ class KaryawanController extends BaseController {
 
         // Validasi data yang diperlukan
         if (empty($data['nik']) || empty($data['name']) || empty($data['email'])) {
-            $_SESSION['error'] = 'NIK, Nama, dan Email wajib diisi';
+            setFlash('error', 'NIK, Nama, dan Email wajib diisi');
             redirect('/admin/karyawan');
         }
 
         if ($this->model->update($id, $data)) {
-            $_SESSION['success'] = 'Data karyawan diperbarui';
+            setFlash('success', 'Data karyawan diperbarui');
         } else {
             $error = $this->model->getLastError();
-            $_SESSION['error'] = 'Gagal memperbarui data' . ($error ? ': ' . $error : '');
+            setFlash('error', 'Gagal memperbarui data' . ($error ? ': ' . $error : ''));
         }
         redirect('/admin/karyawan');
     }
@@ -141,18 +141,18 @@ class KaryawanController extends BaseController {
         }
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
         if (!$id) {
-            $_SESSION['error'] = 'ID tidak valid';
+            setFlash('error', 'ID tidak valid');
             redirect('/admin/karyawan');
         }
         // Hanya super_admin boleh hard delete
         if (($_SESSION['role'] ?? '') !== 'super_admin') {
-            $_SESSION['error'] = 'Hanya super admin boleh hapus permanen';
+            setFlash('error', 'Hanya super admin boleh hapus permanen');
             redirect('/admin/karyawan');
         }
         if ($this->model->deleteWithUser($id)) {
-            $_SESSION['success'] = 'Data karyawan & akun dihapus permanen';
+            setFlash('success', 'Data karyawan & akun dihapus permanen');
         } else {
-            $_SESSION['error'] = 'Gagal hapus permanen';
+            setFlash('error', 'Gagal hapus permanen');
         }
         redirect('/admin/karyawan');
     }
@@ -167,24 +167,24 @@ class KaryawanController extends BaseController {
         }
         $karyawanId = isset($_POST['karyawan_id']) ? (int)$_POST['karyawan_id'] : 0;
         if (!$karyawanId) {
-            $_SESSION['error'] = 'ID karyawan tidak valid';
+            setFlash('error', 'ID karyawan tidak valid');
             redirect('/admin/karyawan');
         }
         $karyawan = $this->model->find($karyawanId);
         if (!$karyawan) {
-            $_SESSION['error'] = 'Karyawan tidak ditemukan';
+            setFlash('error', 'Karyawan tidak ditemukan');
             redirect('/admin/karyawan');
         }
         if ($this->model->getUserByKaryawanId($karyawanId)) {
-            $_SESSION['error'] = 'Karyawan sudah memiliki akun';
+            setFlash('error', 'Karyawan sudah memiliki akun');
             redirect('/admin/karyawan');
         }
         $username = $karyawan['nik'] ?: $karyawan['email'];
         $tempPassword = $this->generateTempPassword();
         if ($this->model->createAccount($karyawanId, $username, $tempPassword)) {
-            $_SESSION['success'] = 'Akun diaktifkan. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
+            setFlash('success', 'Akun diaktifkan. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
         } else {
-            $_SESSION['error'] = 'Gagal mengaktifkan akun';
+            setFlash('error', 'Gagal mengaktifkan akun');
         }
         redirect('/admin/karyawan');
     }
@@ -197,13 +197,13 @@ class KaryawanController extends BaseController {
         }
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
         if (!$id) {
-            $_SESSION['error'] = 'ID tidak valid';
+            setFlash('error', 'ID tidak valid');
             redirect('/admin/karyawan');
         }
         if ($this->model->deactivate($id)) {
-            $_SESSION['success'] = 'Karyawan dinonaktifkan';
+            setFlash('success', 'Karyawan dinonaktifkan');
         } else {
-            $_SESSION['error'] = 'Gagal menonaktifkan karyawan';
+            setFlash('error', 'Gagal menonaktifkan karyawan');
         }
         redirect('/admin/karyawan');
     }

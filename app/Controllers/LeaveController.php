@@ -28,7 +28,7 @@ class LeaveController extends BaseController {
         
         $karyawanId = $this->getKaryawanId();
         if (!$karyawanId) {
-            $_SESSION['error'] = 'Data karyawan tidak ditemukan';
+            setFlash('error', 'Data karyawan tidak ditemukan');
             redirect('/karyawan/dashboard');
         }
 
@@ -102,7 +102,7 @@ class LeaveController extends BaseController {
 
         $karyawanId = $this->getKaryawanId();
         if (!$karyawanId) {
-            $_SESSION['error'] = 'Data karyawan tidak ditemukan';
+            setFlash('error', 'Data karyawan tidak ditemukan');
             redirect('/karyawan/dashboard');
         }
 
@@ -117,13 +117,13 @@ class LeaveController extends BaseController {
         $endDate = $this->convertDateFormat($endDateRaw);
 
         if (empty($leaveType) || empty($startDate) || empty($endDate) || empty($reason)) {
-            $_SESSION['error'] = 'Semua field wajib diisi';
+            setFlash('error', 'Semua field wajib diisi');
             redirect('/karyawan/leave/create');
         }
 
         // Validasi tanggal
         if ($startDate > $endDate) {
-            $_SESSION['error'] = 'Tanggal mulai tidak boleh lebih besar dari tanggal selesai';
+            setFlash('error', 'Tanggal mulai tidak boleh lebih besar dari tanggal selesai');
             redirect('/karyawan/leave/create');
         }
 
@@ -135,7 +135,7 @@ class LeaveController extends BaseController {
 
         // Cek overlap
         if ($this->model->hasOverlap($karyawanId, $startDate, $endDate)) {
-            $_SESSION['error'] = 'Tanggal yang dipilih bentrok dengan pengajuan cuti lainnya';
+            setFlash('error', 'Tanggal yang dipilih bentrok dengan pengajuan cuti lainnya');
             redirect('/karyawan/leave/create');
         }
 
@@ -144,13 +144,13 @@ class LeaveController extends BaseController {
         $maxSize = 10 * 1024 * 1024; // 10MB 
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] !== UPLOAD_ERR_NO_FILE) {
             if ($_FILES['attachment']['error'] !== UPLOAD_ERR_OK) {
-                $_SESSION['error'] = 'Error saat upload file';
+                setFlash('error', 'Error saat upload file');
                 redirect('/karyawan/leave/create');
             }
             
             // Validasi ukuran file (max 10MB)
             if ($_FILES['attachment']['size'] > $maxSize) {
-                $_SESSION['error'] = 'Ukuran file maksimal 5MB';
+                setFlash('error', 'Ukuran file maksimal 5MB');
                 redirect('/karyawan/leave/create');
             }
             
@@ -169,10 +169,10 @@ class LeaveController extends BaseController {
         $result = $this->model->create($data, $file);
 
         if ($result['success']) {
-            $_SESSION['success'] = 'Pengajuan cuti berhasil dikirim';
+            setFlash('success', 'Pengajuan cuti berhasil dikirim');
             redirect('/karyawan/leave');
         } else {
-            $_SESSION['error'] = $result['message'] ?? 'Gagal mengajukan cuti';
+            setFlash('error', $result['message'] ?? 'Gagal mengajukan cuti');
             redirect('/karyawan/leave/create');
         }
     }
@@ -194,19 +194,19 @@ class LeaveController extends BaseController {
         $leave = $this->model->find($id);
         
         if (!$leave || $leave['karyawan_id'] != $karyawanId) {
-            $_SESSION['error'] = 'Pengajuan cuti tidak ditemukan';
+            setFlash('error', 'Pengajuan cuti tidak ditemukan');
             redirect('/karyawan/leave');
         }
 
         if ($leave['status'] !== 'pending') {
-            $_SESSION['error'] = 'Hanya pengajuan cuti pending yang bisa dihapus';
+            setFlash('error', 'Hanya pengajuan cuti pending yang bisa dihapus');
             redirect('/karyawan/leave');
         }
 
         if ($this->model->delete($id)) {
-            $_SESSION['success'] = 'Pengajuan cuti berhasil dihapus';
+            setFlash('success', 'Pengajuan cuti berhasil dihapus');
         } else {
-            $_SESSION['error'] = 'Gagal menghapus pengajuan cuti';
+            setFlash('error', 'Gagal menghapus pengajuan cuti');
         }
 
         redirect('/karyawan/leave');

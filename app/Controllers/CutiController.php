@@ -32,7 +32,7 @@ class CutiController extends BaseController {
         }
 
         if ($file['error'] !== UPLOAD_ERR_OK) {
-            $_SESSION['error'] = 'Error saat upload file';
+            setFlash('error', 'Error saat upload file');
             return false;
         }
 
@@ -43,14 +43,14 @@ class CutiController extends BaseController {
         finfo_close($finfo);
 
         if (!in_array($mimeType, $allowedTypes)) {
-            $_SESSION['error'] = 'Hanya file PDF, JPG, dan PNG yang diperbolehkan';
+            setFlash('error', 'Hanya file PDF, JPG, dan PNG yang diperbolehkan');
             return false;
         }
 
         // Validasi ukuran file (max 5MB)
         $maxSize = 5 * 1024 * 1024; // 5MB
         if ($file['size'] > $maxSize) {
-            $_SESSION['error'] = 'Ukuran file maksimal 5MB';
+            setFlash('error', 'Ukuran file maksimal 5MB');
             return false;
         }
 
@@ -69,7 +69,7 @@ class CutiController extends BaseController {
             return $fileName; // Return filename only (kompatibel dengan LeaveRequest model)
         }
 
-        $_SESSION['error'] = 'Gagal mengupload file';
+        setFlash('error', 'Gagal mengupload file');
         return false;
     }
 
@@ -141,9 +141,9 @@ class CutiController extends BaseController {
 
         // Update dengan approved_by
         if ($this->model->updateStatus($id, 'approved', $_SESSION['user_id'])) {
-            $_SESSION['success'] = 'Pengajuan cuti berhasil disetujui';
+            setFlash('success', 'Pengajuan cuti berhasil disetujui');
         } else {
-            $_SESSION['error'] = 'Gagal menyetujui pengajuan cuti';
+            setFlash('error', 'Gagal menyetujui pengajuan cuti');
         }
 
         redirect('/admin/cuti');
@@ -160,7 +160,7 @@ class CutiController extends BaseController {
 
         $id = (int)($_POST['id'] ?? 0);
         if (!$id) {
-            $_SESSION['error'] = 'ID tidak valid';
+            setFlash('error', 'ID tidak valid');
             redirect('/admin/cuti');
         }
 
@@ -168,15 +168,15 @@ class CutiController extends BaseController {
         
         // Validasi: rejection_reason wajib diisi
         if (empty($rejectionReason)) {
-            $_SESSION['error'] = 'Alasan penolakan wajib diisi';
+            setFlash('error', 'Alasan penolakan wajib diisi');
             redirect('/admin/cuti');
         }
 
         // Update dengan approved_by dan rejection_reason
         if ($this->model->updateStatus($id, 'rejected', $_SESSION['user_id'], $rejectionReason)) {
-            $_SESSION['success'] = 'Pengajuan cuti berhasil ditolak dengan alasan yang diberikan';
+            setFlash('success', 'Pengajuan cuti berhasil ditolak dengan alasan yang diberikan');
         } else {
-            $_SESSION['error'] = 'Gagal menolak pengajuan cuti';
+            setFlash('error', 'Gagal menolak pengajuan cuti');
         }
 
         redirect('/admin/cuti');
@@ -204,9 +204,9 @@ class CutiController extends BaseController {
             if (!empty($pengajuan['attachment_file'])) {
                 $this->deleteDocument($pengajuan['attachment_file']);
             }
-            $_SESSION['success'] = 'Pengajuan cuti berhasil dihapus';
+            setFlash('success', 'Pengajuan cuti berhasil dihapus');
         } else {
-            $_SESSION['error'] = 'Gagal menghapus pengajuan cuti';
+            setFlash('error', 'Gagal menghapus pengajuan cuti');
         }
 
         redirect('/admin/cuti');
