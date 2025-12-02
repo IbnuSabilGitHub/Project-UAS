@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 
 
+## **[Feature: Employee List Filter & Statistics Card] - 2024-12-02**
+
+###**New Features**
+
+**Employee Management:**
+- Menambahkan filter status karyawan (Aktif, Cuti, Resign) dengan checkbox dropdown yang konsisten dengan UI pengajuan cuti
+- Menambahkan fitur pencarian karyawan berdasarkan nama atau NIK
+- Menambahkan statistik karyawan dengan card yang menampilkan:
+  - Total Karyawan
+  - Karyawan Aktif
+  - Karyawan Cuti
+  - Karyawan Resign
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `KaryawanController.php`: 
+  - Method `index()` diperbarui untuk menangani filter status dan pencarian
+  - Menambahkan logic perhitungan statistik karyawan
+  - Filter dapat dikombinasikan (status + pencarian)
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/employees/index.php`:
+  - Menambahkan section statistik karyawan di atas tabel
+  - Menambahkan dropdown filter status employment dengan checkbox
+  - Menambahkan search box untuk pencarian nama/NIK
+  - Menambahkan JavaScript untuk handling filter secara real-time
+
+
+---
+
 ## **[Feature: Dynamic Pending Count Badge] - 2024-12-02**
 
 ### 🔄 **Backend Changes**
