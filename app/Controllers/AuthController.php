@@ -506,7 +506,8 @@ class AuthController extends BaseController
 
         // Bersihkan pesan session setelah diambil
         unset($_SESSION['error'], $_SESSION['success']);
-        $this->render('auth/change_password', $data);
+        $this->renderWithoutSidebar('auth/change-password', $data);
+
     }
 
     /**
@@ -517,23 +518,29 @@ class AuthController extends BaseController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
             redirect('/login');//backward compatibility
         }
+
         $new = $_POST['new_password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
+
         if (strlen($new) < 8) {
             $_SESSION['error'] = 'Password minimal 8 karakter';
             redirect('/change-password');
         }
+
         if ($new !== $confirm) {
             $_SESSION['error'] = 'Konfirmasi password tidak cocok';
             redirect('/change-password');
         }
+
         $hash = password_hash($new, PASSWORD_BCRYPT);
         $conn = $this->db->getConnection();
         $stmt = $conn->prepare("UPDATE users SET password_hash = ?, must_change_password = 0, password_last_changed = NOW() WHERE id = ?");
         $stmt->bind_param('si', $hash, $_SESSION['user_id']);
+        
         if ($stmt->execute()) {
             $_SESSION['success'] = 'Password berhasil diubah';
             redirect('/dashboard');

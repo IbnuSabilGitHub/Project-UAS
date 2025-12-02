@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[fix: add change password link in sidebar] - 2024-12-02**
+
+### 🔄 **Frontend Changes**
+**Views:**
+- `layouts/sidebar-admin.php`: Menambahkan link "Ganti Password" di sidebar admin
+- `layouts/sidebar-karyawan.php`: Menambahkan link "Ganti Password" di sidebar karyawan
+
+
+### 🔄 **Backend Changes**
+- `AuthController.php`: Memperbarui method `changePasswordPage()` untuk merender view yang benar
 
 ## **[Feature: Employee List Filter & Statistics Card] - 2024-12-02**
 

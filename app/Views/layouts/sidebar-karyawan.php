@@ -47,10 +47,10 @@
                             <li>
                                 <a href="<?= url('/admin/dashboard') ?>" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Dashboard</a>
                             </li>
-                            <!-- <li>
-                                <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Settings</a>
-                            </li>
                             <li>
+                                <a href="<?= url('/change-password') ?>" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Ganti Password</a>
+                            </li>
+                            <!-- <li>
                                 <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Earnings</a>
                             </li> -->
                             <li>
