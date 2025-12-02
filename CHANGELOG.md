@@ -2,6 +2,63 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[Refactor: Remove Backward Compatibility Login] - 2024-12-02**
+
+### **Removed**
+
+**Rute Login Backward Compatibility:**
+
+* Menghapus rute `GET /login` – Halaman login lama (generik)
+* Menghapus rute `POST /login` – Proses login lama (generik)
+* Menghapus `app/Views/auth/login.php` – File view login lama
+
+**Metode pada AuthController:**
+
+* Menghapus `loginPage()` – Handler halaman login generik
+* Menghapus `login()` – Metode pemrosesan login generik
+
+### 🔄 **Changed**
+
+**Pembaruan Redirect – Login Berbasis Role:**
+
+* `BaseController.php`:
+
+  * `ensureAuthenticated()`: redirect dari `/login` - `/` (halaman index dengan opsi login)
+  * `ensureAdmin()`: redirect dari `/login` - `/admin/login`
+  * `ensureKaryawan()`: redirect dari `/login` - `/karyawan/login`
+
+* `AuthController.php`:
+
+  * `logout()`: redirect `/login` - `/`
+  * `dashboard()`: redirect `/login` - `/`
+  * `changePasswordPage()`: redirect `/login` - `/`
+  * `changePassword()`: redirect `/login` - `/`
+
+**Router.php:**
+
+* Semua referensi rute `/login` dihapus
+* Membersihkan komentar terkait backward compatibility
+
+### **Sistem Login Saat Ini**
+
+**Rute Login yang Tersedia:**
+
+* `GET /` – Halaman landing dengan 2 opsi login (Admin/Karyawan)
+* `GET /admin/login` – Halaman login Admin
+* `POST /admin/login` – Proses login Admin
+* `GET /karyawan/login` – Halaman login Karyawan
+* `POST /karyawan/login` – Proses login Karyawan
+
+**Catatan Migrasi:**
+
+* Semua tautan lama ke `/login` otomatis diarahkan ke `/`
+* Tidak ada perubahan database
+* Session yang sudah ada tetap valid
+
+
+
+
+
 ## **[Feature: Attendance Management Restructure & Period Filter] - 2024-12-02**
 
 ###  **New Features**
@@ -293,15 +350,15 @@ app/Views/
 **Migration Details:**
 
 1. **File Movements:**
-   - `attendance/admin.php` → `admin/attendance/index.php`
-   - `attendance/index.php` → `employee/attendance.php`
-   - `dashboard/admin.php` → `admin/dashboard.php`
-   - `dashboard/employee.php` → `employee/dashboard.php`
-   - `karyawan/index.php` → `admin/employees/index.php`
-   - `karyawan/form.php` → `admin/employees/form.php`
-   - `cuti/index.php` → `admin/leave/index.php`
-   - `leave/index.php` → `employee/leave/index.php`
-   - `leave/form.php` → `employee/leave/create.php`
+   - `attendance/admin.php` - `admin/attendance/index.php`
+   - `attendance/index.php` - `employee/attendance.php`
+   - `dashboard/admin.php` - `admin/dashboard.php`
+   - `dashboard/employee.php` - `employee/dashboard.php`
+   - `karyawan/index.php` - `admin/employees/index.php`
+   - `karyawan/form.php` - `admin/employees/form.php`
+   - `cuti/index.php` - `admin/leave/index.php`
+   - `leave/index.php` - `employee/leave/index.php`
+   - `leave/form.php` - `employee/leave/create.php`
 
 2. **Controller Updates:**
    -  `AuthController.php` - Updated dashboard paths
@@ -456,27 +513,27 @@ COMMENT 'Jatah cuti tahunan (hari)';
    - Terpakai: 5 hari (approved)
    - Pending: 2 hari
    - Sisa: 5 hari
-   - Ajukan 3 hari → ✅ **Berhasil**
+   - Ajukan 3 hari - ✅ **Berhasil**
 
 2. **Karyawan dengan jatah hampir habis**:
    - Jatah: 12 hari
    - Terpakai: 10 hari
    - Pending: 0 hari
    - Sisa: 2 hari
-   - Ajukan 5 hari → ❌ **Ditolak** (sisa hanya 2 hari)
+   - Ajukan 5 hari - ❌ **Ditolak** (sisa hanya 2 hari)
 
 3. **Karyawan dengan pending leaves**:
    - Jatah: 12 hari
    - Terpakai: 5 hari
    - Pending: 4 hari (belum disetujui)
    - Sisa: 3 hari (12 - 5 - 4)
-   - Ajukan 5 hari → ❌ **Ditolak** (available hanya 3 hari)
+   - Ajukan 5 hari - ❌ **Ditolak** (available hanya 3 hari)
 
 4. **Cuti sakit (tidak ada batasan)**:
    - Jatah: 12 hari (untuk annual leave)
    - Terpakai: 12 hari
    - Sisa: 0 hari
-   - Ajukan cuti sakit 3 hari → ✅ **Berhasil** (sick leave tidak dibatasi)
+   - Ajukan cuti sakit 3 hari - ✅ **Berhasil** (sick leave tidak dibatasi)
 
 **Benefits:**
 
@@ -949,7 +1006,7 @@ Fitur "Ajukan Cuti" untuk karyawan sudah dirilis di branch lain menggunakan tabe
   - `rejection_reason` TEXT - Alasan penolakan cuti
 
 #### **Model Changes** (`app/Models/PengajuanCuti.php`)
-- Updated table reference: `pengajuan_cuti` → `leave_requests`
+- Updated table reference: `pengajuan_cuti` - `leave_requests`
 - `create()` - Added `leave_type` and `total_days` parameters
 - `updateStatus()` - Added `approved_by` and `rejection_reason` support
 - `calculateDays()` - Automatically calculates `total_days` including weekends
@@ -967,7 +1024,7 @@ Fitur "Ajukan Cuti" untuk karyawan sudah dirilis di branch lain menggunakan tabe
 - `app/Views/cuti/form.php`:
   - Added `leave_type` dropdown (Annual/Sick/Emergency/Unpaid Leave)
   - Updated file input: `accept=".pdf,.jpg,.jpeg,.png"` (was `.pdf` only)
-  - Changed file reference: `document_path` → `attachment_file`
+  - Changed file reference: `document_path` - `attachment_file`
   
 - `app/Views/cuti/index.php`:
   - Display `leave_type` badge with color coding
@@ -1104,7 +1161,7 @@ Fitur "Ajukan Cuti" untuk karyawan sudah dirilis di branch lain menggunakan tabe
   - Field baru: `status` (active/disabled/locked)
   - Field baru: `must_change_password` (TINYINT)
   - Field baru: `password_last_changed` (DATETIME)
-  - Foreign key `karyawan_id` → `karyawan(id)` dengan ON DELETE SET NULL
+  - Foreign key `karyawan_id` - `karyawan(id)` dengan ON DELETE SET NULL
   - Unique constraint pada `karyawan_id`
 
 #### **Routing Updates**
@@ -1134,7 +1191,7 @@ Fitur "Ajukan Cuti" untuk karyawan sudah dirilis di branch lain menggunakan tabe
 - Enhanced `login()` method:
   - Validasi status akun (hanya `active` yang bisa login)
   - Auto-redirect ke `/change-password` jika `must_change_password = 1`
-  - Role-based redirect (admin → `/admin/dashboard`, karyawan → `/karyawan/dashboard`)
+  - Role-based redirect (admin - `/admin/dashboard`, karyawan - `/karyawan/dashboard`)
   
 - Deprecated `dashboard()` method:
   - Sekarang hanya redirect ke role-specific dashboard
@@ -1150,7 +1207,7 @@ Fitur "Ajukan Cuti" untuk karyawan sudah dirilis di branch lain menggunakan tabe
 #### **register.php Script**
 - **Breaking Change:** Sekarang HANYA bisa membuat akun admin
 - Untuk akun karyawan, wajib dibuat melalui dashboard admin
-- Alasan: Enforce relasi `users.karyawan_id` → `karyawan.id`
+- Alasan: Enforce relasi `users.karyawan_id` - `karyawan.id`
 - CLI-only access (reject web access)
 
 #### **Frontend Dependencies**
@@ -1215,7 +1272,7 @@ php -d extension=mysqli register.php
    - Email: `john@example.com`
    - Posisi: `Developer`
    - **Centang "Buat Akun Sekarang?"**
-4. Submit → Akan muncul kredensial login
+4. Submit - Akan muncul kredensial login
 5. Logout dan login sebagai `john@example.com` dengan temp password
 6. Sistem akan redirect ke `/change-password`
 7. Ganti password (min 8 karakter)
@@ -1226,7 +1283,7 @@ php -d extension=mysqli register.php
 ## Breaking Changes ⚠️
 
 1. **register.php tidak bisa membuat akun karyawan lagi**
-   - Solution: Gunakan dashboard admin → Manajemen Karyawan
+   - Solution: Gunakan dashboard admin - Manajemen Karyawan
    
 2. **Database schema update diperlukan**
    - Jalankan ulang `database/query.sql` atau migrate manual:

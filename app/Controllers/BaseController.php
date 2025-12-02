@@ -10,7 +10,7 @@ class BaseController {
         }
         if (!isset($_SESSION['user_id'])) {
             $_SESSION['error'] = 'Silakan login terlebih dahulu';
-            redirect('/login');//backward compatibility
+            redirect('/');
         }
     }
 
@@ -23,7 +23,7 @@ class BaseController {
         }
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'super_admin'])) {
             $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');//backward compatibility
+            redirect('/admin/login');
         }
     }
 
@@ -36,7 +36,7 @@ class BaseController {
         }
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
             $_SESSION['error'] = 'Akses ditolak';
-            redirect('/login');//backward compatibility
+            redirect('/karyawan/login');
         }
     }
 
