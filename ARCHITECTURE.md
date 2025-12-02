@@ -11,61 +11,88 @@ Project HRIS ini dibangun dengan arsitektur **MVC Architecture (Model–View–C
 - **Authentication**: Session-based authentication
 
 ### Arsitektur Aplikasi (MVC Pattern)
-hris-project/
-├─ public/                     # Root yang diakses browser
-│  ├─ index.php                # Router/front controller
-│  ├─ assets/
-│  │  ├─ css/
-│  │  │  └─ style.css          # Output build Tailwind
-│  │  ├─ js/
-│  │  │  └─ app.js             # Script utama
-│  │  └─ img/
-│  ├─ uploads/                 # File karyawan / foto profil
-│  └─ .htaccess                # Routing mod_rewrite
-│
-├─ app/
-│  ├─ Controllers/
-│  │  ├─ AuthController.php
-│  │  ├─ DashboardController.php
-│  │  ├─ AttendanceController.php
-│  │  ├─ LeaveController.php
-│  │
-│  ├─ Models/
-│  │  ├─ User.php
-│  │  ├─ Attendance.php
-│  │  └─ LeaveRequest.php
-│  │
-│  ├─ Views/
-│  │  ├─ layouts/
-│  │  │  ├─ header.php
-│  │  │  └─ footer.php
-│  │  ├─ auth/
-│  │  │  └─ login.php
-│  │  ├─ dashboard/
-│  │  │  ├─ admin.php
-│  │  │  └─ employee.php
-│  │  ├─ attendance/
-│  │  │  ├─ index.php
-│  │  └─ leave/
-│  │     ├─ index.php
-│  │     └─ submit.php
-│  │
-│  ├─ Core/
-│  │  ├─ Database.php           # Koneksi MySQL (PDO)
-│  │  ├─ Router.php             # Pengatur route
-│  │  ├─ Session.php            # Auth handler
-│  │  └─ Helpers.php
-│  │
-│  └─ config.php                # Konfigurasi environment
-│
-├─ storage/
-│  └─ logs/
-│     └─ app.log                # (optional) logging
-│
-├─ tailwind.config.js
-├─ package.json                 # Jika ingin build Tailwind
-├─ composer.json                # Jika mau pakai autoload PSR-4 (opsional)
-└─ README.md
+```
+HRIS/
+├── app/
+│   ├── Controllers/                    # Logic aplikasi
+│   │   ├── AuthController.php          # Login, logout, change password
+│   │   ├── AttendanceController.php    # Manajemen absensi (admin & karyawan)
+│   │   ├── BaseController.php          # Base controller dengan helper methods
+│   │   ├── CutiController.php          # Manajemen pengajuan cuti (admin)
+│   │   ├── FileController.php          # Secure file viewing
+│   │   ├── KaryawanController.php      # CRUD karyawan (admin)
+│   │   └── LeaveController.php         # Pengajuan cuti (karyawan)
+│   ├── Models/                         # Data access layer
+│   │   ├── Attendance.php              # Model absensi
+│   │   ├── Karyawan.php                # Model karyawan
+│   │   ├── LeaveRequest.php            # Model leave requests
+│   │   └── PengajuanCuti.php           # Model pengajuan cuti (admin view)
+│   ├── Views/                          # Template HTML (role-based structure)
+│   │   ├── admin/                      # Admin-only views
+│   │   │   ├── dashboard.php           # Dashboard admin
+│   │   │   ├── attendance/
+│   │   │   │   └── index.php           # Manajemen absensi
+│   │   │   ├── employees/
+│   │   │   │   ├── index.php           # List karyawan
+│   │   │   │   └── form.php            # Form tambah/edit karyawan
+│   │   │   └── leave/
+│   │   │       └── index.php           # Manajemen pengajuan cuti
+│   │   ├── employee/                   # Employee-only views
+│   │   │   ├── dashboard.php           # Dashboard karyawan
+│   │   │   ├── attendance.php          # Absensi karyawan
+│   │   │   └── leave/
+│   │   │       ├── index.php           # Riwayat cuti
+│   │   │       └── create.php          # Form pengajuan cuti
+│   │   ├── auth/                       # Public authentication
+│   │   │   ├── login.php               # Landing page login
+│   │   │   ├── login-admin.php         # Login admin
+│   │   │   ├── login-karyawan.php      # Login karyawan
+│   │   │   └── change-password.php     # Ganti password
+│   │   ├── layouts/                    # Templates & Components
+│   │   │   ├── header.php
+│   │   │   ├── footer.php
+│   │   │   ├── sidebar.php
+│   │   │   ├── sidebar-admin.php
+│   │   │   ├── sidebar-karyawan.php
+│   │   │   └── components/
+│   │   │       ├── alerts.php          # Reusable alert component
+│   │   │       └── pagination.php      # Reusable pagination
+│   │   └── errors/                     # Error pages
+│   │       ├── 404.php
+│   │       └── 403.php
+│   ├── Core/                           # Router, Database, Helper
+│   │   ├── Database.php                # Koneksi database
+│   │   ├── Router.php                  # Routing system
+│   │   ├── Env.php                     # Environment loader (.env)
+│   │   └── Helpers.php                 # Helper functions
+│   └── config.php                      # Konfigurasi aplikasi
+├── public/                             # Document root
+│   ├── index.php                       # Front controller
+│   └── assets/                         # CSS, JS, images
+│       ├── css/
+│       │   ├── input.css               # Tailwind input
+│       │   └── output.css              # Compiled CSS
+│       └── js/
+│           ├── theme.js                # Theme switcher (light/dark)
+│           └── apply-theme.js          # Apply theme on load
+├── storage/                            # File storage (outside web root)
+│   └── leave_attachments/              # Leave request attachments
+├── scripts/
+│   └── register.php                    # Script buat akun admin (dev only)
+├── database/
+│   └── query.sql                       # Database schema
+├── docs/                               # Documentation
+│   ├── FRONTEND_DASHBOARD_ADMIN.md
+│   ├── FRONTEND_DASHBOARD_KARYAWAN.md
+│   └── SEPARATED_LOGIN.md
+├── .env.example                        # Environment template
+├── .gitignore
+├── ARCHITECTURE.md                     # Architecture documentation
+├── CHANGELOG.md                        # Version history
+├── package.json                        # Node dependencies
+├── tailwind.config.js                  # Tailwind configuration
+└── README.md
+```
 
 
 ### Request Flow (MVC)

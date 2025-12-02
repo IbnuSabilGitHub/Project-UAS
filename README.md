@@ -12,21 +12,78 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
 
 
 ## Fitur Utama
-- **Login/Logout + Session** (role: `admin`, `karyawan`)
+
+### 🔐 Authentication & Authorization
+- **Separated Login Pages**
+  - Landing page dengan pilihan login Admin atau Karyawan
+  - Login Admin: `/admin/login`
+  - Login Karyawan: `/karyawan/login`
+  - Validasi role-based access
+- **Session Management**
+  - Login berbasis email (bukan username)
   - Validasi status akun (active/disabled)
   - Wajib ganti password pertama kali login
   - Redirect otomatis ke dashboard sesuai role
-- **Dashboard Berbasis Role**
-  - Dashboard Admin: Akses manajemen karyawan
-  - Dashboard Karyawan: Akses fitur personal (absensi & cuti)
-- **Manajemen Karyawan (Admin)**
-  - CRUD data karyawan (NIK, nama, email, posisi, dll)
+
+### 📊 Dashboard Berbasis Role
+- **Dashboard Admin**
+  - Statistik karyawan (total, by status, by posisi)
+  - Statistik pengajuan cuti keseluruhan
+  - Statistik absensi keseluruhan
+  - Akses ke semua fitur manajemen
+- **Dashboard Karyawan**
+  - Statistik cuti personal (terpakai, tersisa, pending)
+  - Statistik absensi personal (bulan ini & keseluruhan)
+  - Riwayat 7 hari terakhir
+  - Quick access ke fitur absensi & pengajuan cuti
+
+### 👥 Manajemen Karyawan (Admin)
+- **CRUD Data Karyawan**
+  - NIK (16 karakter sesuai KTP), nama, email, posisi, tanggal bergabung
+  - Filter karyawan berdasarkan status (Aktif, Cuti, Resign)
+  - Pencarian karyawan by nama atau NIK
+  - Statistik real-time (total karyawan, by status, karyawan baru)
+- **Manajemen Akun**
+  - Buat akun otomatis saat tambah karyawan (opsional)
+  - Generate temporary password acak
   - Aktivasi/Nonaktifkan akun karyawan
-  - Generate temporary password otomatis
-  - Soft delete (nonaktifkan) & Hard delete (hapus permanen - super_admin only)
-- **Absensi Karyawan** (check-in/check-out, 1x per hari)
-- **Pengajuan Cuti** (karyawan) + Approve/Reject (admin)
-- super_admin role feature (masih di pertimbangkan)
+  - Soft delete (nonaktifkan) & Hard delete (hapus permanen - admin only)
+- **User Interface**
+  - Dropdown actions untuk aksi per karyawan
+  - Status badge dengan color coding
+  - Responsive table dengan Flowbite components
+
+### ⏰ Manajemen Absensi
+- **Fitur Karyawan**
+  - Check-in/Check-out harian (1x per hari)
+  - Validasi jam kerja (terlambat, half day)
+  - Riwayat absensi personal
+- **Fitur Admin**
+  - View semua absensi karyawan
+  - Filter by periode (Hari Ini, Minggu Ini, Bulan Ini, Semua Data)
+  - Filter by status (Hadir, Terlambat, Half Day)
+  - Pencarian karyawan by nama
+  - Export data ke CSV dengan filter yang diterapkan
+  - Statistik real-time (total, tepat waktu, terlambat, half day, belum checkout)
+
+### 🏖️ Manajemen Cuti
+- **Fitur Karyawan**
+  - Ajukan cuti dengan 4 jenis: Annual, Sick, Emergency, Unpaid
+  - Upload dokumen pendukung (PDF/JPG/PNG, max 10MB)
+  - Validasi jatah cuti tahunan (default 12 hari/tahun)
+  - Perhitungan otomatis total hari cuti
+  - Tracking status: Pending, Approved, Rejected
+  - View riwayat pengajuan dengan statistik personal
+- **Fitur Admin**
+  - View semua pengajuan cuti
+  - Filter by status (Approved, Pending, Rejected)
+  - Filter by periode (Hari Ini, Minggu Ini, Bulan Ini, Semua Data)
+  - Pencarian karyawan by nama
+  - Approve/Reject pengajuan dengan alasan
+  - View & download dokumen pendukung
+  - Export data ke CSV
+  - Statistik pengajuan (total, pending, approved, rejected)
+  - Badge notifikasi dinamis untuk pending requests
 
 ## Arsitektur
 - Pola: **MVC Pattern** (Model-View-Controller)
@@ -45,7 +102,7 @@ Pastikan sudah terinstall:
 - **Node.js** (untuk Tailwind CSS)
 - **Git**
 
-### 1️⃣ Clone Repository (branch: feat/dashboard-admin)
+### 1️⃣ Clone Repository
 ```bash
 git clone https://github.com/IbnuSabilGitHub/Project-UAS.git
 cd Project-UAS
@@ -237,7 +294,7 @@ Lihat di pojok kanan bawah jendela Open, ubah dropdown dari Text Documents (*.tx
 **Cara membuat akun admin:**
 1. Buka folder `scripts/`
 2. Edit file `register.php`:
-   - Ubah variabel `$username` (contoh: `'admin'`)
+   - Ubah variabel `$email` (contoh: `'admin@hris.local'`)
    - Ubah variabel `$password` (contoh: `'admin123'`)
    - Pastikan `$role = 'admin'`
 3. Jalankan di CLI (Command Prompt/Terminal):
@@ -249,14 +306,14 @@ Lihat di pojok kanan bawah jendela Open, ubah dropdown dari Text Documents (*.tx
 
 **Cara membuat akun karyawan:**
 1. Login sebagai admin
-2. Buka menu **Manajemen Karyawan** (`/admin/karyawan`)
+2. Buka menu **Manajemen Karyawan** (`/admin/employees`)
 3. Klik **Tambah Karyawan**
-4. Isi data karyawan (NIK, Nama, Email, dll)
+4. Isi data karyawan (NIK 16 digit, Nama, Email, Posisi, Tanggal Bergabung, dll)
 5. **Centang opsi "Buat Akun Sekarang?"** jika ingin langsung membuat akun login
 6. Sistem akan:
    - Membuat data karyawan
-   - Generate username otomatis (dari NIK atau email)
-   - Generate temporary password acak
+   - Generate username otomatis dari email (misal: `john.doe@company.com` → `john.doe`)
+   - Generate temporary password acak 12 karakter
    - Menampilkan kredensial login (catat untuk diberikan ke karyawan)
    - User wajib ganti password saat login pertama kali
 
@@ -275,40 +332,200 @@ npm run dev
 ```
 HRIS/
 ├── app/
-│   ├── Controllers/             # Logic aplikasi
-│   │   ├── AuthController.php   # Login, logout, change password
-│   │   └── KaryawanController.php # CRUD karyawan (admin)
-│   ├── Models/                  # Data access layer
-│   │   └── Karyawan.php         # Model karyawan
-│   ├── Views/                   # Template HTML
-│   │   ├── layouts/             # Header & Footer
-│   │   ├── auth/                # Login, change password
-│   │   │   ├── login.php
-│   │   │   └── change_password.php
-│   │   ├── dashboard/           # Dashboard berbasis role
-│   │   │   ├── admin.php
-│   │   │   └── employee.php
-│   │   └── karyawan/            # Manajemen karyawan (admin)
-│   │       ├── index.php        # List karyawan
-│   │       └── form.php         # Form tambah/edit
-│   ├── Core/                    # Router, Database, Helper
-│   │   ├── Database.php         # Koneksi database
-│   │   ├── Router.php           # Routing
-│   │   ├── Env.php              # Environment loader
-│   │   └── Helpers.php          # Helper functions
-│   └── config.php               # Konfigurasi
-├── public/                      # Document root
-│   ├── index.php                # Front controller
-│   └── assets/                  # CSS, JS, images
-│       └── css/
-│           ├── input.css        # Tailwind input
-│           └── output.css       # Compiled CSS
+│   ├── Controllers/                    # Logic aplikasi
+│   │   ├── AuthController.php          # Login, logout, change password
+│   │   ├── AttendanceController.php    # Manajemen absensi (admin & karyawan)
+│   │   ├── BaseController.php          # Base controller dengan helper methods
+│   │   ├── CutiController.php          # Manajemen pengajuan cuti (admin)
+│   │   ├── FileController.php          # Secure file viewing
+│   │   ├── KaryawanController.php      # CRUD karyawan (admin)
+│   │   └── LeaveController.php         # Pengajuan cuti (karyawan)
+│   ├── Models/                         # Data access layer
+│   │   ├── Attendance.php              # Model absensi
+│   │   ├── Karyawan.php                # Model karyawan
+│   │   ├── LeaveRequest.php            # Model leave requests
+│   │   └── PengajuanCuti.php           # Model pengajuan cuti (admin view)
+│   ├── Views/                          # Template HTML (role-based structure)
+│   │   ├── admin/                      # Admin-only views
+│   │   │   ├── dashboard.php           # Dashboard admin
+│   │   │   ├── attendance/
+│   │   │   │   └── index.php           # Manajemen absensi
+│   │   │   ├── employees/
+│   │   │   │   ├── index.php           # List karyawan
+│   │   │   │   └── form.php            # Form tambah/edit karyawan
+│   │   │   └── leave/
+│   │   │       └── index.php           # Manajemen pengajuan cuti
+│   │   ├── employee/                   # Employee-only views
+│   │   │   ├── dashboard.php           # Dashboard karyawan
+│   │   │   ├── attendance.php          # Absensi karyawan
+│   │   │   └── leave/
+│   │   │       ├── index.php           # Riwayat cuti
+│   │   │       └── create.php          # Form pengajuan cuti
+│   │   ├── auth/                       # Public authentication
+│   │   │   ├── login.php               # Landing page login
+│   │   │   ├── login-admin.php         # Login admin
+│   │   │   ├── login-karyawan.php      # Login karyawan
+│   │   │   └── change-password.php     # Ganti password
+│   │   ├── layouts/                    # Templates & Components
+│   │   │   ├── header.php
+│   │   │   ├── footer.php
+│   │   │   ├── sidebar.php
+│   │   │   ├── sidebar-admin.php
+│   │   │   ├── sidebar-karyawan.php
+│   │   │   └── components/
+│   │   │       ├── alerts.php          # Reusable alert component
+│   │   │       └── pagination.php      # Reusable pagination
+│   │   └── errors/                     # Error pages
+│   │       ├── 404.php
+│   │       └── 403.php
+│   ├── Core/                           # Router, Database, Helper
+│   │   ├── Database.php                # Koneksi database
+│   │   ├── Router.php                  # Routing system
+│   │   ├── Env.php                     # Environment loader (.env)
+│   │   └── Helpers.php                 # Helper functions
+│   └── config.php                      # Konfigurasi aplikasi
+├── public/                             # Document root
+│   ├── index.php                       # Front controller
+│   └── assets/                         # CSS, JS, images
+│       ├── css/
+│       │   ├── input.css               # Tailwind input
+│       │   └── output.css              # Compiled CSS
+│       └── js/
+│           ├── theme.js                # Theme switcher (light/dark)
+│           └── apply-theme.js          # Apply theme on load
+├── storage/                            # File storage (outside web root)
+│   └── leave_attachments/              # Leave request attachments
 ├── scripts/
-│   └── register.php             # Script buat akun admin (dev only)
+│   └── register.php                    # Script buat akun admin (dev only)
 ├── database/
-│   └── query.sql                # Database schema
+│   └── query.sql                       # Database schema
+├── docs/                               # Documentation
+│   ├── FRONTEND_DASHBOARD_ADMIN.md
+│   ├── FRONTEND_DASHBOARD_KARYAWAN.md
+│   └── SEPARATED_LOGIN.md
+├── .env.example                        # Environment template
+├── .gitignore
+├── ARCHITECTURE.md                     # Architecture documentation
+├── CHANGELOG.md                        # Version history
+├── package.json                        # Node dependencies
+├── tailwind.config.js                  # Tailwind configuration
 └── README.md
 ```
+
+---
+
+## 🔒 Security Features
+
+### Secure File Storage
+- **File Upload Protection**
+  - Uploaded files disimpan di `storage/` (outside web root)
+  - Tidak bisa diakses langsung via URL
+  - Authentication required untuk view/download files
+  
+- **File Access Control**
+  - Role-based access control untuk leave attachments
+  - Admin: Akses semua file pengajuan cuti
+  - Karyawan: Hanya file milik sendiri
+  - File viewing melalui controller endpoint: `/file/leave/{id}`
+
+- **File Validation**
+  - Supported formats: PDF, JPG, PNG
+  - Maximum file size: 10MB
+  - File type validation (MIME type check)
+  - Secure filename sanitization
+
+### Database Security
+- **Email-based Authentication**
+  - Login menggunakan email (lebih aman dari username)
+  - Kolom `users.email` VARCHAR(150) UNIQUE
+  - Password hashing dengan `password_hash()` (bcrypt)
+  
+- **NIK Standardization**
+  - NIK field: CHAR(16) sesuai standar KTP Indonesia
+  - Input validation untuk 16 digit
+
+- **Prepared Statements**
+  - Semua query menggunakan prepared statements
+  - Protection dari SQL injection
+  - Type binding untuk parameter ('s', 'i', 'd')
+
+### Session Security
+- Session-based authentication
+- Auto-logout untuk inactive sessions
+- CSRF protection (recommended untuk production)
+
+---
+
+## ✨ Key Improvements
+
+### Performance Optimization
+- **Search by Name Instead of Dropdown**
+  - Text input search untuk filter karyawan (scalable)
+  - MySQL LIKE query dengan wildcard
+  - Lebih efisien bandwidth dibanding dropdown dengan ratusan options
+  - Recommended: Add database index `CREATE INDEX idx_name ON karyawan(name)`
+
+### User Experience
+- **Real-time Statistics**
+  - Dashboard cards dengan data live dari database
+  - Auto-update tanpa reload (untuk beberapa fitur)
+  - Color-coded badges untuk status visualization
+  
+- **Advanced Filtering**
+  - Multiple filter kombinasi (status + date range + search)
+  - Filter state preserved setelah reload
+  - Export CSV dengan filter yang diterapkan
+  
+- **Responsive Design**
+  - Mobile-friendly dengan Tailwind CSS
+  - Flowbite components untuk konsistensi UI
+  - Dropdown actions untuk space efficiency
+
+### Developer Experience
+- **Environment Variables**
+  - `.env` file untuk database credentials
+  - `.env.example` sebagai template
+  - `.gitignore` untuk security
+  
+- **MVC Pattern**
+  - Clear separation of concerns
+  - Role-based view structure
+  - Reusable components (alerts, pagination)
+  
+- **Code Organization**
+  - Consistent naming conventions
+  - Helper functions di `Core/Helpers.php`
+  - Base controller untuk shared functionality
+
+---
+
+## 📋 Database Schema Highlights
+
+### Tabel Users
+- `email` VARCHAR(150) UNIQUE - Email untuk login
+- `password` VARCHAR(255) - Hashed password (bcrypt)
+- `role` ENUM('admin','karyawan') - User role
+- `status` ENUM('active','disabled') - Account status
+- `must_change_password` BOOLEAN - Force password change flag
+
+### Tabel Karyawan
+- `nik` CHAR(16) UNIQUE - NIK sesuai KTP (16 digit)
+- `annual_leave_quota` INT DEFAULT 12 - Jatah cuti tahunan
+- `employment_status` ENUM('active','on_leave','resigned')
+- `user_id` INT NULLABLE - Foreign key ke users (opsional)
+
+### Tabel Leave Requests
+- `leave_type` ENUM('annual','sick','emergency','unpaid')
+- `total_days` INT - Auto-calculated (include weekends)
+- `attachment_file` VARCHAR(255) - Path to uploaded file
+- `approved_by` INT - Admin user ID yang approve
+- `rejection_reason` TEXT - Alasan penolakan
+
+### Tabel Attendance
+- `check_in` TIME - Jam masuk
+- `check_out` TIME - Jam keluar
+- `status` ENUM('present','late','half_day') - Status kehadiran
+- Unique constraint: 1 record per karyawan per hari
 
 ---
 
@@ -322,13 +539,46 @@ HRIS/
 
 **Problem:** Database connection error
 - **Solusi:** Cek konfigurasi di `app/config.php`, pastikan MySQL sudah running
+- **Solusi:** Pastikan file `.env` sudah dibuat dan diisi dengan benar
 
 **Problem:** Virtual Host tidak berfungsi
 - **Solusi:** Pastikan sudah restart Apache setelah edit config, dan cek file `hosts` sudah benar
 
+**Problem:** File upload tidak bisa diakses
+- **Solusi:** Pastikan folder `storage/leave_attachments/` sudah dibuat dengan permission yang benar
+- **Solusi:** Akses file melalui endpoint `/file/leave/{id}`, bukan direct URL
+
+**Problem:** Login dengan email tidak berhasil
+- **Solusi:** Pastikan sudah update database schema (tabel `users` menggunakan `email`, bukan `username`)
+- **Solusi:** Jalankan migration database dari `database/query.sql`
+
 ---
 
 ## 📚 Dokumentasi Lengkap
-Lihat `ARCHITECTURE.md` untuk detail arsitektur, ERD, dan flowchart aplikasi.
+- **`ARCHITECTURE.md`** - Detail arsitektur, ERD, dan flowchart aplikasi
+- **`CHANGELOG.md`** - Riwayat perubahan dan feature updates
+- **`docs/SEPARATED_LOGIN.md`** - Dokumentasi fitur separated login
+- **`docs/FRONTEND_DASHBOARD_ADMIN.md`** - Dokumentasi dashboard admin
+- **`docs/FRONTEND_DASHBOARD_KARYAWAN.md`** - Dokumentasi dashboard karyawan
+
+---
+
+## 🤝 Contributing
+Contributions are welcome! Please follow these guidelines:
+1. Fork repository ini
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+---
+
+## 📄 License
+Project ini dibuat untuk keperluan pembelajaran dan tugas akhir semester.
+
+---
+
+## 👥 Team
+Developed by **IbnuSabilGitHub** and team.
 
 
