@@ -563,22 +563,12 @@ HRIS/
 
 ---
 
-## 🤝 Contributing
-Contributions are welcome! Please follow these guidelines:
-1. Fork repository ini
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
----
-
 ## 📄 License
 Project ini dibuat untuk keperluan pembelajaran dan tugas akhir semester.
 
 ---
 
 ## 👥 Team
-Developed by **IbnuSabilGitHub** and team.
+Developed by **kELOMPOK 8**.
 
 
