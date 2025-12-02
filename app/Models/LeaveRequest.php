@@ -246,17 +246,39 @@ class LeaveRequest {
     }
 
     /**
-     * Hitung total hari cuti yang sudah diambil tahun ini
+     * Hitung total pengajuan cuti yang disetujui tahun ini
+     * 
      * @param int $karyawanId
      * @return int
      */
-    public function getTotalDaysThisYear($karyawanId) {
+    public function getTotalApprovedThisYear($karyawanId) {
         $year = date('Y');
         $stmt = $this->conn->prepare("
-            SELECT COALESCE(SUM(total_days), 0) as total
+            SELECT COUNT(*) as total
             FROM leave_requests
             WHERE karyawan_id = ?
             AND status = 'approved'
+            AND YEAR(start_date) = ?
+        ");
+        $stmt->bind_param('ii', $karyawanId, $year);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result['total'];
+    }
+
+    /**
+     * Hitung total pengajuan cuti yang ditolak tahun ini
+     * 
+     * @param int $karyawanId
+     * @return int
+     */
+    public function getTotalRejectedThisYear($karyawanId) {
+        $year = date('Y');
+        $stmt = $this->conn->prepare("
+            SELECT COUNT(*) as total
+            FROM leave_requests
+            WHERE karyawan_id = ?
+            AND status = 'rejected'
             AND YEAR(start_date) = ?
         ");
         $stmt->bind_param('ii', $karyawanId, $year);

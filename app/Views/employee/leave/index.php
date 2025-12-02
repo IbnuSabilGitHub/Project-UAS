@@ -39,12 +39,12 @@
         <h2 class="text-xl font-semibold mb-4 text-heading">Ringkasan Cuti Tahun Ini</h2>
         <div class="grid md:grid-cols-3 gap-4">
             <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading "><?= $totalDaysUsed ?></p>
-                <p class="text-body">Hari Cuti Terpakai</p>
+                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading "><?= $totalApproved ?></p>
+                <p class="text-body">Total Cuti Disetujui</p>
             </div>
             <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= max(0, 12 - $totalDaysUsed) ?></p>
-                <p class="text-body">Hari Cuti Tersisa</p>
+                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $totalRejected ?></p>
+                <p class="text-body">Total Cuti Ditolak</p>
             </div>
             <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default ">
                 <p class="mb-2 text-2xl font-semibold tracking-tight text-heading">
@@ -165,25 +165,53 @@
 
 </div>
 
-<!-- Modal Detail -->
-<div id="detailModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-2/3 lg:w-1/2 shadow-lg rounded-md bg-white">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold">Detail Pengajuan Cuti</h3>
-            <button onclick="closeModal()" class="text-gray-600 hover:text-gray-800">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+<!-- Overlay -->
+<div id="modalOverlay"
+    class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-200 ">
+</div>
+
+<!-- Modal Container -->
+<div id="detailModal"
+    class="fixed inset-0 z-50 hidden flex items-start justify-center overflow-y-auto p-6 mt-14">
+    <div id="modalBox"
+        class="bg-neutral-primary-soft border border-default rounded-base shadow-lg w-full max-w-xl
+               opacity-0 scale-95 transition-all duration-200 mt-20">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-default p-4">
+            <h5 class="flex items-center text-lg font-semibold text-heading">
+                <svg class="w-5 h-5 mr-2" aria-hidden="true" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                Detail Pengajuan Cuti
+            </h5>
+            <button type="button" onclick="closeModal()"
+                class="w-9 h-9 flex items-center justify-center rounded-base text-body
+                       hover:bg-neutral-tertiary hover:text-heading transition">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
                 </svg>
             </button>
         </div>
-        <div id="modalContent" class="space-y-3">
-            <!-- Content will be filled by JavaScript -->
-        </div>
+
+        <!-- Body (auto-filled) -->
+        <div id="modalContent" class="p-4 space-y-4 text-body leading-relaxed"></div>
+
     </div>
 </div>
 
+
+
+
 <script>
     function showDetail(leave) {
+        const modal = document.getElementById('detailModal');
+        const overlay = document.getElementById('modalOverlay');
+        const box = document.getElementById('modalBox');
+
+        // === generate content (copy dari kode Anda) ===
         const types = {
             'annual': 'Tahunan',
             'sick': 'Sakit',
@@ -192,55 +220,144 @@
         };
 
         const status = {
-            'pending': '<span class="px-2 py-1 text-xs rounded bg-yellow-100 text-yellow-800">Pending</span>',
-            'approved': '<span class="px-2 py-1 text-xs rounded bg-green-100 text-green-800">Disetujui</span>',
-            'rejected': '<span class="px-2 py-1 text-xs rounded bg-red-100 text-red-800">Ditolak</span>'
+            'pending': '<span class="bg-danger-soft text-fg-danger-strong text-xs font-medium px-1.5 py-0.5 rounded-full">Pending</span>',
+            'approved': '<span class="bg-success-soft text-fg-success-strong text-xs font-medium px-1.5 py-0.5 rounded-full">Disetujui</span>',
+            'rejected': '<span class="bg-danger-soft text-fg-danger-strong text-xs font-medium px-1.5 py-0.5 rounded-full">Ditolak</span>'
         };
 
         let content = `
-        <div><strong>Jenis Cuti:</strong> ${types[leave.leave_type]}</div>
-        <div><strong>Tanggal Mulai:</strong> ${formatDate(leave.start_date)}</div>
-        <div><strong>Tanggal Selesai:</strong> ${formatDate(leave.end_date)}</div>
-        <div><strong>Durasi:</strong> ${leave.total_days} hari</div>
-        <div><strong>Status:</strong> ${status[leave.status]}</div>
-        <div><strong>Alasan:</strong> ${leave.reason}</div>
-    `;
+        <div class="flow-root">
+        <dl class="-my-3 divide-y divide-default/40 text-sm">
+            
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Jenis Cuti</dt>
+            <dd class="text-body sm:col-span-2">${types[leave.leave_type]}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Tanggal Mulai</dt>
+            <dd class="text-body sm:col-span-2">${formatDate(leave.start_date)}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Tanggal Selesai</dt>
+            <dd class="text-body sm:col-span-2">${formatDate(leave.end_date)}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Durasi</dt>
+            <dd class="text-body sm:col-span-2">${leave.total_days} hari</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Status</dt>
+            <dd class="sm:col-span-2">
+                <span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-base 
+                        ${leave.status === 'approved'
+                            ? 'bg-success-soft text-success-strong'
+                            : leave.status === 'rejected'
+                                ? 'bg-danger-soft text-danger-strong'
+                                : 'bg-warning-soft text-warning-strong'}">
+                    ${status[leave.status]}
+                </span>
+            </dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Alasan</dt>
+            <dd class="text-body sm:col-span-2 leading-relaxed">${leave.reason}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Diproses Oleh</dt>
+            <dd class="text-body sm:col-span-2">${leave.approver_email || '-'}</dd>
+            </div>
+        `;
+
 
         if (leave.approved_by) {
-            content += `<div><strong>Diproses oleh:</strong> ${leave.approver_email || '-'}</div>`;
+            content += `
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Diproses Oleh</dt>
+            <dd class="text-body sm:col-span-2">${leave.approver_email || '-'}</dd>
+            </div>
+        `;
         }
+
 
         if (leave.rejection_reason) {
-            content += `<div class="bg-red-50 p-3 rounded"><strong>Alasan Penolakan:</strong> ${leave.rejection_reason}</div>`;
+            content += `
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Alasan Penolakan</dt>
+            <dd class="text-body sm:col-span-2 leading-relaxed">
+                <span class="text-body">${leave.rejection_reason}</span>
+            </dd>
+            </div>
+        `;
         }
+
 
         if (leave.attachment_file) {
-            content += `<div><strong>Lampiran:</strong> <a href="<?= url('/file/leave/') ?>${leave.id}" target="_blank" class="text-blue-600">Lihat File</a></div>`;
+            content += `
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Lampiran</dt>
+            <dd class="text-body sm:col-span-2">
+                <a href="<?= url('/file/leave/') ?>${leave.id}"
+                target="_blank"
+                class="inline-flex items-center text-brand hover:text-brand-strong underline">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                </svg>
+                Lihat File
+                </a>
+            </dd>
+            </div>
+        `;
         }
 
+        content += `</dl></div>`;
         document.getElementById('modalContent').innerHTML = content;
-        document.getElementById('detailModal').classList.remove('hidden');
+
+        // === OPEN MODAL ===
+        modal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+
+        setTimeout(() => {
+            overlay.classList.remove("opacity-0");
+            box.classList.remove("opacity-0", "scale-95");
+        }, 10);
+
+        document.body.style.overflow = "hidden"; // lock body scroll
     }
 
     function closeModal() {
-        document.getElementById('detailModal').classList.add('hidden');
+        const modal = document.getElementById('detailModal');
+        const overlay = document.getElementById('modalOverlay');
+        const box = document.getElementById('modalBox');
+
+        // animate reverse
+        overlay.classList.add("opacity-0");
+        box.classList.add("opacity-0", "scale-95");
+
+        setTimeout(() => {
+            modal.classList.add("hidden");
+            overlay.classList.add("hidden");
+        }, 200);
+
+        document.body.style.overflow = ""; // unlock body scroll
     }
 
+    // Close via overlay
+    document.getElementById('modalOverlay').addEventListener('click', closeModal);
+
     function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('id-ID', {
+        return new Date(dateString).toLocaleDateString('id-ID', {
             day: '2-digit',
             month: 'long',
             year: 'numeric'
         });
     }
-
-    // Close modal when clicking outside
-    document.getElementById('detailModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
-    });
 </script>
 
 <?php require_once __DIR__ . '/../../layouts/footer.php'; ?>
