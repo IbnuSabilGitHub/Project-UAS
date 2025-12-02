@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 
 
+## **[Feature: Dynamic Pending Count Badge] - 2024-12-02**
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `BaseController.php`: Memperbarui method `renderSidebar()` untuk mengambil dan meneruskan jumlah pengajuan cuti pending ke sidebar admin
+
+**Models:**
+
+- `PengajuanCuti.php`: Menambahkan method `countPending()` untuk menghitung total pengajuan cuti dengan status pending
+
+**Views:**
+
+- `sidebar.php`: Menambahkan logic untuk mengambil pending count sebelum merender sidebar admin
+- `sidebar-admin.php`: Badge notifikasi pada menu "Pengajuan Cuti" kini menggunakan variabel `$pendingCount` yang dinamis
+
+
+---
+
 ## **[Fix: Email Login & NIK Update] - 2024-12-01**
 
 ### 🔄 **Database Schema Changes**

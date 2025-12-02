@@ -276,6 +276,21 @@ class PengajuanCuti {
     }
 
     /**
+     * Menghitung jumlah pengajuan cuti dengan status pending
+     * 
+     * @return int
+     */
+    public function countPending() {
+        $sql = "SELECT COUNT(*) as total FROM leave_requests WHERE status = 'pending'";
+        $result = $this->conn->query($sql);
+        if ($result) {
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }
+        return 0;
+    }
+
+    /**
      * Mengambil statistik cuti untuk karyawan tertentu
      * 
      * @param int $karyawanId

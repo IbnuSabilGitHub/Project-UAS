@@ -84,6 +84,17 @@ class BaseController {
      */
     private function renderSidebar($role, $email) {
         if (in_array($role, ['admin', 'super_admin'])) {
+            // Get pending leave requests count for admin sidebar
+            $pendingCount = 0;
+            try {
+                require_once __DIR__ . '/../Models/PengajuanCuti.php';
+                $cutiModel = new PengajuanCuti();
+                $pendingCount = $cutiModel->countPending();
+            } catch (Exception $e) {
+                // Fallback to 0 if there's an error
+                $pendingCount = 0;
+            }
+            
             require_once __DIR__ . '/../Views/layouts/sidebar-admin.php';
         } elseif ($role === 'karyawan') {
             require_once __DIR__ . '/../Views/layouts/sidebar-karyawan.php';

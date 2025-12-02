@@ -88,7 +88,11 @@
                 <a href="<?= url('/admin/cuti') ?>" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                     <i class="fa-solid fa-folder-open transition duration-75 group-hover:text-fg-brand"></i>
                     <span class="flex-1 ms-3 whitespace-nowrap">Penjauan cuti</span>
-                    <span class="inline-flex items-center justify-center w-4.5 h-4.5 ms-2 text-xs font-medium text-fg-danger-strong bg-danger-soft border border-danger-subtle rounded-full">2</span>
+                    <?php if (isset($pendingCount) && $pendingCount > 0): ?>
+                    <span class="inline-flex items-center justify-center w-4.5 h-4.5 ms-2 text-xs font-medium text-fg-warning bg-warning-soft border border-warning-subtle rounded-full">
+                        <?= htmlspecialchars($pendingCount) ?>
+                    </span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li>
