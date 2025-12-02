@@ -22,14 +22,112 @@
         </div>
     <?php endif; ?>
 
+    <!-- Statistik Karyawan -->
+    <?php if (isset($statistics) && !empty($statistics)): ?>
+        <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
+            <h2 class="text-xl font-semibold mb-4 text-heading">Statistik Karyawan</h2>
+
+            <!-- Card -->
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <!-- Total Karyawan -->
+                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
+                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['total'] ?? 0 ?></p>
+                    <p class="text-body">Total Karyawan</p>
+                </div>
+
+                <!-- Active -->
+                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
+                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['active'] ?? 0 ?></p>
+                    <p class="text-body">Aktif</p>
+                </div>
+
+                <!-- Resigned -->
+                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
+                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['resigned'] ?? 0 ?></p>
+                    <p class="text-body">Resign</p>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <div class="overflow-y-auto overflow-x-auto shadow-md sm:rounded-base bg-neutral-secondary-soft p-4 space-y-4">
         <div class="flex flex-row items-center justify-between w-full">
             <h1 class="text-2xl font-bold text-heading">List Karyawan </h1>
-            <a href="<?= url('/admin/karyawan/create') ?>"
-                class="text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-                Tambah Karyawan
-            </a>
+
+            <!-- Wrapper filter -->
+            <div class="flex flex-row space-x-4">
+                <!-- Filter Status Employment -->
+                <div>
+                    <button id="dropdownHelperCheckboxButton"
+                        data-dropdown-toggle="dropdownHelperCheckbox"
+                        class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+                        type="button">
+                        Employment
+                        <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 9-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div id="dropdownHelperCheckbox"
+                        class="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-56">
+                        <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownHelperCheckboxButton">
+
+                            <!-- Active -->
+                            <li>
+                                <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                                    <div class="flex items-center h-5">
+                                        <input id="helper-checkbox-1" type="checkbox" value="active" name="status-filter"
+                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+                                            <?= (empty($currentStatus) || in_array('active', $currentStatus)) ? 'checked' : '' ?>>
+                                    </div>
+                                    <label for="helper-checkbox-1" class="ms-2 text-sm select-none font-medium text-heading">
+                                        Aktif
+                                    </label>
+                                </div>
+                            </li>
+
+                            <!-- Resigned -->
+                            <li>
+                                <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                                    <div class="flex items-center h-5">
+                                        <input id="helper-checkbox-3" type="checkbox" value="resigned" name="status-filter"
+                                            class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+                                            <?= (empty($currentStatus) || in_array('resigned', $currentStatus)) ? 'checked' : '' ?>>
+                                    </div>
+                                    <label for="helper-checkbox-3" class="ms-2 text-sm select-none font-medium text-heading">
+                                        Resign
+                                    </label>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Search berdasarkan nama/NIK karyawan -->
+                <form class="min-w-xs flex space-x-2" id="searchForm" method="GET">
+                    <label for="simple-search" class="sr-only">Search</label>
+                    <div class="relative w-full">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <i class="fa-solid fa-user text-sm text-body"></i>
+                        </div>
+                        <input type="text" name="search" id="simple-search" value="<?= htmlspecialchars($currentSearch ?? '') ?>" class="px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body" placeholder="Cari nama/NIK karyawan..." />
+                    </div>
+                    <button type="submit" class="inline-flex items-center justify-center shrink-0 text-white bg-brand hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs rounded-base w-10 h-10 focus:outline-none">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
+                        </svg>
+                        <span class="sr-only">Icon description</span>
+                    </button>
+                </form>
+
+                <a href="<?= url('/admin/karyawan/create') ?>"
+                    class="inline-flex items-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                    Tambah Karyawan
+                </a>
+            </div>
         </div>
 
         <!-- Table -->
@@ -95,7 +193,10 @@
                                             Aktif
                                         </span>
                                         <?php if (!empty($k['must_change_password'])): ?>
-                                            <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-warning-soft text-warning-strong">Wajib Ganti</span>
+                                            <span class="flex items-center justify-center bg-danger-soft border border-danger-subtle text-fg-danger-strong text-xs font-medium h-5 w-5 rounded-full">
+                                                <i class="fa-solid fa-unlock text-danger-strong text-xs fa-xs"></i>
+                                                <span class="sr-only">Wajib ganti password</span>
+                                            </span>
                                         <?php endif; ?>
                                     <?php elseif ($k['employment_status'] === 'resigned'): ?>
                                         <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-danger-soft text-danger-strong">
@@ -197,3 +298,52 @@
         </div>
     </div>
 </div>
+
+<script>
+    // JavaScript untuk menangani filter
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchForm = document.getElementById('searchForm');
+        const statusCheckboxes = document.querySelectorAll('input[name="status-filter"]');
+
+        // Fungsi untuk menerapkan filter
+        function applyFilters() {
+            const url = new URL(window.location.href);
+            url.search = ''; // Clear existing params
+
+            // Ambil nilai pencarian
+            const searchValue = document.getElementById('simple-search').value.trim();
+            if (searchValue) {
+                url.searchParams.set('search', searchValue);
+            }
+
+            // Get checked statuses
+            const checkedStatuses = Array.from(statusCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (checkedStatuses.length > 0 && checkedStatuses.length < 3) {
+                checkedStatuses.forEach(status => {
+                    url.searchParams.append('status[]', status);
+                });
+            }
+
+            // Redirect dengan filter
+            window.location.href = url.toString();
+        }
+
+        // deteksi perubahan pada checkbox status
+        statusCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                applyFilters();
+            });
+        });
+
+        // deteksi submit form pencarian
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                applyFilters();
+            });
+        }
+    });
+</script>

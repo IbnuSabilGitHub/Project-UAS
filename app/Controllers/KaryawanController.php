@@ -17,8 +17,46 @@ class KaryawanController extends BaseController {
      */
     public function index() {
         $this->ensureAdmin();
+        
+        // Dapatkan filter dari query parameter
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $statusFilter = isset($_GET['status']) ? $_GET['status'] : [];
+        
+        // dapatkan semua karyawan
         $karyawans = $this->model->allWithUser();
-        $this->render('admin/employees/index', ['title' => 'List Karyawan', 'karyawans' => $karyawans]);
+        
+        // Terapkan filter pencarian (berdasarkan nama atau NIK)
+        if (!empty($search)) {
+            $karyawans = array_filter($karyawans, function($k) use ($search) {
+                return stripos($k['name'], $search) !== false || 
+                       stripos($k['nik'], $search) !== false;
+            });
+        }
+        
+        // Terapkan filter status employment
+        if (!empty($statusFilter) && is_array($statusFilter)) {
+            $karyawans = array_filter($karyawans, function($k) use ($statusFilter) {
+                $empStatus = $k['employment_status'] ?? 'active';
+                return in_array($empStatus, $statusFilter);
+            });
+        }
+        
+        // Hitung statistik
+        $allEmployees = $this->model->allWithUser();
+        $statistics = [
+            'total' => count($allEmployees),
+            'active' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'active')),
+            'on_leave' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'on_leave')),
+            'resigned' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'resigned')),
+        ];
+        
+        $this->render('admin/employees/index', [
+            'title' => 'List Karyawan', 
+            'karyawans' => $karyawans,
+            'statistics' => $statistics,
+            'currentSearch' => $search,
+            'currentStatus' => $statusFilter
+        ]);
     }
 
     /**
@@ -48,13 +86,19 @@ class KaryawanController extends BaseController {
             'status' => $_POST['status'] ?? 'active'
         ];
 
+        // Validasi data yang diperlukan
+        if (empty($data['nik']) || empty($data['name']) || empty($data['email'])) {
+            $_SESSION['error'] = 'NIK, Nama, dan Email wajib diisi';
+            redirect('/admin/karyawan');
+        }
+
         $insertId = $this->model->create($data);
         if ($insertId) {
             if (!empty($_POST['create_account'])) {
-                $username = $data['nik'] ?: $data['email'];
+                $email = $data['email'];
                 $tempPassword = $this->generateTempPassword();
-                if ($this->model->createAccount($insertId, $username, $tempPassword)) {
-                    $_SESSION['success'] = 'Karyawan & akun dibuat. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
+                if ($this->model->createAccount($insertId, $email, $tempPassword)) {
+                    $_SESSION['success'] = 'Karyawan & akun dibuat. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
                 } else {
                     $_SESSION['success'] = 'Karyawan dibuat (akun sudah ada sebelumnya)';
                 }
@@ -62,7 +106,8 @@ class KaryawanController extends BaseController {
                 $_SESSION['success'] = 'Karyawan berhasil dibuat';
             }
         } else {
-            $_SESSION['error'] = 'Gagal menyimpan data karyawan';
+            $error = $this->model->getLastError();
+            $_SESSION['error'] = 'Gagal menyimpan data karyawan' . ($error ? ': ' . $error : '');
         }
 
         redirect('/admin/karyawan');
@@ -109,10 +154,17 @@ class KaryawanController extends BaseController {
             'status' => $_POST['status'] ?? 'active'
         ];
 
+        // Validasi data yang diperlukan
+        if (empty($data['nik']) || empty($data['name']) || empty($data['email'])) {
+            $_SESSION['error'] = 'NIK, Nama, dan Email wajib diisi';
+            redirect('/admin/karyawan');
+        }
+
         if ($this->model->update($id, $data)) {
             $_SESSION['success'] = 'Data karyawan diperbarui';
         } else {
-            $_SESSION['error'] = 'Gagal memperbarui data';
+            $error = $this->model->getLastError();
+            $_SESSION['error'] = 'Gagal memperbarui data' . ($error ? ': ' . $error : '');
         }
         redirect('/admin/karyawan');
     }
@@ -165,10 +217,10 @@ class KaryawanController extends BaseController {
             $_SESSION['error'] = 'Karyawan sudah memiliki akun';
             redirect('/admin/karyawan');
         }
-        $username = $karyawan['nik'] ?: $karyawan['email'];
+        $email = $karyawan['email'];
         $tempPassword = $this->generateTempPassword();
-        if ($this->model->createAccount($karyawanId, $username, $tempPassword)) {
-            $_SESSION['success'] = 'Akun diaktifkan. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
+        if ($this->model->createAccount($karyawanId, $email, $tempPassword)) {
+            $_SESSION['success'] = 'Akun diaktifkan. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword);
         } else {
             $_SESSION['error'] = 'Gagal mengaktifkan akun';
         }

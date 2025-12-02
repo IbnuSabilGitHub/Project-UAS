@@ -32,10 +32,8 @@ class AttendanceController extends BaseController {
 
         // Cek status hari ini
         $todayStatus = $this->model->hasCheckedInToday($karyawanId);
-        
         // Ambil riwayat
         $history = $this->model->getHistory($karyawanId, 30);
-        
         // Ambil statistik bulan ini
         $stats = $this->model->getMonthlyStats($karyawanId);
 
@@ -121,38 +119,32 @@ class AttendanceController extends BaseController {
         $this->ensureAdmin();
 
         // Ambil parameter filter
-        $date = $_GET['date'] ?? '';
-        $searchName = $_GET['search_name'] ?? '';
-        $status = $_GET['status'] ?? '';
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-
-        // Ambil data absensi dengan filter
-        $attendances = $this->model->getAllWithFilter($date, $searchName, $status, $limit, $offset);
+        $period = $_GET['period'] ?? 'today';
+        $searchName = $_GET['search'] ?? '';
+        $statusFilter = $_GET['status'] ?? [];
         
-        // Hitung total untuk pagination
-        $total = $this->model->countAllWithFilter($date, $searchName, $status);
-        $totalPages = ceil($total / $limit);
+        // Jika status dikirim sebagai array kosong atau tidak ada, tampilkan semua
+        if (!is_array($statusFilter)) {
+            $statusFilter = [$statusFilter];
+        }
+
+        // Convert period ke date range
+        $dateRange = $this->convertPeriodToDateRange($period);
+
+        // Ambil data absensi dengan filter (tanpa pagination)
+        $attendances = $this->model->getWithFilters($dateRange['start'], $dateRange['end'], $searchName, $statusFilter);
 
         // Statistik ringkas
-        $stats = $this->model->getAdminStats($date);
+        $stats = $this->model->getAdminStats($dateRange['start'], $dateRange['end']);
 
         $data = [
             'title' => 'Manajemen Absensi',
             'attendances' => $attendances,
             'stats' => $stats,
-            'filters' => [
-                'date' => $date,
-                'search_name' => $searchName,
-                'status' => $status
-            ],
-            'pagination' => [
-                'current' => $page,
-                'total' => $totalPages,
-                'totalRecords' => $total
-            ],
-            'username' => $_SESSION['username'] ?? null,
+            'currentPeriod' => $period,
+            'currentSearch' => $searchName,
+            'currentStatus' => $statusFilter,
+            'email' => $_SESSION['email'] ?? null,
             'role' => $_SESSION['role'] ?? null,
             'success' => $_SESSION['success'] ?? null,
             'error' => $_SESSION['error'] ?? null
@@ -163,17 +155,44 @@ class AttendanceController extends BaseController {
     }
 
     /**
+     * Convert period string ke date range
+     * 
+     * @param string $period
+     * @return array ['start' => string, 'end' => string]
+     */
+    private function convertPeriodToDateRange($period) {
+        $end = date('Y-m-d');
+        $start = '';
+
+        switch ($period) {
+            case 'today':
+                $start = date('Y-m-d');
+                break;
+            case 'week':
+                $start = date('Y-m-d', strtotime('-7 days'));
+                break;
+            case 'month':
+                $start = date('Y-m-d', strtotime('-30 days'));
+                break;
+            case 'all':
+            default:
+                $start = '';
+                $end = '';
+                break;
+        }
+
+        return ['start' => $start, 'end' => $end];
+    }
+
+    /**
      * Export data absensi ke CSV
+     * Export semua data tanpa filter
      */
     public function export() {
         $this->ensureAdmin();
 
-        $date = $_GET['date'] ?? '';
-        $searchName = $_GET['search_name'] ?? '';
-        $status = $_GET['status'] ?? '';
-
-        // Ambil semua data tanpa limit
-        $attendances = $this->model->getAllWithFilter($date, $searchName, $status, 10000, 0);
+        // Ambil semua data tanpa filter
+        $attendances = $this->model->getAll(10000);
 
         // Set header untuk download CSV
         header('Content-Type: text/csv; charset=utf-8');

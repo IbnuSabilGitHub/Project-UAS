@@ -20,7 +20,7 @@ class PengajuanCuti {
      */
     public function allWithKaryawan() {
         $sql = "SELECT lr.*, k.nik, k.name AS karyawan_name, k.position,
-                       u.username as approver_name
+                       u.email as approver_email
                 FROM leave_requests lr
                 INNER JOIN karyawan k ON lr.karyawan_id = k.id
                 LEFT JOIN users u ON lr.approved_by = u.id
@@ -43,7 +43,7 @@ class PengajuanCuti {
      */
     public function find($id) {
         $stmt = $this->conn->prepare("SELECT lr.*, k.nik, k.name AS karyawan_name, k.position,
-                                              u.username as approver_name
+                                              u.email as approver_email
                                         FROM leave_requests lr
                                         INNER JOIN karyawan k ON lr.karyawan_id = k.id
                                         LEFT JOIN users u ON lr.approved_by = u.id
@@ -205,7 +205,7 @@ class PengajuanCuti {
      */
     public function getWithFilters($search = '', $statusFilter = [], $dateFilter = '') {
         $sql = "SELECT lr.*, k.nik, k.name AS karyawan_name, k.position,
-                       u.username as approver_name
+                       u.email as approver_name
                 FROM leave_requests lr
                 INNER JOIN karyawan k ON lr.karyawan_id = k.id
                 LEFT JOIN users u ON lr.approved_by = u.id
@@ -273,6 +273,21 @@ class PengajuanCuti {
                 FROM leave_requests";
         $result = $this->conn->query($sql);
         return $result ? $result->fetch_assoc() : [];
+    }
+
+    /**
+     * Menghitung jumlah pengajuan cuti dengan status pending
+     * 
+     * @return int
+     */
+    public function countPending() {
+        $sql = "SELECT COUNT(*) as total FROM leave_requests WHERE status = 'pending'";
+        $result = $this->conn->query($sql);
+        if ($result) {
+            $row = $result->fetch_assoc();
+            return (int)$row['total'];
+        }
+        return 0;
     }
 
     /**

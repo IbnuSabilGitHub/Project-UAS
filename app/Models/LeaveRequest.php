@@ -106,7 +106,7 @@ class LeaveRequest {
     public function getByKaryawan($karyawanId) {
         $stmt = $this->conn->prepare("
             SELECT lr.*, 
-                   u.username as approver_name
+                   u.email as approver_name
             FROM leave_requests lr
             LEFT JOIN users u ON lr.approved_by = u.id
             WHERE lr.karyawan_id = ?
@@ -132,7 +132,7 @@ class LeaveRequest {
         $sql = "
             SELECT lr.*, 
                    k.nik, k.name as karyawan_name,
-                   u.username as approver_name
+                   u.email as approver_name
             FROM leave_requests lr
             JOIN karyawan k ON lr.karyawan_id = k.id
             LEFT JOIN users u ON lr.approved_by = u.id
@@ -170,7 +170,7 @@ class LeaveRequest {
         $stmt = $this->conn->prepare("
             SELECT lr.*, 
                    k.nik, k.name as karyawan_name, k.email,
-                   u.username as approver_name
+                   u.email as approver_name
             FROM leave_requests lr
             JOIN karyawan k ON lr.karyawan_id = k.id
             LEFT JOIN users u ON lr.approved_by = u.id
@@ -246,17 +246,39 @@ class LeaveRequest {
     }
 
     /**
-     * Hitung total hari cuti yang sudah diambil tahun ini
+     * Hitung total pengajuan cuti yang disetujui tahun ini
+     * 
      * @param int $karyawanId
      * @return int
      */
-    public function getTotalDaysThisYear($karyawanId) {
+    public function getTotalApprovedThisYear($karyawanId) {
         $year = date('Y');
         $stmt = $this->conn->prepare("
-            SELECT COALESCE(SUM(total_days), 0) as total
+            SELECT COUNT(*) as total
             FROM leave_requests
             WHERE karyawan_id = ?
             AND status = 'approved'
+            AND YEAR(start_date) = ?
+        ");
+        $stmt->bind_param('ii', $karyawanId, $year);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result['total'];
+    }
+
+    /**
+     * Hitung total pengajuan cuti yang ditolak tahun ini
+     * 
+     * @param int $karyawanId
+     * @return int
+     */
+    public function getTotalRejectedThisYear($karyawanId) {
+        $year = date('Y');
+        $stmt = $this->conn->prepare("
+            SELECT COUNT(*) as total
+            FROM leave_requests
+            WHERE karyawan_id = ?
+            AND status = 'rejected'
             AND YEAR(start_date) = ?
         ");
         $stmt->bind_param('ii', $karyawanId, $year);

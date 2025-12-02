@@ -181,8 +181,14 @@ class Attendance {
 
     /**
      * Ambil semua absensi dengan filter untuk admin
+     * 
+     * @param string $startDate Start date for range filter (Y-m-d)
+     * @param string $endDate End date for range filter (Y-m-d)
+     * @param string $searchName Search by name or NIK
+     * @param array $statusFilter Array of status to filter
+     * @return array
      */
-    public function getAllWithFilter($date = '', $searchName = '', $status = '', $limit = 20, $offset = 0) {
+    public function getWithFilters($startDate = '', $endDate = '', $searchName = '', $statusFilter = []) {
         $sql = "
             SELECT a.*, k.nik, k.name, k.position
             FROM attendance a
@@ -193,28 +199,30 @@ class Attendance {
         $types = '';
         $params = [];
 
-        if ($date) {
-            $sql .= " AND DATE(a.check_in) = ?";
-            $types .= 's';
-            $params[] = $date;
+        // Date range filter
+        if ($startDate && $endDate) {
+            $sql .= " AND DATE(a.check_in) BETWEEN ? AND ?";
+            $types .= 'ss';
+            $params[] = $startDate;
+            $params[] = $endDate;
         }
 
         if ($searchName) {
-            $sql .= " AND k.name LIKE ?";
-            $types .= 's';
+            $sql .= " AND (k.name LIKE ? OR k.nik LIKE ?)";
+            $types .= 'ss';
+            $params[] = '%' . $searchName . '%';
             $params[] = '%' . $searchName . '%';
         }
 
-        if ($status) {
-            $sql .= " AND a.status = ?";
-            $types .= 's';
-            $params[] = $status;
+        // Filter status: jika array tidak kosong dan tidak berisi semua status
+        if (!empty($statusFilter) && count($statusFilter) < 3) {
+            $placeholders = str_repeat('?,', count($statusFilter) - 1) . '?';
+            $sql .= " AND a.status IN ($placeholders)";
+            $types .= str_repeat('s', count($statusFilter));
+            $params = array_merge($params, $statusFilter);
         }
 
-        $sql .= " ORDER BY a.check_in DESC LIMIT ? OFFSET ?";
-        $types .= 'ii';
-        $params[] = $limit;
-        $params[] = $offset;
+        $sql .= " ORDER BY a.check_in DESC";
 
         $stmt = $this->conn->prepare($sql);
         
@@ -234,13 +242,15 @@ class Attendance {
 
     /**
      * Hitung total record dengan filter untuk pagination
+     * (Method ini tidak digunakan lagi setelah hapus pagination, tapi tetap dipertahankan untuk backward compatibility)
      * 
-     * @param string $date
+     * @param string $startDate
+     * @param string $endDate
      * @param string $searchName
-     * @param string $status
+     * @param array $statusFilter
      * @return int
      */
-    public function countAllWithFilter($date = '', $searchName = '', $status = '') {
+    public function countAllWithFilter($startDate = '', $endDate = '', $searchName = '', $statusFilter = []) {
         $sql = "
             SELECT COUNT(*) as total
             FROM attendance a
@@ -251,22 +261,25 @@ class Attendance {
         $types = '';
         $params = [];
 
-        if ($date) {
-            $sql .= " AND DATE(a.check_in) = ?";
-            $types .= 's';
-            $params[] = $date;
+        if ($startDate && $endDate) {
+            $sql .= " AND DATE(a.check_in) BETWEEN ? AND ?";
+            $types .= 'ss';
+            $params[] = $startDate;
+            $params[] = $endDate;
         }
 
         if ($searchName) {
-            $sql .= " AND k.name LIKE ?";
-            $types .= 's';
+            $sql .= " AND (k.name LIKE ? OR k.nik LIKE ?)";
+            $types .= 'ss';
+            $params[] = '%' . $searchName . '%';
             $params[] = '%' . $searchName . '%';
         }
 
-        if ($status) {
-            $sql .= " AND a.status = ?";
-            $types .= 's';
-            $params[] = $status;
+        if (!empty($statusFilter) && count($statusFilter) < 3) {
+            $placeholders = str_repeat('?,', count($statusFilter) - 1) . '?';
+            $sql .= " AND a.status IN ($placeholders)";
+            $types .= str_repeat('s', count($statusFilter));
+            $params = array_merge($params, $statusFilter);
         }
 
         $stmt = $this->conn->prepare($sql);
@@ -283,10 +296,11 @@ class Attendance {
     /**
      * Statistik absensi untuk admin
      * 
-     * @param string $date
+     * @param string $startDate Start date for range (Y-m-d)
+     * @param string $endDate End date for range (Y-m-d)
      * @return array
      */
-    public function getAdminStats($date = '') {
+    public function getAdminStats($startDate = '', $endDate = '') {
         $sql = "
             SELECT 
                 COUNT(DISTINCT a.karyawan_id) as total_employees,
@@ -296,21 +310,24 @@ class Attendance {
                 SUM(CASE WHEN a.status = 'half_day' THEN 1 ELSE 0 END) as half_day,
                 SUM(CASE WHEN a.check_out IS NULL THEN 1 ELSE 0 END) as not_checkout
             FROM attendance a
+            WHERE 1=1
         ";
 
-        if ($date) {
-            $sql .= " WHERE DATE(a.check_in) = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param('s', $date);
-        } else {
-            // Default: bulan ini
-            $startOfMonth = date('Y-m-01');
-            $endOfMonth = date('Y-m-t');
-            $sql .= " WHERE DATE(a.check_in) BETWEEN ? AND ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param('ss', $startOfMonth, $endOfMonth);
+        $types = '';
+        $params = [];
+
+        if ($startDate && $endDate) {
+            $sql .= " AND DATE(a.check_in) BETWEEN ? AND ?";
+            $types = 'ss';
+            $params = [$startDate, $endDate];
         }
 
+        $stmt = $this->conn->prepare($sql);
+        
+        if ($types) {
+            $stmt->bind_param($types, ...$params);
+        }
+        
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }

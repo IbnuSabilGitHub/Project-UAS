@@ -58,15 +58,15 @@ class BaseController {
         extract($data);
 
         // Set default values jika tidak ada di data
-        $username = $username ?? ($_SESSION['username'] ?? null);
+        $email = $email ?? ($_SESSION['email'] ?? null);
         $role = $role ?? ($_SESSION['role'] ?? null);
 
         // Include header
         require_once __DIR__ . '/../Views/layouts/header.php';
 
         // Include sidebar jika diperlukan dan user sudah login
-        if ($withSidebar && isset($_SESSION['role']) && isset($_SESSION['username'])) {
-            $this->renderSidebar($role, $username);
+        if ($withSidebar && isset($_SESSION['role']) && isset($_SESSION['email'])) {
+            $this->renderSidebar($role, $email);
         }
 
         // Include main view
@@ -80,10 +80,21 @@ class BaseController {
      * Render sidebar berdasarkan role user
      * 
      * @param string $role Role user
-     * @param string $username Username
+     * @param string $email User email
      */
-    private function renderSidebar($role, $username) {
+    private function renderSidebar($role, $email) {
         if (in_array($role, ['admin', 'super_admin'])) {
+            // Get pending leave requests count for admin sidebar
+            $pendingCount = 0;
+            try {
+                require_once __DIR__ . '/../Models/PengajuanCuti.php';
+                $cutiModel = new PengajuanCuti();
+                $pendingCount = $cutiModel->countPending();
+            } catch (Exception $e) {
+                // Fallback to 0 if there's an error
+                $pendingCount = 0;
+            }
+            
             require_once __DIR__ . '/../Views/layouts/sidebar-admin.php';
         } elseif ($role === 'karyawan') {
             require_once __DIR__ . '/../Views/layouts/sidebar-karyawan.php';

@@ -4,11 +4,22 @@ require_once __DIR__ . '/../Core/Database.php';
 class Karyawan
 {
     private $conn;
+    private $lastError = '';
 
     public function __construct()
     {
         $db = new Database();
         $this->conn = $db->getConnection();
+    }
+
+    /**
+     * Mendapatkan pesan error terakhir
+     * 
+     * @return string
+     */
+    public function getLastError()
+    {
+        return $this->lastError;
     }
 
     /**
@@ -35,7 +46,7 @@ class Karyawan
      */
     public function allWithUser()
     {
-        $sql = "SELECT k.*, u.id AS user_id, u.username, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
+        $sql = "SELECT k.*, u.id AS user_id, u.email, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
         $result = $this->conn->query($sql);
         $rows = [];
         if ($result) {
@@ -69,11 +80,17 @@ class Karyawan
      */
     public function create($data)
     {
+        $this->lastError = '';
         $stmt = $this->conn->prepare("INSERT INTO karyawan (nik, name, email, phone, position, join_date, status) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            $this->lastError = $this->conn->error;
+            return false;
+        }
         $stmt->bind_param('sssssss', $data['nik'], $data['name'], $data['email'], $data['phone'], $data['position'], $data['join_date'], $data['status']);
         if ($stmt->execute()) {
             return $this->conn->insert_id;
         }
+        $this->lastError = $stmt->error;
         return false;
     }
 
@@ -86,9 +103,18 @@ class Karyawan
      */
     public function update($id, $data)
     {
+        $this->lastError = '';
         $stmt = $this->conn->prepare("UPDATE karyawan SET nik = ?, name = ?, email = ?, phone = ?, position = ?, join_date = ?, status = ? WHERE id = ?");
+        if (!$stmt) {
+            $this->lastError = $this->conn->error;
+            return false;
+        }
         $stmt->bind_param('sssssssi', $data['nik'], $data['name'], $data['email'], $data['phone'], $data['position'], $data['join_date'], $data['status'], $id);
-        return $stmt->execute();
+        if ($stmt->execute()) {
+            return true;
+        }
+        $this->lastError = $stmt->error;
+        return false;
     }
 
     /**
@@ -108,12 +134,12 @@ class Karyawan
      * Membuat akun pengguna yang terhubung dengan data karyawan (wajib ganti password pertama login)
      * 
      * @param int $karyawanId
-     * @param string $username
+     * @param string $email
      * @param string $password
      * @param string $role
      * @return bool
      */
-    public function createAccount($karyawanId, $username, $password, $role = 'karyawan')
+    public function createAccount($karyawanId, $email, $password, $role = 'karyawan')
     {
         if ($this->getUserByKaryawanId($karyawanId)) {
             return false; // sudah punya akun
@@ -122,9 +148,9 @@ class Karyawan
         $createdAt = date('Y-m-d H:i:s');
         $mustChange = 1;
         $status = 'active';
-        $stmt = $this->conn->prepare("INSERT INTO users (username, password_hash, role, karyawan_id, status, must_change_password, password_last_changed, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)");
-        // 7 placeholders => types: s (username), s (hash), s (role), i (karyawan_id), s (status), i (must_change), s (created_at)
-        $stmt->bind_param('sssisis', $username, $passwordHash, $role, $karyawanId, $status, $mustChange, $createdAt);
+        $stmt = $this->conn->prepare("INSERT INTO users (email, password_hash, role, karyawan_id, status, must_change_password, password_last_changed, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)");
+        // 7 placeholders => types: s (email), s (hash), s (role), i (karyawan_id), s (status), i (must_change), s (created_at)
+        $stmt->bind_param('sssisis', $email, $passwordHash, $role, $karyawanId, $status, $mustChange, $createdAt);
         return $stmt->execute();
     }
 

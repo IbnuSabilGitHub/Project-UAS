@@ -142,24 +142,23 @@ class AuthController extends BaseController
             redirect('/admin/login');
         }
 
-        $username = trim($_POST['username'] ?? '');
-        $username = filter_var($username, FILTER_SANITIZE_SPECIAL_CHARS);
-        $username = preg_replace('/[^a-zA-Z0-9_\-.@]/', '', $username);
+        $email = trim($_POST['email'] ?? '');
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'] ?? '';
 
-        if (empty($username) || empty($password)) {
-            $_SESSION['error'] = 'Username dan password harus diisi';
+        if (empty($email) || empty($password)) {
+            $_SESSION['error'] = 'Email dan password harus diisi';
             redirect('/admin/login');
         }
 
         $conn = $this->db->getConnection();
-        $stmt = $conn->prepare("SELECT id, username, password_hash, role, must_change_password, status FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $stmt = $conn->prepare("SELECT id, email, password_hash, role, must_change_password, status FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows === 0) {
-            $_SESSION['error'] = 'Username atau password salah';
+            $_SESSION['error'] = 'Email atau password salah';
             redirect('/admin/login');
         }
 
@@ -177,14 +176,14 @@ class AuthController extends BaseController
         }
 
         if (!password_verify($password, $user['password_hash'])) {
-            $_SESSION['error'] = 'Username atau password salah';
+            $_SESSION['error'] = 'Email atau password salah';
             redirect('/admin/login');
         }
 
         session_regenerate_id(true);
 
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['success'] = 'Login berhasil!';
 
@@ -208,24 +207,23 @@ class AuthController extends BaseController
             redirect('/karyawan/login');
         }
 
-        $username = trim($_POST['username'] ?? '');
-        $username = filter_var($username, FILTER_SANITIZE_SPECIAL_CHARS);
-        $username = preg_replace('/[^a-zA-Z0-9_\-.@]/', '', $username);
+        $email = trim($_POST['email'] ?? '');
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
         $password = $_POST['password'] ?? '';
 
-        if (empty($username) || empty($password)) {
-            $_SESSION['error'] = 'Username dan password harus diisi';
+        if (empty($email) || empty($password)) {
+            $_SESSION['error'] = 'Email dan password harus diisi';
             redirect('/karyawan/login');
         }
 
         $conn = $this->db->getConnection();
-        $stmt = $conn->prepare("SELECT id, username, password_hash, role, must_change_password, status FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        $stmt = $conn->prepare("SELECT id, email, password_hash, role, must_change_password, status FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows === 0) {
-            $_SESSION['error'] = 'Username atau password salah';
+            $_SESSION['error'] = 'Email atau password salah';
             redirect('/karyawan/login');
         }
 
@@ -243,14 +241,14 @@ class AuthController extends BaseController
         }
 
         if (!password_verify($password, $user['password_hash'])) {
-            $_SESSION['error'] = 'Username atau password salah';
+            $_SESSION['error'] = 'Email atau password salah';
             redirect('/karyawan/login');
         }
 
         session_regenerate_id(true);
 
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['success'] = 'Login berhasil!';
 
@@ -302,30 +300,29 @@ class AuthController extends BaseController
             redirect('/login'); //backward compatibility
         }
 
-        // Sanitas input username
-        $username = trim($_POST['username'] ?? '');
-        $username = filter_var($username, FILTER_SANITIZE_SPECIAL_CHARS);
-        $username = preg_replace('/[^a-zA-Z0-9_\-.@]/', '', $username);
+        // Sanitas input email
+        $email = trim($_POST['email'] ?? '');
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
         // password tidak disanitasi agar sesuai dengan hash asli
         $password = $_POST['password'] ?? '';
 
-        if (empty($username) || empty($password)) {
-            $_SESSION['error'] = 'Username dan password harus diisi';
+        if (empty($email) || empty($password)) {
+            $_SESSION['error'] = 'Email dan password harus diisi';
             redirect('/login');//backward compatibility
         }
 
         // Konksi db
         $conn = $this->db->getConnection();
 
-        // Query user berdasarkan username
-        $stmt = $conn->prepare("SELECT id, username, password_hash, role, must_change_password, status FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
+        // Query user berdasarkan email
+        $stmt = $conn->prepare("SELECT id, email, password_hash, role, must_change_password, status FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         $invalid_login = function () {
-            $_SESSION['error'] = 'Username atau password salah';
+            $_SESSION['error'] = 'Email atau password salah';
             redirect('/login');//backward compatibility
         };
 
@@ -353,7 +350,6 @@ class AuthController extends BaseController
 
         // Login berhasil
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['success'] = 'Login berhasil!';
@@ -439,7 +435,7 @@ class AuthController extends BaseController
 
         $data = [
             'title' => 'Admin Dashboard',
-            'username' => $_SESSION['username'],
+            'email' => $_SESSION['email'],
             'role' => $_SESSION['role'],
             'success' => $_SESSION['success'] ?? null,
             'statsLeave' => $statsLeave,
@@ -481,7 +477,7 @@ class AuthController extends BaseController
 
         $data = [
             'title' => 'Karyawan Dashboard',
-            'username' => $_SESSION['username'],
+            'email' => $_SESSION['email'],
             'role' => $_SESSION['role'],
             'success' => $_SESSION['success'] ?? null,
             'statsLeave' => $statsLeave,
@@ -510,7 +506,8 @@ class AuthController extends BaseController
 
         // Bersihkan pesan session setelah diambil
         unset($_SESSION['error'], $_SESSION['success']);
-        $this->render('auth/change_password', $data);
+        $this->renderWithoutSidebar('auth/change-password', $data);
+
     }
 
     /**
@@ -521,23 +518,29 @@ class AuthController extends BaseController
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
             redirect('/login');//backward compatibility
         }
+
         $new = $_POST['new_password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
+
         if (strlen($new) < 8) {
             $_SESSION['error'] = 'Password minimal 8 karakter';
             redirect('/change-password');
         }
+
         if ($new !== $confirm) {
             $_SESSION['error'] = 'Konfirmasi password tidak cocok';
             redirect('/change-password');
         }
+
         $hash = password_hash($new, PASSWORD_BCRYPT);
         $conn = $this->db->getConnection();
         $stmt = $conn->prepare("UPDATE users SET password_hash = ?, must_change_password = 0, password_last_changed = NOW() WHERE id = ?");
         $stmt->bind_param('si', $hash, $_SESSION['user_id']);
+        
         if ($stmt->execute()) {
             $_SESSION['success'] = 'Password berhasil diubah';
             redirect('/dashboard');
