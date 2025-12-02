@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[Feature: Attendance Management Restructure & Period Filter] - 2024-12-02**
+
+###  **New Features**
+
+**Attendance Admin Interface:**
+- Menambahkan filter periode waktu dengan dropdown:
+  - Hari Ini (default)
+  - Minggu Terakhir (7 hari)
+  - Bulan Terakhir (30 hari)
+  - Semua Data
+- Filter status dengan checkbox dropdown (Hadir, Terlambat, Half Day)
+- Pencarian karyawan berdasarkan nama atau NIK
+- Export CSV dengan filter yang diterapkan
+- Statistik absensi real-time berdasarkan periode yang dipilih
+- UI/UX konsisten dengan modul Employee Management
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `AttendanceController.php`:
+  - Refactor method `adminIndex()` untuk menghapus pagination
+  - Menambahkan method `convertPeriodToDateRange()` untuk konversi periode ke date range
+  - Update method `export()` untuk support period filter
+  - Mengubah parameter filter dari single date menjadi period-based
+
+**Models:**
+- `Attendance.php`:
+  - Update method `getAllWithFilter($startDate, $endDate, $searchName, $statusFilter)` untuk support date range
+  - Update method `countAllWithFilter()` untuk support date range (backward compatibility)
+  - Update method `getAdminStats($startDate, $endDate)` untuk statistik berdasarkan range
+  - Pencarian mendukung NIK dan nama karyawan
+  - Filter status menggunakan array untuk multiple selection
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/attendance/index.php`:
+  - Menghapus pagination UI sepenuhnya
+  - Mengganti input date dengan dropdown periode
+  - Menambahkan filter checkbox untuk status absensi
+  - Implementasi JavaScript auto-filter saat perubahan periode/status
+  - Statistik cards dengan design system konsisten
+  - Table styling mengikuti pola Employee Management
+  - Status badge menggunakan semantic colors (success-soft, warning-soft, etc.)
+
+
+---
+
 ## **[fix: add change password link in sidebar] - 2024-12-02**
 
 ### 🔄 **Frontend Changes**
