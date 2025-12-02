@@ -2,6 +2,322 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[Feature: Attendance Management Restructure & Period Filter] - 2024-12-02**
+
+###  **New Features**
+
+**Attendance Admin Interface:**
+- Menambahkan filter periode waktu dengan dropdown:
+  - Hari Ini (default)
+  - Minggu Terakhir (7 hari)
+  - Bulan Terakhir (30 hari)
+  - Semua Data
+- Filter status dengan checkbox dropdown (Hadir, Terlambat, Half Day)
+- Pencarian karyawan berdasarkan nama atau NIK
+- Export CSV dengan filter yang diterapkan
+- Statistik absensi real-time berdasarkan periode yang dipilih
+- UI/UX konsisten dengan modul Employee Management
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `AttendanceController.php`:
+  - Refactor method `adminIndex()` untuk menghapus pagination
+  - Menambahkan method `convertPeriodToDateRange()` untuk konversi periode ke date range
+  - Update method `export()` untuk support period filter
+  - Mengubah parameter filter dari single date menjadi period-based
+
+**Models:**
+- `Attendance.php`:
+  - Update method `getAllWithFilter($startDate, $endDate, $searchName, $statusFilter)` untuk support date range
+  - Update method `countAllWithFilter()` untuk support date range (backward compatibility)
+  - Update method `getAdminStats($startDate, $endDate)` untuk statistik berdasarkan range
+  - Pencarian mendukung NIK dan nama karyawan
+  - Filter status menggunakan array untuk multiple selection
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/attendance/index.php`:
+  - Menghapus pagination UI sepenuhnya
+  - Mengganti input date dengan dropdown periode
+  - Menambahkan filter checkbox untuk status absensi
+  - Implementasi JavaScript auto-filter saat perubahan periode/status
+  - Statistik cards dengan design system konsisten
+  - Table styling mengikuti pola Employee Management
+  - Status badge menggunakan semantic colors (success-soft, warning-soft, etc.)
+
+
+---
+
+## **[fix: add change password link in sidebar] - 2024-12-02**
+
+### 🔄 **Frontend Changes**
+**Views:**
+- `layouts/sidebar-admin.php`: Menambahkan link "Ganti Password" di sidebar admin
+- `layouts/sidebar-karyawan.php`: Menambahkan link "Ganti Password" di sidebar karyawan
+
+
+### 🔄 **Backend Changes**
+- `AuthController.php`: Memperbarui method `changePasswordPage()` untuk merender view yang benar
+
+## **[Feature: Employee List Filter & Statistics Card] - 2024-12-02**
+
+###**New Features**
+
+**Employee Management:**
+- Menambahkan filter status karyawan (Aktif, Cuti, Resign) dengan checkbox dropdown yang konsisten dengan UI pengajuan cuti
+- Menambahkan fitur pencarian karyawan berdasarkan nama atau NIK
+- Menambahkan statistik karyawan dengan card yang menampilkan:
+  - Total Karyawan
+  - Karyawan Aktif
+  - Karyawan Cuti
+  - Karyawan Resign
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `KaryawanController.php`: 
+  - Method `index()` diperbarui untuk menangani filter status dan pencarian
+  - Menambahkan logic perhitungan statistik karyawan
+  - Filter dapat dikombinasikan (status + pencarian)
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/employees/index.php`:
+  - Menambahkan section statistik karyawan di atas tabel
+  - Menambahkan dropdown filter status employment dengan checkbox
+  - Menambahkan search box untuk pencarian nama/NIK
+  - Menambahkan JavaScript untuk handling filter secara real-time
+
+
+---
+
+## **[Feature: Dynamic Pending Count Badge] - 2024-12-02**
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `BaseController.php`: Memperbarui method `renderSidebar()` untuk mengambil dan meneruskan jumlah pengajuan cuti pending ke sidebar admin
+
+**Models:**
+
+- `PengajuanCuti.php`: Menambahkan method `countPending()` untuk menghitung total pengajuan cuti dengan status pending
+
+**Views:**
+
+- `sidebar.php`: Menambahkan logic untuk mengambil pending count sebelum merender sidebar admin
+- `sidebar-admin.php`: Badge notifikasi pada menu "Pengajuan Cuti" kini menggunakan variabel `$pendingCount` yang dinamis
+
+
+---
+
+## **[Fix: Email Login & NIK Update] - 2024-12-01**
+
+### 🔄 **Database Schema Changes**
+
+**Tabel `users`:**
+
+* Kolom `username` diubah menjadi `email` (VARCHAR(150))
+* Nilai ENUM `status` diperbarui menjadi hanya (`active`, `disabled`) — opsi `locked` dihapus
+* Proses login kini menggunakan email, bukan username
+
+**Tabel `karyawan`:**
+
+* Kolom `nik` diubah dari VARCHAR(50) menjadi CHAR(16) sesuai standar KTP Indonesia
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+
+* `AuthController.php`: Seluruh metode login diperbarui untuk menggunakan autentikasi email
+
+  * `adminLogin()`, `karyawanLogin()`, `login()` sekarang memvalidasi email, bukan username
+  * Penyimpanan session diperbarui menjadi `$_SESSION['email']` menggantikan `$_SESSION['username']`
+
+**Models:**
+
+* `PengajuanCuti.php`: Diubah menggunakan `approver_email` menggantikan `approver_name`
+
+**Scripts:**
+
+* `register.php`: Diperbarui agar pembuatan user baru memakai email, bukan username
+
+**Views:**
+
+* Seluruh form login (`login-admin.php`, `login-karyawan.php`, `login.php`) diubah menjadi input email
+* Template sidebar diperbarui untuk menampilkan email menggantikan username
+* `sidebar.php`, `sidebar-admin.php`, `sidebar-karyawan.php`: kini memakai `$_SESSION['email']`
+
+### ⚠️ **Catatan Migrasi**
+
+* User yang sudah ada perlu mengonversi username mereka menjadi format email
+* Jalankan migration database sebelum melakukan deployment
+* Field NIK kini wajib 16 karakter sesuai format KTP
+
+
+---
+
+
+## **[Feature: Attendance Management Restructure & Period Filter] - 2024-12-02**
+
+###  **New Features**
+
+**Attendance Admin Interface:**
+- Menambahkan filter periode waktu dengan dropdown:
+  - Hari Ini (default)
+  - Minggu Terakhir (7 hari)
+  - Bulan Terakhir (30 hari)
+  - Semua Data
+- Filter status dengan checkbox dropdown (Hadir, Terlambat, Half Day)
+- Pencarian karyawan berdasarkan nama atau NIK
+- Export CSV dengan filter yang diterapkan
+- Statistik absensi real-time berdasarkan periode yang dipilih
+- UI/UX konsisten dengan modul Employee Management
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `AttendanceController.php`:
+  - Refactor method `adminIndex()` untuk menghapus pagination
+  - Menambahkan method `convertPeriodToDateRange()` untuk konversi periode ke date range
+  - Update method `export()` untuk support period filter
+  - Mengubah parameter filter dari single date menjadi period-based
+
+**Models:**
+- `Attendance.php`:
+  - Update method `getAllWithFilter($startDate, $endDate, $searchName, $statusFilter)` untuk support date range
+  - Update method `countAllWithFilter()` untuk support date range (backward compatibility)
+  - Update method `getAdminStats($startDate, $endDate)` untuk statistik berdasarkan range
+  - Pencarian mendukung NIK dan nama karyawan
+  - Filter status menggunakan array untuk multiple selection
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/attendance/index.php`:
+  - Menghapus pagination UI sepenuhnya
+  - Mengganti input date dengan dropdown periode
+  - Menambahkan filter checkbox untuk status absensi
+  - Implementasi JavaScript auto-filter saat perubahan periode/status
+  - Statistik cards dengan design system konsisten
+  - Table styling mengikuti pola Employee Management
+  - Status badge menggunakan semantic colors (success-soft, warning-soft, etc.)
+
+
+---
+
+## **[fix: add change password link in sidebar] - 2024-12-02**
+
+### 🔄 **Frontend Changes**
+**Views:**
+- `layouts/sidebar-admin.php`: Menambahkan link "Ganti Password" di sidebar admin
+- `layouts/sidebar-karyawan.php`: Menambahkan link "Ganti Password" di sidebar karyawan
+
+
+### 🔄 **Backend Changes**
+- `AuthController.php`: Memperbarui method `changePasswordPage()` untuk merender view yang benar
+
+## **[Feature: Employee List Filter & Statistics Card] - 2024-12-02**
+
+###**New Features**
+
+**Employee Management:**
+- Menambahkan filter status karyawan (Aktif, Cuti, Resign) dengan checkbox dropdown yang konsisten dengan UI pengajuan cuti
+- Menambahkan fitur pencarian karyawan berdasarkan nama atau NIK
+- Menambahkan statistik karyawan dengan card yang menampilkan:
+  - Total Karyawan
+  - Karyawan Aktif
+  - Karyawan Cuti
+  - Karyawan Resign
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `KaryawanController.php`: 
+  - Method `index()` diperbarui untuk menangani filter status dan pencarian
+  - Menambahkan logic perhitungan statistik karyawan
+  - Filter dapat dikombinasikan (status + pencarian)
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/employees/index.php`:
+  - Menambahkan section statistik karyawan di atas tabel
+  - Menambahkan dropdown filter status employment dengan checkbox
+  - Menambahkan search box untuk pencarian nama/NIK
+  - Menambahkan JavaScript untuk handling filter secara real-time
+
+
+---
+
+## **[Feature: Dynamic Pending Count Badge] - 2024-12-02**
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `BaseController.php`: Memperbarui method `renderSidebar()` untuk mengambil dan meneruskan jumlah pengajuan cuti pending ke sidebar admin
+
+**Models:**
+
+- `PengajuanCuti.php`: Menambahkan method `countPending()` untuk menghitung total pengajuan cuti dengan status pending
+
+**Views:**
+
+- `sidebar.php`: Menambahkan logic untuk mengambil pending count sebelum merender sidebar admin
+- `sidebar-admin.php`: Badge notifikasi pada menu "Pengajuan Cuti" kini menggunakan variabel `$pendingCount` yang dinamis
+
+
+---
+
+## **[Fix: Email Login & NIK Update] - 2024-12-01**
+
+### 🔄 **Database Schema Changes**
+
+**Tabel `users`:**
+
+* Kolom `username` diubah menjadi `email` (VARCHAR(150))
+* Nilai ENUM `status` diperbarui menjadi hanya (`active`, `disabled`) — opsi `locked` dihapus
+* Proses login kini menggunakan email, bukan username
+
+**Tabel `karyawan`:**
+
+* Kolom `nik` diubah dari VARCHAR(50) menjadi CHAR(16) sesuai standar KTP Indonesia
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+
+* `AuthController.php`: Seluruh metode login diperbarui untuk menggunakan autentikasi email
+
+  * `adminLogin()`, `karyawanLogin()`, `login()` sekarang memvalidasi email, bukan username
+  * Penyimpanan session diperbarui menjadi `$_SESSION['email']` menggantikan `$_SESSION['username']`
+
+**Models:**
+
+* `PengajuanCuti.php`: Diubah menggunakan `approver_email` menggantikan `approver_name`
+
+**Scripts:**
+
+* `register.php`: Diperbarui agar pembuatan user baru memakai email, bukan username
+
+**Views:**
+
+* Seluruh form login (`login-admin.php`, `login-karyawan.php`, `login.php`) diubah menjadi input email
+* Template sidebar diperbarui untuk menampilkan email menggantikan username
+* `sidebar.php`, `sidebar-admin.php`, `sidebar-karyawan.php`: kini memakai `$_SESSION['email']`
+
+### ⚠️ **Catatan Migrasi**
+
+* User yang sudah ada perlu mengonversi username mereka menjadi format email
+* Jalankan migration database sebelum melakukan deployment
+* Field NIK kini wajib 16 karakter sesuai format KTP
+
+
+---
+
+
 
 ## [Feature: Toast Notification System] - 2024-12-01
 
@@ -121,7 +437,6 @@ redirect('/page');
 
 
 
-```
 
 ### 🔒 Backward Compatibility
 

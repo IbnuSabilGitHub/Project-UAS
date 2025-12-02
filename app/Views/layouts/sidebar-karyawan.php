@@ -37,20 +37,20 @@
                     <div class="z-50 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44" id="dropdown-user">
                         <div class="px-4 py-3 border-b border-default-medium" role="none">
                             <p class="text-sm font-medium text-heading" role="none">
-                                <?= htmlspecialchars($username) ?>
+                                <?= htmlspecialchars($email) ?>
                             </p>
                             <p class="text-sm text-body truncate" role="none">
-                                ibnu@gmail.com
+                                Karyawan
                             </p>
                         </div>
                         <ul class="p-2 text-sm text-body font-medium" role="none">
                             <li>
                                 <a href="<?= url('/admin/dashboard') ?>" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Dashboard</a>
                             </li>
-                            <!-- <li>
-                                <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Settings</a>
-                            </li>
                             <li>
+                                <a href="<?= url('/change-password') ?>" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Ganti Password</a>
+                            </li>
+                            <!-- <li>
                                 <a href="#" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Earnings</a>
                             </li> -->
                             <li>
@@ -88,7 +88,6 @@
                 <a href="<?= url('/karyawan/leave/create') ?>" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                     <i class="fa-solid fa-calendar-day transition duration-75 group-hover:text-fg-brand"></i>
                     <span class="flex-1 ms-3 whitespace-nowrap">Penjauan cuti</span>
-                    <span class="inline-flex items-center justify-center w-4.5 h-4.5 ms-2 text-xs font-medium text-fg-danger-strong bg-danger-soft border border-danger-subtle rounded-full">2</span>
                 </a>
             </li>
             <li>

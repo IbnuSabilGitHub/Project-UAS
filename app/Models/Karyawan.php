@@ -46,7 +46,7 @@ class Karyawan
      */
     public function allWithUser()
     {
-        $sql = "SELECT k.*, u.id AS user_id, u.username, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
+        $sql = "SELECT k.*, u.id AS user_id, u.email, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
         $result = $this->conn->query($sql);
         $rows = [];
         if ($result) {
@@ -134,12 +134,12 @@ class Karyawan
      * Membuat akun pengguna yang terhubung dengan data karyawan (wajib ganti password pertama login)
      * 
      * @param int $karyawanId
-     * @param string $username
+     * @param string $email
      * @param string $password
      * @param string $role
      * @return bool
      */
-    public function createAccount($karyawanId, $username, $password, $role = 'karyawan')
+    public function createAccount($karyawanId, $email, $password, $role = 'karyawan')
     {
         if ($this->getUserByKaryawanId($karyawanId)) {
             return false; // sudah punya akun
@@ -148,9 +148,9 @@ class Karyawan
         $createdAt = date('Y-m-d H:i:s');
         $mustChange = 1;
         $status = 'active';
-        $stmt = $this->conn->prepare("INSERT INTO users (username, password_hash, role, karyawan_id, status, must_change_password, password_last_changed, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)");
-        // 7 placeholders => types: s (username), s (hash), s (role), i (karyawan_id), s (status), i (must_change), s (created_at)
-        $stmt->bind_param('sssisis', $username, $passwordHash, $role, $karyawanId, $status, $mustChange, $createdAt);
+        $stmt = $this->conn->prepare("INSERT INTO users (email, password_hash, role, karyawan_id, status, must_change_password, password_last_changed, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)");
+        // 7 placeholders => types: s (email), s (hash), s (role), i (karyawan_id), s (status), i (must_change), s (created_at)
+        $stmt->bind_param('sssisis', $email, $passwordHash, $role, $karyawanId, $status, $mustChange, $createdAt);
         return $stmt->execute();
     }
 

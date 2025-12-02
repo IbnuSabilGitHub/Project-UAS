@@ -33,12 +33,14 @@ class LeaveController extends BaseController {
         }
 
         $leaves = $this->model->getByKaryawan($karyawanId);
-        $totalDaysUsed = $this->model->getTotalDaysThisYear($karyawanId);
+        $totalApproved = $this->model->getTotalApprovedThisYear($karyawanId);
+        $totalRejected = $this->model->getTotalRejectedThisYear($karyawanId);
 
         $data = [
             'title' => 'Riwayat Cuti Saya',
             'leaves' => $leaves,
-            'totalDaysUsed' => $totalDaysUsed,
+            'totalApproved' => $totalApproved,
+            'totalRejected' => $totalRejected,
             'success' => $_SESSION['success'] ?? null,
             'error' => $_SESSION['error'] ?? null
         ];

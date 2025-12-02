@@ -46,12 +46,16 @@
             <div class="flex flex-row space-x-4">
                 <!-- Filter Tanggal (Last) -->
                 <div>
+
+                    <!-- Button dropdown periode -->
                     <button id="dropdownHelperRadioButton" data-dropdown-toggle="dropdownHelperRadio" class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none" type="button">
                         Last
                         <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
                         </svg>
                     </button>
+
+                    <!-- Dropdown menu -->
                     <div id="dropdownHelperRadio" class="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-56">
                         <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownHelperRadioButton">
                             <li>

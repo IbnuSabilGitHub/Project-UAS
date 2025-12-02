@@ -17,8 +17,46 @@ class KaryawanController extends BaseController {
      */
     public function index() {
         $this->ensureAdmin();
+        
+        // Dapatkan filter dari query parameter
+        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+        $statusFilter = isset($_GET['status']) ? $_GET['status'] : [];
+        
+        // dapatkan semua karyawan
         $karyawans = $this->model->allWithUser();
-        $this->render('admin/employees/index', ['title' => 'List Karyawan', 'karyawans' => $karyawans]);
+        
+        // Terapkan filter pencarian (berdasarkan nama atau NIK)
+        if (!empty($search)) {
+            $karyawans = array_filter($karyawans, function($k) use ($search) {
+                return stripos($k['name'], $search) !== false || 
+                       stripos($k['nik'], $search) !== false;
+            });
+        }
+        
+        // Terapkan filter status employment
+        if (!empty($statusFilter) && is_array($statusFilter)) {
+            $karyawans = array_filter($karyawans, function($k) use ($statusFilter) {
+                $empStatus = $k['employment_status'] ?? 'active';
+                return in_array($empStatus, $statusFilter);
+            });
+        }
+        
+        // Hitung statistik
+        $allEmployees = $this->model->allWithUser();
+        $statistics = [
+            'total' => count($allEmployees),
+            'active' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'active')),
+            'on_leave' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'on_leave')),
+            'resigned' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'resigned')),
+        ];
+        
+        $this->render('admin/employees/index', [
+            'title' => 'List Karyawan', 
+            'karyawans' => $karyawans,
+            'statistics' => $statistics,
+            'currentSearch' => $search,
+            'currentStatus' => $statusFilter
+        ]);
     }
 
     /**
@@ -57,10 +95,10 @@ class KaryawanController extends BaseController {
         $insertId = $this->model->create($data);
         if ($insertId) {
             if (!empty($_POST['create_account'])) {
-                $username = $data['nik'] ?: $data['email'];
+                $email = $data['email'];
                 $tempPassword = $this->generateTempPassword();
-                if ($this->model->createAccount($insertId, $username, $tempPassword)) {
-                    setFlash('success', 'Karyawan & akun dibuat. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
+                if ($this->model->createAccount($insertId, $email, $tempPassword)) {
+                    setFlash('success', 'Karyawan & akun dibuat. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
                 } else {
                     setFlash('success', 'Karyawan dibuat (akun sudah ada sebelumnya)');
                 }
@@ -179,10 +217,10 @@ class KaryawanController extends BaseController {
             setFlash('error', 'Karyawan sudah memiliki akun');
             redirect('/admin/karyawan');
         }
-        $username = $karyawan['nik'] ?: $karyawan['email'];
+        $email = $karyawan['email'];
         $tempPassword = $this->generateTempPassword();
-        if ($this->model->createAccount($karyawanId, $username, $tempPassword)) {
-            setFlash('success', 'Akun diaktifkan. Username: ' . htmlspecialchars($username) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
+        if ($this->model->createAccount($karyawanId, $email, $tempPassword)) {
+            setFlash('success', 'Akun diaktifkan. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
         } else {
             setFlash('error', 'Gagal mengaktifkan akun');
         }
