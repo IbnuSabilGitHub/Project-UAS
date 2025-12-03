@@ -46,7 +46,7 @@ class Karyawan
      */
     public function allWithUser()
     {
-        $sql = "SELECT k.*, u.id AS user_id, u.email, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
+        $sql = "SELECT k.*, u.id AS user_id, u.email AS user_email, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
         $result = $this->conn->query($sql);
         $rows = [];
         if ($result) {
