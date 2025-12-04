@@ -21,8 +21,8 @@ require_once dirname(__DIR__) . '/app/Core/Database.php';
 
 $db = new Database();
 $conn = $db->getConnection();
-$email = 'ibnu@gmail.com';
-$password = 'ibnu123';
+$email = 'kelompok8@gmail.com';
+$password = 'kelompok8';
 $role = 'admin'; // atau 'karyawan'
 
 if($role === 'admin'){

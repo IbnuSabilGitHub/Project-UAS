@@ -85,9 +85,9 @@
           Karyawan Berdasarkan Status
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 py-2">
-          <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-5 flex items-center gap-4 hover:bg-white/50 transition-colors">
+          <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-5 flex items-center gap-4 transition-colors">
             <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
             </div>
             <div>
               <p class="text-xs text-body uppercase tracking-wide">Active</p>
@@ -95,7 +95,7 @@
             </div>
           </div>
 
-          <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-5 flex items-center gap-4 hover:bg-white/50 transition-colors">
+          <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-5 flex items-center gap-4 transition-colors">
             <div class="p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
                 <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24" id="meh-alt" class="w-5 h-5" aria-hidden="true">
                   <path fill="#ff9a63ff" d="M9,11h1a1,1,0,0,0,0-2H9a1,1,0,0,0,0,2Zm6,3H9a1,1,0,0,0,0,2h6a1,1,0,0,0,0-2Zm0-5H14a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2ZM12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"></path>
@@ -107,7 +107,7 @@
             </div>
           </div>
 
-          <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-5 flex items-center gap-4 hover:bg-white/50 transition-colors">
+          <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-5 flex items-center gap-4 transition-colors">
             <div class="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </div>
@@ -145,7 +145,7 @@
             <div class="group">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-sm font-semibold text-heading"><?= htmlspecialchars($position ?? '-') ?></span>
-                <span class="text-xs font-bold text-body bg-white/50 px-2 py-1 rounded"><?= $count ?></span>
+                <span class="text-xs font-bold text-body bg-white/50 dark:bg-neutral-primary-soft px-2 py-1 rounded"><?= $count ?></span>
               </div>
               <div class="w-full bg-neutral-secondary rounded-full h-2 overflow-hidden">
                 <div class="bg-gradient-to-r <?= $gradient ?> h-2 rounded-full transition-all duration-500 group-hover:shadow-lg" style="width: <?= number_format($percentage, 0) ?>%;"></div>
@@ -170,7 +170,7 @@
           </h3>
           <div class="grid grid-cols-3 gap-3">
             <!-- Pending -->
-            <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-4 hover:bg-white/50 transition-colors group">
+            <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-4 transition-colors group">
               <div class="flex items-center justify-center mb-3">
                 <div class="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -181,7 +181,7 @@
             </div>
 
             <!-- Approved -->
-            <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-4 hover:bg-white/50 transition-colors group">
+            <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-4 transition-colors group">
               <div class="flex items-center justify-center mb-3">
                 <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -192,10 +192,10 @@
             </div>
 
             <!-- Rejected -->
-            <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-4 hover:bg-white/50 transition-colors group">
+            <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-4 transition-colors group">
               <div class="flex items-center justify-center mb-3">
                 <div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg group-hover:bg-red-200 dark:group-hover:bg-red-900/50 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l-2-2m0 0l-2-2m2 2l2-2m-2 2l-2 2m2-2l2 2"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </div>
               </div>
               <p class="text-xs text-body uppercase tracking-wide text-center font-semibold mb-1">Rejected</p>
@@ -212,10 +212,10 @@
           </h3>
           <div class="grid grid-cols-3 gap-3">
             <!-- Tepat Waktu -->
-            <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-4 hover:bg-white/50 transition-colors group">
+            <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-4 transition-colors group">
               <div class="flex items-center justify-center mb-3">
                 <div class="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
               </div>
               <p class="text-xs text-body uppercase tracking-wide text-center font-semibold mb-1">Tepat Waktu</p>
@@ -223,7 +223,7 @@
             </div>
 
             <!-- Terlambat -->
-            <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-4 hover:bg-white/50 transition-colors group">
+            <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-4 transition-colors group">
               <div class="flex items-center justify-center mb-3">
                 <div class="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg group-hover:bg-orange-200 dark:group-hover:bg-orange-900/50 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -234,7 +234,7 @@
             </div>
 
             <!-- Tidak Hadir -->
-            <div class="bg-white/30 backdrop-blur-sm border border-default rounded-lg p-4 hover:bg-white/50 transition-colors group">
+            <div class="bg-white/30 dark:bg-neutral-primary-soft backdrop-blur-sm border border-default rounded-lg p-4 transition-colors group">
               <div class="flex items-center justify-center mb-3">
                 <div class="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg group-hover:bg-red-200 dark:group-hover:bg-red-900/50 transition-colors">
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>

@@ -308,8 +308,8 @@ class AuthController extends BaseController
         $password = $_POST['password'] ?? '';
 
         if (empty($email) || empty($password)) {
-            setFlash('error', 'Email dan password harus diisi');
-            redirect('/login'); //backward compatibility
+            $_SESSION['error'] = 'Email dan password harus diisi';
+            redirect('/login');//backward compatibility
         }
 
         // Konksi db
@@ -322,8 +322,8 @@ class AuthController extends BaseController
         $result = $stmt->get_result();
 
         $invalid_login = function () {
-            setFlash('error', 'Email atau password salah');
-            redirect('/login'); //backward compatibility
+            $_SESSION['error'] = 'Email atau password salah';
+            redirect('/login');//backward compatibility
         };
 
         // Cek apakah user ditemukan atau tidak
@@ -337,8 +337,8 @@ class AuthController extends BaseController
 
         // Cek status akun
         if ($user['status'] !== 'active') {
-            setFlash('error', 'Akun dinonaktifkan');
-            redirect('/login'); //backward compatibility
+            $_SESSION['error'] = 'Akun dinonaktifkan';
+            redirect('/login');//backward compatibility
         }
 
         // Verifikasi password
@@ -352,7 +352,7 @@ class AuthController extends BaseController
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
-        setFlash('success', 'Login berhasil!');
+        $_SESSION['success'] = 'Login berhasil!';
 
         // Redirect jika wajib ganti password
         if (!empty($user['must_change_password'])) {
@@ -374,7 +374,7 @@ class AuthController extends BaseController
         }
         // Hapus semua data session
         session_destroy();
-        redirect('/login'); //backward compatibility
+        redirect('/login');//backward compatibility
     }
 
     public function indexPage()
@@ -400,7 +400,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            redirect('/login'); //backward compatibility
+            redirect('/login');//backward compatibility
         }
         if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
             redirect('/admin/dashboard');
@@ -496,7 +496,7 @@ class AuthController extends BaseController
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            redirect('/login'); //backward compatibility
+            redirect('/login');//backward compatibility
         }
         $data = [
             'title' => 'Ganti Password',
@@ -520,7 +520,7 @@ class AuthController extends BaseController
         }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
-            redirect('/login'); //backward compatibility
+            redirect('/login');//backward compatibility
         }
 
         $new = $_POST['new_password'] ?? '';

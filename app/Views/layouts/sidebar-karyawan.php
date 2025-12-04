@@ -45,7 +45,7 @@
                         </div>
                         <ul class="p-2 text-sm text-body font-medium" role="none">
                             <li>
-                                <a href="<?= url('/admin/dashboard') ?>" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Dashboard</a>
+                                <a href="<?= url('/karyawan/dashboard') ?>" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Dashboard</a>
                             </li>
                             <li>
                                 <a href="<?= url('/change-password') ?>" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" role="menuitem">Ganti Password</a>
@@ -87,7 +87,7 @@
             <li>
                 <a href="<?= url('/karyawan/leave/create') ?>" class="flex items-center px-2 py-1.5 text-body rounded-base hover:bg-neutral-tertiary hover:text-fg-brand group">
                     <i class="fa-solid fa-calendar-day transition duration-75 group-hover:text-fg-brand"></i>
-                    <span class="flex-1 ms-3 whitespace-nowrap">Penjauan cuti</span>
+                    <span class="flex-1 ms-3 whitespace-nowrap">Pengajuan Cuti</span>
                 </a>
             </li>
             <li>

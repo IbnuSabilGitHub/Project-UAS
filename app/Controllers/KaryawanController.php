@@ -92,6 +92,18 @@ class KaryawanController extends BaseController {
             redirect('/admin/karyawan');
         }
 
+        // Validasi NIK harus 16 digit
+        if (!preg_match('/^[0-9]{16}$/', $data['nik'])) {
+            $_SESSION['error'] = 'NIK harus tepat 16 digit angka';
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi tanggal join tidak boleh masa depan
+        if (!empty($data['join_date']) && strtotime($data['join_date']) > time()) {
+            $_SESSION['error'] = 'Tanggal masuk tidak boleh di masa depan';
+            redirect('/admin/karyawan');
+        }
+
         $insertId = $this->model->create($data);
         if ($insertId) {
             if (!empty($_POST['create_account'])) {
@@ -157,6 +169,18 @@ class KaryawanController extends BaseController {
         // Validasi data yang diperlukan
         if (empty($data['nik']) || empty($data['name']) || empty($data['email'])) {
             setFlash('error', 'NIK, Nama, dan Email wajib diisi');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi NIK harus 16 digit
+        if (!preg_match('/^[0-9]{16}$/', $data['nik'])) {
+            $_SESSION['error'] = 'NIK harus tepat 16 digit angka';
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi tanggal join tidak boleh masa depan
+        if (!empty($data['join_date']) && strtotime($data['join_date']) > time()) {
+            $_SESSION['error'] = 'Tanggal masuk tidak boleh di masa depan';
             redirect('/admin/karyawan');
         }
 
