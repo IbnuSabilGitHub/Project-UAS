@@ -110,7 +110,11 @@ class KaryawanController extends BaseController {
                 $email = $data['email'];
                 $tempPassword = $this->generateTempPassword();
                 if ($this->model->createAccount($insertId, $email, $tempPassword)) {
-                    setFlash('success', 'Karyawan & akun dibuat. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
+                    // Simpan ke session untuk ditampilkan di modal
+                    $_SESSION['temp_password_data'] = [
+                        'email' => $email,
+                        'password' => $tempPassword
+                    ];
                 } else {
                     setFlash('success', 'Karyawan dibuat (akun sudah ada sebelumnya)');
                 }
@@ -244,7 +248,11 @@ class KaryawanController extends BaseController {
         $email = $karyawan['email'];
         $tempPassword = $this->generateTempPassword();
         if ($this->model->createAccount($karyawanId, $email, $tempPassword)) {
-            setFlash('success', 'Akun diaktifkan. Email: ' . htmlspecialchars($email) . ' | Temp Password: ' . htmlspecialchars($tempPassword));
+            // Simpan ke session untuk ditampilkan di modal
+            $_SESSION['temp_password_data'] = [
+                'email' => $email,
+                'password' => $tempPassword
+            ];
         } else {
             setFlash('error', 'Gagal mengaktifkan akun');
         }

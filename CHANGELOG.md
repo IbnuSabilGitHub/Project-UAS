@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[Feature: Modal for Temporary Password Display] - 2024-12-02**
+### **New Features**
+**Modal Component for Temporary Password:**
+- Menampilkan email dan password temporary setelah pembuatan user baru
+- Tombol "Copy to Clipboard" untuk menyalin kredensial dengan feedback toast
+- Peringatan bahwa password hanya ditampilkan sekali
+
+### 🔄 **Backend Changes**
+**Controllers:**
+- `KaryawanController.php`:
+  - Memperbarui method `create_account()` dan `activateAccount()` untuk mengirim data email dan temp password ke view modal
+### 🔄 **Frontend Changes**
+**Views:**
+- `modal-temp-password.php`:
+  - Struktur modal dengan Tailwind CSS
+  - Tombol salin dengan feedback visual
+  - Peringatan keamanan tentang password temporary
+
+
+
 ## **[Refactor: Remove Backward Compatibility Login] - 2024-12-02**
 
 ### **Removed**

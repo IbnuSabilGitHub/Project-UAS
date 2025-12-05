@@ -1,6 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
 
-
 <!-- Toast Notification System -->
 <?php require_once __DIR__ . '/components/toast.php'; ?>
 <script src="<?= asset('js/toast.js') ?>"></script>
