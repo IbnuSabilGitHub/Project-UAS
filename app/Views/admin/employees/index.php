@@ -244,7 +244,8 @@
                                                     <form action="<?= url('/admin/karyawan/deactivate') ?>"
                                                         method="post"
                                                         class="block"
-                                                        onsubmit="return confirm('Nonaktifkan akun karyawan ini?');">
+                                                        id="form-deactivate-<?= $k['id'] ?>"
+                                                        onsubmit="return handleDeactivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
                                                         <input type="hidden" name="id" value="<?= $k['id'] ?>">
                                                         <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-warning-strong font-medium">
                                                             <i class="fa-solid fa-user-slash w-4"></i>
@@ -259,7 +260,8 @@
                                                 <form action="<?= url('/admin/karyawan/activate') ?>"
                                                     method="post"
                                                     class="block"
-                                                    onsubmit="return confirm('Aktifkan akun untuk karyawan ini?');">
+                                                    id="form-activate-<?= $k['id'] ?>"
+                                                    onsubmit="return handleActivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
                                                     <input type="hidden" name="karyawan_id" value="<?= $k['id'] ?>">
                                                     <button type="submit"
                                                         class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-success-strong font-medium">
@@ -279,7 +281,8 @@
                                                 <form action="<?= url('/admin/karyawan/delete') ?>"
                                                     method="post"
                                                     class="block"
-                                                    onsubmit="return confirm('Hapus permanen karyawan ini? Data tidak dapat dikembalikan!');">
+                                                    id="form-delete-<?= $k['id'] ?>"
+                                                    onsubmit="return handleDeleteEmployee(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
                                                     <input type="hidden" name="id" value="<?= $k['id'] ?>">
                                                     <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong">
                                                         <i class="fa-solid fa-trash w-4"></i>
@@ -327,6 +330,12 @@
 
 <!-- Include Modal Temporary Password -->
 <?php require_once __DIR__ . '/../../layouts/components/modal-temp-password.php'; ?>
+
+<!-- Include Toast Component -->
+<?php require_once __DIR__ . '/../../layouts/components/toast.php'; ?>
+
+<!-- Toast JavaScript -->
+<script src="<?= asset('js/toast.js') ?>"></script>
 
 <script>
     // JavaScript untuk menangani filter
@@ -425,5 +434,79 @@
                 }
             });
         }
+    }
+
+    // ===================================================================
+    // TOAST ACTION HANDLERS
+    // ===================================================================
+
+    /**
+     * Handle deactivate account with toast confirmation
+     */
+    function handleDeactivateAccount(event, employeeId, employeeName) {
+        event.preventDefault();
+        
+        ToastManager.showAction({
+            type: 'update',
+            title: 'Nonaktifkan Akun Karyawan',
+            message: `Apakah Anda yakin ingin menonaktifkan akun untuk karyawan "${employeeName}"? Karyawan tidak akan bisa login setelah akun dinonaktifkan.`,
+            confirmText: 'Ya, Nonaktifkan',
+            cancelText: 'Batal',
+            onConfirm: function() {
+                // Submit form
+                document.getElementById(`form-deactivate-${employeeId}`).submit();
+            }
+        });
+        
+        return false;
+    }
+
+    /**
+     * Handle activate account with toast confirmation
+     */
+    function handleActivateAccount(event, employeeId, employeeName) {
+        event.preventDefault();
+        
+        ToastManager.confirm(
+            `Aktifkan akun untuk karyawan "${employeeName}"? Sistem akan membuat kredensial login dan mengirimkan password temporary.`,
+            function() {
+                // Submit form
+                document.getElementById(`form-activate-${employeeId}`).submit();
+            },
+            {
+                title: 'Aktifkan Akun Karyawan',
+                confirmText: 'Ya, Aktifkan',
+                cancelText: 'Batal'
+            }
+        );
+        
+        return false;
+    }
+
+    /**
+     * Handle delete employee with toast confirmation
+     */
+    function handleDeleteEmployee(event, employeeId, employeeName) {
+        event.preventDefault();
+        
+        ToastManager.showAction({
+            type: 'delete',
+            title: 'Hapus Karyawan Permanen',
+            message: `Apakah Anda yakin ingin menghapus karyawan "${employeeName}" secara permanen? Data yang sudah dihapus tidak dapat dikembalikan!`,
+            confirmText: 'Ya, Hapus Permanen',
+            cancelText: 'Batal',
+            onConfirm: function() {
+                // Show loading
+                ToastManager.info('Menghapus data karyawan...');
+                
+                // Submit form
+                document.getElementById(`form-delete-${employeeId}`).submit();
+            },
+            onCancel: function() {
+                ToastManager.info('Penghapusan dibatalkan');
+            }
+        });
+        
+        return false;
     }
 </script>

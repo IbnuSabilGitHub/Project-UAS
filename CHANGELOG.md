@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[Feature: Toast Action Confirmations] - 2024-12-05**
+
+### **Frontend Changes**
+
+**Components:**
+- `app/Views/layouts/components/toast.php`:
+  - Menambahkan template `toast-action-template` untuk action confirmations
+  - Support untuk 3 tema berbeda dengan icon dan warna yang sesuai
+
+**JavaScript:**
+- `public/assets/js/toast.js`:
+  - Method `showAction()` untuk menampilkan toast konfirmasi
+  - Method `getActionConfig()` untuk konfigurasi tema (delete, update, confirm)
+  - Shorthand methods: `confirmDelete()`, `confirmUpdate()`, `confirm()`
+  - Event handlers untuk confirm, cancel, dan close buttons
+
+---
+
 ## **[Feature: Modal for Temporary Password Display] - 2024-12-02**
 ### **New Features**
 **Modal Component for Temporary Password:**

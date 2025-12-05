@@ -3,7 +3,6 @@
 <!-- Toast Notification System -->
 <?php require_once __DIR__ . '/components/toast.php'; ?>
 <script src="<?= asset('js/toast.js') ?>"></script>
-
 <!-- Auto-show flash messages dari PHP session -->
 <script>
     <?php 
