@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[Feature: Alert Must Change Password] - 2024-12-05**
+### 🔄 **Backend Changes**
+**Controllers:**
+- `AuthController.php`:
+  - `karyawanLogin()`: Menghapus setFlash info tentang ganti password saat login dan menghapus redirect ke halaman ganti password jika password belum diganti
+  - `changePassword()`: Menambahkan `$_SESSION['must_change_password'] = false;` setelah password berhasil diubah untuk menghilangkan alert di sidebar
+
+### 🔄 **Frontend Changes**
+**Views:**
+- `layouts/sidebar-karyawan.php`:
+  - Menambahkan alert/notifikasi untuk karyawan yang belum mengganti password
+
+
+
 ## **[Feature: Toast Action Confirmations] - 2024-12-05**
 
 ### **Frontend Changes**

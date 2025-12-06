@@ -235,11 +235,13 @@ class AuthController extends BaseController
             redirect('/karyawan/login');
         }
 
+        // Cek status akun
         if ($user['status'] !== 'active') {
             setFlash('error', 'Akun dinonaktifkan');
             redirect('/karyawan/login');
         }
 
+        // Verifikasi password
         if (!password_verify($password, $user['password_hash'])) {
             setFlash('error', 'Email atau password salah');
             redirect('/karyawan/login');
@@ -250,11 +252,8 @@ class AuthController extends BaseController
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
+        $_SESSION['must_change_password'] = !empty($user['must_change_password']);
         setFlash('success', 'Login berhasil!');
-
-        if (!empty($user['must_change_password'])) {
-            redirect('/change-password');
-        }
 
         redirect('/karyawan/dashboard');
     }
@@ -374,7 +373,7 @@ class AuthController extends BaseController
         }
         // Hapus semua data session
         session_destroy();
-        redirect('/login');//backward compatibility
+        redirect('/');//backward compatibility
     }
 
     public function indexPage()
@@ -542,6 +541,7 @@ class AuthController extends BaseController
         $stmt->bind_param('si', $hash, $_SESSION['user_id']);
         
         if ($stmt->execute()) {
+            $_SESSION['must_change_password'] = false;
             setFlash('success', 'Password berhasil diubah');
             redirect('/dashboard');
         } else {
