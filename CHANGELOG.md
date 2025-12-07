@@ -2,8 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[refactor: modal detail leave] - 2024-12-07**
+### 🔄 **Frontend Changes**
+**Views:**
+- `admin/leave/index.php`: Memperbarui modal detail pengajuan cuti untuk tampilan yang lebih baik dan konsisten
 
-## **[Feature: alert crud in leave management] - 2024-12-07**
+## **[Feature: CRUD alerts in leave management] - 2024-12-07**
 ### 🔄 **Frontend Changes**
 **Views:**
 - `admin/leave/index.php`: Menambahkan alert/notifikasi untuk aksi CRUD pada pengajuan cuti

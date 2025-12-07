@@ -203,7 +203,7 @@
             <table class="w-full text-sm text-left rtl:text-right text-body">
                 <thead class="text-sm text-body bg-neutral-secondary-soft border-b rounded-base border-default">
                     <tr>
-                        <th scope="col" class="px-6 py-3 font-medium">#</th>
+                        <th scope="col" class="px-6 py-3 font-medium">No</th>
                         <th scope="col" class="px-6 py-3 font-medium">Karyawan</th>
                         <th scope="col" class="px-6 py-3 font-medium">NIK</th>
                         <th scope="col" class="px-6 py-3 font-medium">Posisi</th>
@@ -228,7 +228,7 @@
                             </td>
                         </tr>
                     <?php else: ?>
-                        <?php foreach ($pengajuanCuti as $pc): ?>
+                        <?php foreach ($pengajuanCuti as $index => $pc): ?>
                             <?php
                             $start = new DateTime($pc['start_date']);
                             $end = new DateTime($pc['end_date']);
@@ -246,21 +246,34 @@
                             ?>
 
                             <tr class="bg-neutral-primary border-b border-default">
-                                <td class="px-6 py-4"><?= htmlspecialchars($pc['id']) ?></td>
+                                <!-- No -->
+                                <td class="px-6 py-4"><?= $index + 1 ?></td>
+
+                                <!-- Karyawan name -->
                                 <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap">
                                     <?= htmlspecialchars($pc['karyawan_name']) ?>
                                 </th>
+
+                                <!-- NIK -->
                                 <td class="px-6 py-4"><?= htmlspecialchars($pc['nik']) ?></td>
+
+                                <!-- Posisi -->
                                 <td class="px-6 py-4"><?= htmlspecialchars($pc['position'] ?? '-') ?></td>
+
+                                <!-- Tanggal -->
                                 <td class="px-6 py-4">
                                     <div class="text-sm">
                                         <div class="font-medium text-heading"><?= date('d/m/y', strtotime($pc['start_date'])) ?> - <?= date('d/m/y', strtotime($pc['end_date'])) ?></div>
                                         <div class="text-xs text-body"><?= date('M Y', strtotime($pc['start_date'])) ?></div>
                                     </div>
                                 </td>
+
+                                <!-- Total hari -->
                                 <td class="px-6 py-4">
                                     <span class="font-semibold text-heading"><?= $duration ?> hari</span>
                                 </td>
+
+                                <!-- Alasan -->
                                 <td class="px-6 py-4">
                                     <div class="max-w-xs">
                                         <p class="text-sm text-body truncate" title="<?= htmlspecialchars($pc['reason']) ?>">
@@ -268,31 +281,36 @@
                                         </p>
                                     </div>
                                 </td>
+
+                                <!-- Lampiran -->
                                 <td class="px-6 py-4">
                                     <?php if (!empty($pc['attachment_file'])): ?>
                                         <a href="<?= url('/file/leave/' . htmlspecialchars($pc['id'])) ?>"
                                             target="_blank"
-                                            class="inline-flex items-center text-xs font-medium px-2.5 py-1.5 rounded-base bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 transition-colors">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                            </svg>
+                                            class="text-blue-600 hover:text-blue-800">
                                             Lihat File
                                         </a>
                                     <?php else: ?>
                                         <span class="text-xs text-body">-</span>
                                     <?php endif; ?>
                                 </td>
+
+                                <!-- Status -->
                                 <td class="px-6 py-4">
                                     <span class="inline-flex items-center text-xs font-medium px-2.5 py-0.5 rounded-full <?= $statusClass ?>">
                                         <?= htmlspecialchars(ucfirst($pc['status'])) ?>
                                     </span>
                                 </td>
+
+                                <!-- Diajukan -->
                                 <td class="px-6 py-4">
                                     <div class="text-sm text-body">
                                         <div><?= date('d/m/y', strtotime($pc['created_at'])) ?></div>
                                         <div class="text-xs"><?= date('H:i', strtotime($pc['created_at'])) ?></div>
                                     </div>
                                 </td>
+
+                                <!-- Aksi -->
                                 <td class="px-6 py-4 text-center">
                                     <button id="dropdownButton<?= $pc['id'] ?>" data-dropdown-toggle="dropdown<?= $pc['id'] ?>"
                                         class="inline-flex items-center p-2 text-sm font-medium text-center text-heading bg-neutral-primary hover:bg-neutral-secondary-medium rounded-base focus:ring-4 focus:outline-none focus:ring-neutral-tertiary"
@@ -335,8 +353,7 @@
                                             <?php endif; ?>
                                             <li>
                                                 <button type="button"
-                                                    title="<?= htmlspecialchars($pc['reason']) ?>"
-                                                    onclick="showDetailInfo('<?= htmlspecialchars($pc['karyawan_name']) ?>', '<?= htmlspecialchars($pc['reason']) ?>', '<?= date('d/m/Y', strtotime($pc['start_date'])) ?> - <?= date('d/m/Y', strtotime($pc['end_date'])) ?>', '<?= $duration ?>')"
+                                                    onclick="showDetail(<?= htmlspecialchars(json_encode($pc)) ?>)"
                                                     class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-heading flex items-center">
                                                     <i class="fa-solid fa-eye text-xs mr-2"></i>
                                                     Detail
@@ -435,6 +452,43 @@
     </div>
 </div>
 
+<!-- Overlay -->
+<div id="modalOverlay"
+    class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-200">
+</div>
+
+<!-- Modal Container -->
+<div id="detailModal"
+    class="fixed inset-0 z-50 hidden flex items-start justify-center overflow-y-auto p-6 mt-14">
+    <div id="modalBox"
+        class="bg-neutral-primary-soft border border-default rounded-base shadow-lg w-full max-w-xl
+               opacity-0 scale-95 transition-all duration-200 mt-20">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-default p-4">
+            <h5 class="flex items-center text-lg font-semibold text-heading">
+                <svg class="w-5 h-5 mr-2" aria-hidden="true" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+                Detail Pengajuan Cuti
+            </h5>
+            <button type="button" onclick="closeModal()"
+                class="w-9 h-9 flex items-center justify-center rounded-base text-body
+                       hover:bg-neutral-tertiary hover:text-heading transition">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Body (auto-filled) -->
+        <div id="modalContent" class="p-4 space-y-4 text-body leading-relaxed"></div>
+
+    </div>
+</div>
+
 <script>
     function handleApprove(event, employeeId, employeeName) {
         event.preventDefault();
@@ -488,17 +542,190 @@
         return false;
     }
 
-    function showDetailInfo(karyawan, reason, periode, durasi) {
-        const message = `
-        Karyawan: ${karyawan}
-        Periode: ${periode}
-        Durasi: ${durasi} hari
+    function showDetail(leave) {
+        const modal = document.getElementById('detailModal');
+        const overlay = document.getElementById('modalOverlay');
+        const box = document.getElementById('modalBox');
 
-        Alasan:
-        ${reason}
-            `;
-        alert(message);
+        // Mapping jenis cuti
+        const types = {
+            'annual': 'Tahunan',
+            'sick': 'Sakit',
+            'emergency': 'Darurat',
+            'unpaid': 'Tidak Dibayar'
+        };
+
+        const statusBadge = {
+            'pending': '<span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-warning-soft text-fg-warning">Pending</span>',
+            'approved': '<span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-success-soft text-fg-success-strong">Disetujui</span>',
+            'rejected': '<span class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded-full bg-danger-soft text-fg-danger-strong">Ditolak</span>'
+        };
+
+        let content = `
+        <div class="flow-root">
+        <dl class="-my-3 divide-y divide-default/40 text-sm">
+            
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Nama Karyawan</dt>
+            <dd class="text-body sm:col-span-2">${leave.karyawan_name || '-'}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">NIK</dt>
+            <dd class="text-body sm:col-span-2">${leave.nik || '-'}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Posisi</dt>
+            <dd class="text-body sm:col-span-2">${leave.position || '-'}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Jenis Cuti</dt>
+            <dd class="text-body sm:col-span-2">${types[leave.leave_type] || leave.leave_type}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Tanggal Mulai</dt>
+            <dd class="text-body sm:col-span-2">${formatDate(leave.start_date)}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Tanggal Selesai</dt>
+            <dd class="text-body sm:col-span-2">${formatDate(leave.end_date)}</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Durasi</dt>
+            <dd class="text-body sm:col-span-2">${leave.total_days || calculateDuration(leave.start_date, leave.end_date)} hari</dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Status</dt>
+            <dd class="sm:col-span-2">
+                ${statusBadge[leave.status] || leave.status}
+            </dd>
+            </div>
+
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Alasan</dt>
+            <dd class="text-body sm:col-span-2 leading-relaxed">${leave.reason || '-'}</dd>
+            </div>
+        `;
+
+        if (leave.approved_by || leave.approver_email) {
+            content += `
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Diproses Oleh</dt>
+            <dd class="text-body sm:col-span-2">${leave.approver_email || '-'}</dd>
+            </div>
+        `;
+        }
+
+        if (leave.rejection_reason) {
+            content += `
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Alasan Penolakan</dt>
+            <dd class="text-body sm:col-span-2 leading-relaxed">
+                <span class="text-danger-strong">${leave.rejection_reason}</span>
+            </dd>
+            </div>
+        `;
+        }
+
+        if (leave.attachment_file) {
+            content += `
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Lampiran</dt>
+            <dd class="text-body sm:col-span-2">
+                <a href="<?= url('/file/leave/') ?>${leave.id}"
+                target="_blank"
+                class="inline-flex items-center text-brand hover:text-brand-strong underline">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                </svg>
+                Lihat File
+                </a>
+            </dd>
+            </div>
+        `;
+        }
+
+        if (leave.created_at) {
+            content += `
+            <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+            <dt class="font-medium text-heading">Tanggal Pengajuan</dt>
+            <dd class="text-body sm:col-span-2">${formatDateTime(leave.created_at)}</dd>
+            </div>
+        `;
+        }
+
+        content += `</dl></div>`;
+        document.getElementById('modalContent').innerHTML = content;
+
+        // Open modal with animation
+        modal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+
+        setTimeout(() => {
+            overlay.classList.remove("opacity-0");
+            box.classList.remove("opacity-0", "scale-95");
+        }, 10);
+
+        document.body.style.overflow = "hidden";
     }
+
+    function closeModal() {
+        const modal = document.getElementById('detailModal');
+        const overlay = document.getElementById('modalOverlay');
+        const box = document.getElementById('modalBox');
+
+        overlay.classList.add("opacity-0");
+        box.classList.add("opacity-0", "scale-95");
+
+        setTimeout(() => {
+            modal.classList.add("hidden");
+            overlay.classList.add("hidden");
+        }, 200);
+
+        document.body.style.overflow = "";
+    }
+
+    // Close via overlay
+    document.getElementById('modalOverlay').addEventListener('click', closeModal);
+
+    function formatDate(dateString) {
+        return new Date(dateString).toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+    }
+
+    function formatDateTime(dateString) {
+        const date = new Date(dateString);
+        const dateStr = date.toLocaleDateString('id-ID', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
+        const timeStr = date.toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        return `${dateStr} ${timeStr}`;
+    }
+
+    function calculateDuration(startDate, endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays + 1;
+    }
+
+
 
     // javaScript untuk menangani filter
     document.addEventListener('DOMContentLoaded', function() {

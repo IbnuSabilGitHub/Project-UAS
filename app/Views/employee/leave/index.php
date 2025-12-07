@@ -89,36 +89,41 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php foreach ($leaves as $index => $leave): ?>
+                            <?php
+                            $types = [
+                                'annual' => 'Tahunan',
+                                'sick' => 'Sakit',
+                                'emergency' => 'Darurat',
+                                'unpaid' => 'Tidak Dibayar'
+                            ];
+
+                            $startDateValid = $leave['start_date'] && $leave['start_date'] !== '0000-00-00';
+                            $endDateValid = $leave['end_date'] && $leave['end_date'] !== '0000-00-00';
+                            ?>
+
                             <tr class="bg-neutral-primary border-b border-default">
+                                <!-- No -->
                                 <td class="px-6 py-4">
                                     <?= $index + 1 ?>
                                 </td>
+
+                                <!-- Jenis Cuti -->
                                 <td class="px-6 py-4">
-                                    <?php
-                                    $types = [
-                                        'annual' => 'Tahunan',
-                                        'sick' => 'Sakit',
-                                        'emergency' => 'Darurat',
-                                        'unpaid' => 'Tidak Dibayar'
-                                    ];
-                                    echo $types[$leave['leave_type']] ?? $leave['leave_type'];
-                                    ?>
+                                    <?= htmlspecialchars($types[$leave['leave_type']]) ?>
                                 </td>
+
+                                <!-- Tanggal -->
                                 <td class="px-6 py-4 text-sm">
-                                    <?php
-                                    $startDateValid = $leave['start_date'] && $leave['start_date'] !== '0000-00-00';
-                                    $endDateValid = $leave['end_date'] && $leave['end_date'] !== '0000-00-00';
-                                    ?>
-                                    <div>
-                                        <?= $startDateValid ? date('d/m/Y', strtotime($leave['start_date'])) : '<span class="text-red-500">Tanggal tidak valid</span>' ?>
-                                    </div>
-                                    <div class="text-gray-500">
-                                        s/d <?= $endDateValid ? date('d/m/Y', strtotime($leave['end_date'])) : '<span class="text-red-500">Tanggal tidak valid</span>' ?>
-                                    </div>
+                                    <div class="font-medium text-heading"><?= date('d/m/y', strtotime($leave['start_date'])) ?> - <?= date('d/m/y', strtotime($leave['end_date'])) ?></div>
+                                    <div class="text-xs text-body"><?= date('M Y', strtotime($leave['start_date'])) ?></div>
                                 </td>
+
+                                <!-- Total hari -->
                                 <td class="px-6 py-4">
                                     <?= $leave['total_days'] ?> hari
                                 </td>
+
+                                <!-- Status -->
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <?php if ($leave['status'] === 'pending'): ?>
                                         <span class="bg-warning-soft text-fg-warning text-xs font-medium px-1.5 py-0.5 rounded">Pending</span>
@@ -128,6 +133,8 @@
                                         <span class="bg-danger-soft text-fg-danger-strong text-xs font-medium px-1.5 py-0.5 rounded">Ditolak</span>
                                     <?php endif; ?>
                                 </td>
+
+                                <!-- Lampiran -->
                                 <td class="px-6 py-4">
                                     <?php if ($leave['attachment_file']): ?>
                                         <a href="<?= url('/file/leave/' . $leave['id']) ?>"
@@ -139,6 +146,8 @@
                                         <span class="text-gray-400">-</span>
                                     <?php endif; ?>
                                 </td>
+
+                                <!-- Aksi -->
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <?php if ($leave['status'] === 'pending'): ?>
                                         <form action="<?= url('/karyawan/leave/delete') ?>" method="POST"
