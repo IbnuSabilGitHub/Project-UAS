@@ -494,7 +494,7 @@
         event.preventDefault();
 
         ToastManager.showAction({
-            type: 'approve',
+            type: 'confirm',
             title: 'Konfirmasi Approve',
             message: `Apakah Anda yakin menyetujui pengajuan cuti dari ${employeeName}?`,
             confirmText: 'Setujui',
@@ -511,7 +511,7 @@
         event.preventDefault();
 
         ToastManager.showAction({
-            type: 'reject',
+            type: 'confirm',
             title: 'Konfirmasi Reject',
             message: `Apakah Anda yakin menolak pengajuan cuti dari ${employeeName}?`,
             confirmText: 'Tolak',

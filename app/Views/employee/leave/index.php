@@ -150,8 +150,11 @@
                                 <!-- Aksi -->
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <?php if ($leave['status'] === 'pending'): ?>
-                                        <form action="<?= url('/karyawan/leave/delete') ?>" method="POST"
-                                            onsubmit="return confirm('Yakin ingin membatalkan pengajuan cuti ini?')">
+                                        <form
+                                            action="<?= url('/karyawan/leave/delete') ?>"
+                                            method="POST"
+                                            id="cancel-form-<?= $leave['id'] ?>"
+                                            onsubmit="return handleCancelLeave(event, <?= $leave['id'] ?>)">
                                             <input type="hidden" name="id" value="<?= $leave['id'] ?>">
                                             <button type="submit" class="text-red-600 hover:text-red-800">
                                                 Batalkan
@@ -215,6 +218,24 @@
 
 
 <script>
+    function handleCancelLeave(event, employeeId) {
+        event.preventDefault();
+
+        ToastManager.showAction({
+            type: 'delete',
+            title: 'Konfirmasi Cancel',
+            message: `Apakah Anda yakin membatalkan pengajuan cuti ini?`,
+            confirmText: 'Batalkan',
+            cancelText: 'Batal',
+            onConfirm: () => {
+                document.getElementById(`cancel-form-${employeeId}`).submit();
+            }
+        });
+
+        return false;
+    }
+
+
     function showDetail(leave) {
         const modal = document.getElementById('detailModal');
         const overlay = document.getElementById('modalOverlay');

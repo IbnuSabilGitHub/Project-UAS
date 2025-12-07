@@ -104,11 +104,12 @@
                     <i class="fa-solid fa-paper-plane text-base"></i>
                     Ajukan Cuti
                 </button>
-                <a
-                    href="<?= url('/karyawan/leave') ?>"
+                <button
+                    type="button"
+                    onclick="handleCancelLeaveForm(event)"
                     class="flex items-center justify-center flex-1 text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-full text-sm px-4 py-2.5">
                     Batal
-                </a>
+                </button>
             </div>
 
         </form>
@@ -116,6 +117,34 @@
 </div>
 
 <script>
+    function handleCancelLeaveForm(event) {
+        event.preventDefault();
+        
+        // Cek apakah form sudah diisi
+        const leaveType = document.getElementById('leave_type').value;
+        const startDate = document.getElementById('start_date').value;
+        const endDate = document.getElementById('end_date').value;
+        const reason = document.getElementById('reason').value;
+        const attachment = document.getElementById('attachment').files.length;
+        
+        const hasData = leaveType || startDate || endDate || reason.trim() !== '' || attachment > 0;
+        
+        if (hasData) {
+            ToastManager.showAction({
+                type: 'confirm',
+                title: 'Konfirmasi Batal',
+                message: 'Data pengajuan cuti yang sudah diisi akan hilang. Apakah Anda yakin ingin membatalkan?',
+                confirmText: 'Ya, Batalkan',
+                cancelText: 'Tidak',
+                onConfirm: () => {
+                    window.location.href = '<?= url('/karyawan/leave') ?>';
+                }
+            });
+        } else {
+            window.location.href = '<?= url('/karyawan/leave') ?>';
+        }
+    }
+
     // Element references
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
@@ -202,7 +231,6 @@
             calculateDays();
         }
     });
-    F
 </script>
 
 <?php require_once __DIR__ . '/../../layouts/footer.php'; ?>
