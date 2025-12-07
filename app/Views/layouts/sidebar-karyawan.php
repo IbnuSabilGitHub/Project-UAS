@@ -14,7 +14,7 @@
                 </a>
             </div>
             <div class="flex items-center">
-                
+
                 <!-- Dark mode toggle -->
                 <button id="theme-toggle" data-tooltip-target="tooltip-toggle" type="button" class="inline-flex hover:text-heading items-center justify-center text-body w-10 h-10 hover:bg-neutral-secondary-soft focus:outline-none focus:ring-2 focus:ring-neutral-tertiary rounded-xl text-sm p-2.5">
                     <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -97,6 +97,23 @@
                 </a>
             </li>
         </ul>
+        <?php if (isset($_SESSION['must_change_password']) && $_SESSION['must_change_password']): ?>
+            <div id="alert-additional-content-2" class="p-4 mt-4 text-sm text-fg-danger-strong rounded-base bg-danger-soft border border-danger-subtle" role="alert">
+                <div class="flex items-center">
+                    <i class="fa-solid fa-triangle-exclamation shrink-0 me-2"></i>
+                    <span class="sr-only">Info</span>
+                    <h3 class="font-medium text-sm">Ganti Password!</h3>
+                </div>
+                <div class="mt-2 mb-4 text-xs">
+                    Anda masih menggunakan password default. Demi keamanan akun Anda, silakan ganti password Anda sekarang.
+                </div>
+                <button type="button" class="inline-flex items-center text-white bg-danger box-border border border-transparent hover:bg-danger-strong focus:ring-4 focus:ring-danger-medium shadow-xs font-medium leading-5 rounded-base text-xs px-3 py-1.5 focus:outline-none" onclick="window.location.href='<?= url('/change-password') ?>'">
+                    <i class="fa-solid fa-lock me-1.5"></i>
+                    <span>Ganti Password</span>
+                </button>
+            </div>
+        <?php endif; ?>
+
     </div>
 </aside>
 

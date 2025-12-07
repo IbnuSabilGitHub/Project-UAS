@@ -40,3 +40,38 @@ function url($path) {
 function asset($path) {
     return rtrim(base_url(), '/') . '/public/assets/' . ltrim($path, '/');
 }
+
+/**
+ * Set flash message untuk ditampilkan di page berikutnya
+ * 
+ * @param string $type Tipe pesan: 'success', 'error', 'warning', 'info'
+ * @param string $message Pesan yang akan ditampilkan
+ */
+function setFlash($type, $message) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    $_SESSION['flash'] = [
+        'type' => $type,
+        'message' => $message
+    ];
+}
+
+/**
+ * Ambil flash message dan hapus dari session
+ * 
+ * @return array|null Array dengan 'type' dan 'message', atau null jika tidak ada
+ */
+function getFlash() {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    if (isset($_SESSION['flash'])) {
+        $flash = $_SESSION['flash'];
+        unset($_SESSION['flash']);
+        return $flash;
+    }
+    
+    return null;
+}

@@ -135,7 +135,7 @@
             <table class="w-full text-sm text-left rtl:text-right text-body">
                 <thead class="text-xs text-heading uppercase bg-neutral-secondary-soft">
                     <tr>
-                        <th scope="col" class="px-6 py-3 font-medium">#</th>
+                        <th scope="col" class="px-6 py-3 font-medium">NO</th>
                         <th scope="col" class="px-6 py-3 font-medium">NIK</th>
                         <th scope="col" class="px-6 py-3 font-medium">Nama</th>
                         <th scope="col" class="px-6 py-3 font-medium">Email</th>
@@ -148,28 +148,48 @@
                 </thead>
 
                 <tbody>
-                    <?php foreach ($karyawans as $k): ?>
+                    <?php foreach ($karyawans as $index => $k): ?>
                         <tr class="bg-neutral-primary border-b border-default">
+
+                            <!-- No -->
                             <td class="px-6 py-4">
-                                <?= htmlspecialchars($k['id']) ?>
+                                <?= htmlspecialchars($index + 1) ?>
                             </td>
+
+                            <!-- NIK -->
                             <td class="px-6 py-4">
                                 <?= htmlspecialchars($k['nik']) ?>
                             </td>
+
+                            <!-- Name -->
                             <th class="px-6 py-4 font-medium text-heading whitespace-nowrap">
                                 <?= htmlspecialchars($k['name']) ?>
                             </th>
+
+                            <!-- Email -->
                             <td class="px-6 py-4">
                                 <?= htmlspecialchars($k['email']) ?>
                             </td>
+
+                            <!-- Position -->
                             <td class="px-6 py-4">
                                 <?= htmlspecialchars($k['position']) ?>
                             </td>
-                            <td class="px-6 py-4">
-                                <?= htmlspecialchars($k['status']) ?>
-                            </td>
 
                             <!-- Karyawan status -->
+                            <td class="px-6 py-4">
+                                <?php if ($k['status'] === 'active'): ?>
+                                    <div class="flex items-center">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> Active
+                                    </div>
+                                <?php else: ?>
+                                    <div class="flex items-center">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-danger me-2"></div> Inactive
+                                    </div>
+                                <?php endif; ?>
+                            </td>
+
+                            <!-- Employment Status -->
                             <td class="px-6 py-4">
                                 <?php
                                 $emp = $k['employment_status'] ?? 'active';
@@ -244,7 +264,8 @@
                                                     <form action="<?= url('/admin/karyawan/deactivate') ?>"
                                                         method="post"
                                                         class="block"
-                                                        onsubmit="return confirm('Nonaktifkan akun karyawan ini?');">
+                                                        id="form-deactivate-<?= $k['id'] ?>"
+                                                        onsubmit="return handleDeactivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
                                                         <input type="hidden" name="id" value="<?= $k['id'] ?>">
                                                         <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-warning-strong font-medium">
                                                             <i class="fa-solid fa-user-slash w-4"></i>
@@ -259,7 +280,8 @@
                                                 <form action="<?= url('/admin/karyawan/activate') ?>"
                                                     method="post"
                                                     class="block"
-                                                    onsubmit="return confirm('Aktifkan akun untuk karyawan ini?');">
+                                                    id="form-activate-<?= $k['id'] ?>"
+                                                    onsubmit="return handleActivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
                                                     <input type="hidden" name="karyawan_id" value="<?= $k['id'] ?>">
                                                     <button type="submit"
                                                         class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-success-strong font-medium">
@@ -279,7 +301,8 @@
                                                 <form action="<?= url('/admin/karyawan/delete') ?>"
                                                     method="post"
                                                     class="block"
-                                                    onsubmit="return confirm('Hapus permanen karyawan ini? Data tidak dapat dikembalikan!');">
+                                                    id="form-delete-<?= $k['id'] ?>"
+                                                    onsubmit="return handleDeleteEmployee(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
                                                     <input type="hidden" name="id" value="<?= $k['id'] ?>">
                                                     <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong">
                                                         <i class="fa-solid fa-trash w-4"></i>
@@ -297,7 +320,42 @@
             </table>
         </div>
     </div>
+
+    <div class="w-full max-w-[18rem]">
+        <div class="relative">
+            <label for="npm-install-copy-text" class="sr-only">Label</label>
+            <input id="npm-install-copy-text" type="text" class="col-span-6 bg-neutral-secondary-medium border border-default-medium text-body text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" value="npm install flowbite" disabled readonly>
+            <button data-copy-to-clipboard-target="npm-install-copy-text" class="absolute flex items-center end-1.5 top-1/2 -translate-y-1/2 text-body bg-neutral-primary-strong border border-default-strong hover:bg-neutral-secondary-strong/70 hover:text-heading focus:ring-4 focus:ring-neutral-tertiary-soft font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">
+                <span id="default-message">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 5h6m-6 4h6M10 3v4h4V3h-4Z" />
+                        </svg>
+                        <span class="text-xs font-semibold">Copy</span>
+                    </span>
+                </span>
+                <span id="success-message" class="hidden">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 text-fg-brand me-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 4h3a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h3m0 3h6m-6 7 2 2 4-4m-5-9v4h4V3h-4Z" />
+                        </svg>
+                        <span class="text-xs font-semibold text-fg-brand">Copied</span>
+                    </span>
+                </span>
+            </button>
+        </div>
+    </div>
+
 </div>
+
+<!-- Include Modal Temporary Password -->
+<?php require_once __DIR__ . '/../../layouts/components/modal-temp-password.php'; ?>
+
+<!-- Include Toast Component -->
+<?php require_once __DIR__ . '/../../layouts/components/toast.php'; ?>
+
+<!-- Toast JavaScript -->
+<script src="<?= asset('js/toast.js') ?>"></script>
 
 <script>
     // JavaScript untuk menangani filter
@@ -345,5 +403,127 @@
                 applyFilters();
             });
         }
+
+        // Tampilkan modal temporary password jika ada data dari session
+        <?php if (isset($_SESSION['temp_password_data'])): ?>
+            showTempPasswordModal(
+                '<?= addslashes($_SESSION['temp_password_data']['email'] ?? '') ?>',
+                '<?= addslashes($_SESSION['temp_password_data']['password'] ?? '') ?>'
+            );
+        <?php
+            // Hapus data dari session setelah ditampilkan
+            unset($_SESSION['temp_password_data']);
+        endif;
+        ?>
     });
+
+    // Fungsi untuk menampilkan modal temporary password
+    function showTempPasswordModal(email, password) {
+        const modal = document.getElementById('temp-password-modal');
+        const emailInput = document.getElementById('temp-email');
+        const passwordInput = document.getElementById('temp-password');
+        const closeBtn = document.getElementById('close-temp-password-modal');
+        const confirmBtn = document.getElementById('confirm-close-modal');
+
+        // Set nilai ke input fields
+        if (emailInput) emailInput.value = email;
+        if (passwordInput) passwordInput.value = password;
+
+        // Tampilkan modal
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Event listener untuk close modal
+        const closeModal = function() {
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        };
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (confirmBtn) confirmBtn.addEventListener('click', closeModal);
+
+        // Close modal jika klik di luar modal content
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+    }
+
+    // TOAST ACTION HANDLERS
+
+    /**
+     * Handle deactivate account with toast confirmation
+     */
+    function handleDeactivateAccount(event, employeeId, employeeName) {
+        event.preventDefault();
+
+        ToastManager.showAction({
+            type: 'update',
+            title: 'Nonaktifkan Akun Karyawan',
+            message: `Apakah Anda yakin ingin menonaktifkan akun untuk karyawan "${employeeName}"? Karyawan tidak akan bisa login setelah akun dinonaktifkan.`,
+            confirmText: 'Ya, Nonaktifkan',
+            cancelText: 'Batal',
+            onConfirm: function() {
+                // Submit form
+                document.getElementById(`form-deactivate-${employeeId}`).submit();
+            }
+        });
+
+        return false;
+    }
+
+    /**
+     * Handle activate account with toast confirmation
+     */
+    function handleActivateAccount(event, employeeId, employeeName) {
+        event.preventDefault();
+
+        ToastManager.confirm(
+            `Aktifkan akun untuk karyawan "${employeeName}"? Sistem akan membuat kredensial login dan mengirimkan password temporary.`,
+            function() {
+                // Submit form
+                document.getElementById(`form-activate-${employeeId}`).submit();
+            }, {
+                title: 'Aktifkan Akun Karyawan',
+                confirmText: 'Ya, Aktifkan',
+                cancelText: 'Batal'
+            }
+        );
+
+        return false;
+    }
+
+    /**
+     * Handle delete employee with toast confirmation
+     */
+    function handleDeleteEmployee(event, employeeId, employeeName) {
+        event.preventDefault();
+
+        ToastManager.showAction({
+            type: 'delete',
+            title: 'Hapus Karyawan Permanen',
+            message: `Apakah Anda yakin ingin menghapus karyawan "${employeeName}" secara permanen? Data yang sudah dihapus tidak dapat dikembalikan!`,
+            confirmText: 'Ya, Hapus Permanen',
+            cancelText: 'Batal',
+            onConfirm: function() {
+                // Show loading
+                ToastManager.info('Menghapus data karyawan...');
+
+                // Submit form
+                document.getElementById(`form-delete-${employeeId}`).submit();
+            },
+            onCancel: function() {
+                ToastManager.info('Penghapusan dibatalkan');
+            }
+        });
+
+        return false;
+    }
 </script>

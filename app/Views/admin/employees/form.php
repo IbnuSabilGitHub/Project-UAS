@@ -196,11 +196,44 @@
                     Simpan
                 </button>
 
-                <a href="<?= url('/admin/karyawan') ?>"
+                <button type="button" onclick="handleCancelForm(event)"
                     class="ml-3 text-body text-sm font-medium hover:text-heading transition duration-150 ease-in-out">
                     Batal
-                </a>
+                </button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    function handleCancelForm(event) {
+        event.preventDefault();
+        
+        // Cek apakah form sudah diisi
+        const form = document.querySelector('form');
+        const formData = new FormData(form);
+        let hasData = false;
+        
+        for (let [key, value] of formData.entries()) {
+            if (key !== 'id' && key !== 'status' && value && value.trim() !== '') {
+                hasData = true;
+                break;
+            }
+        }
+        
+        if (hasData) {
+            ToastManager.showAction({
+                type: 'confirm',
+                title: 'Konfirmasi Batal',
+                message: 'Data yang sudah diisi akan hilang. Apakah Anda yakin ingin membatalkan?',
+                confirmText: 'Ya, Batalkan',
+                cancelText: 'Tidak',
+                onConfirm: () => {
+                    window.location.href = '<?= url('/admin/karyawan') ?>';
+                }
+            });
+        } else {
+            window.location.href = '<?= url('/admin/karyawan') ?>';
+        }
+    }
+</script>

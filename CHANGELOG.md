@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[refactor: modal detail leave] - 2024-12-07**
+### 🔄 **Frontend Changes**
+**Views:**
+- `admin/leave/index.php`: Memperbarui modal detail pengajuan cuti untuk tampilan yang lebih baik dan konsisten
+
+## **[Feature: CRUD alerts in leave management] - 2024-12-07**
+### 🔄 **Frontend Changes**
+**Views:**
+- `admin/leave/index.php`: Menambahkan alert/notifikasi untuk aksi CRUD pada pengajuan cuti
+
+## **[Feature: Alert Must Change Password] - 2024-12-05**
+### 🔄 **Backend Changes**
+**Controllers:**
+- `AuthController.php`:
+  - `karyawanLogin()`: Menghapus setFlash info tentang ganti password saat login dan menghapus redirect ke halaman ganti password jika password belum diganti
+  - `changePassword()`: Menambahkan `$_SESSION['must_change_password'] = false;` setelah password berhasil diubah untuk menghilangkan alert di sidebar
+
+### 🔄 **Frontend Changes**
+**Views:**
+- `layouts/sidebar-karyawan.php`:
+  - Menambahkan alert/notifikasi untuk karyawan yang belum mengganti password
+
+
+
+## **[Feature: Toast Action Confirmations] - 2024-12-05**
+
+### **Frontend Changes**
+
+**Components:**
+- `app/Views/layouts/components/toast.php`:
+  - Menambahkan template `toast-action-template` untuk action confirmations
+  - Support untuk 3 tema berbeda dengan icon dan warna yang sesuai
+
+**JavaScript:**
+- `public/assets/js/toast.js`:
+  - Method `showAction()` untuk menampilkan toast konfirmasi
+  - Method `getActionConfig()` untuk konfigurasi tema (delete, update, confirm)
+  - Shorthand methods: `confirmDelete()`, `confirmUpdate()`, `confirm()`
+  - Event handlers untuk confirm, cancel, dan close buttons
+
+---
+
+## **[Feature: Modal for Temporary Password Display] - 2024-12-02**
+### **New Features**
+**Modal Component for Temporary Password:**
+- Menampilkan email dan password temporary setelah pembuatan user baru
+- Tombol "Copy to Clipboard" untuk menyalin kredensial dengan feedback toast
+- Peringatan bahwa password hanya ditampilkan sekali
+
+### 🔄 **Backend Changes**
+**Controllers:**
+- `KaryawanController.php`:
+  - Memperbarui method `create_account()` dan `activateAccount()` untuk mengirim data email dan temp password ke view modal
+### 🔄 **Frontend Changes**
+**Views:**
+- `modal-temp-password.php`:
+  - Struktur modal dengan Tailwind CSS
+  - Tombol salin dengan feedback visual
+  - Peringatan keamanan tentang password temporary
+
+
+
 ## **[Refactor: Remove Backward Compatibility Login] - 2024-12-02**
 
 ### **Removed**
@@ -217,7 +279,295 @@ All notable changes to this project will be documented in this file.
 ---
 
 
-## [Refactor: form ui add employee] - 2024-11-30
+## **[Feature: Attendance Management Restructure & Period Filter] - 2024-12-02**
+
+###  **New Features**
+
+**Attendance Admin Interface:**
+- Menambahkan filter periode waktu dengan dropdown:
+  - Hari Ini (default)
+  - Minggu Terakhir (7 hari)
+  - Bulan Terakhir (30 hari)
+  - Semua Data
+- Filter status dengan checkbox dropdown (Hadir, Terlambat, Half Day)
+- Pencarian karyawan berdasarkan nama atau NIK
+- Export CSV dengan filter yang diterapkan
+- Statistik absensi real-time berdasarkan periode yang dipilih
+- UI/UX konsisten dengan modul Employee Management
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `AttendanceController.php`:
+  - Refactor method `adminIndex()` untuk menghapus pagination
+  - Menambahkan method `convertPeriodToDateRange()` untuk konversi periode ke date range
+  - Update method `export()` untuk support period filter
+  - Mengubah parameter filter dari single date menjadi period-based
+
+**Models:**
+- `Attendance.php`:
+  - Update method `getAllWithFilter($startDate, $endDate, $searchName, $statusFilter)` untuk support date range
+  - Update method `countAllWithFilter()` untuk support date range (backward compatibility)
+  - Update method `getAdminStats($startDate, $endDate)` untuk statistik berdasarkan range
+  - Pencarian mendukung NIK dan nama karyawan
+  - Filter status menggunakan array untuk multiple selection
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/attendance/index.php`:
+  - Menghapus pagination UI sepenuhnya
+  - Mengganti input date dengan dropdown periode
+  - Menambahkan filter checkbox untuk status absensi
+  - Implementasi JavaScript auto-filter saat perubahan periode/status
+  - Statistik cards dengan design system konsisten
+  - Table styling mengikuti pola Employee Management
+  - Status badge menggunakan semantic colors (success-soft, warning-soft, etc.)
+
+
+---
+
+## **[fix: add change password link in sidebar] - 2024-12-02**
+
+### 🔄 **Frontend Changes**
+**Views:**
+- `layouts/sidebar-admin.php`: Menambahkan link "Ganti Password" di sidebar admin
+- `layouts/sidebar-karyawan.php`: Menambahkan link "Ganti Password" di sidebar karyawan
+
+
+### 🔄 **Backend Changes**
+- `AuthController.php`: Memperbarui method `changePasswordPage()` untuk merender view yang benar
+
+## **[Feature: Employee List Filter & Statistics Card] - 2024-12-02**
+
+###**New Features**
+
+**Employee Management:**
+- Menambahkan filter status karyawan (Aktif, Cuti, Resign) dengan checkbox dropdown yang konsisten dengan UI pengajuan cuti
+- Menambahkan fitur pencarian karyawan berdasarkan nama atau NIK
+- Menambahkan statistik karyawan dengan card yang menampilkan:
+  - Total Karyawan
+  - Karyawan Aktif
+  - Karyawan Cuti
+  - Karyawan Resign
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `KaryawanController.php`: 
+  - Method `index()` diperbarui untuk menangani filter status dan pencarian
+  - Menambahkan logic perhitungan statistik karyawan
+  - Filter dapat dikombinasikan (status + pencarian)
+
+### **Frontend Changes**
+
+**Views:**
+- `admin/employees/index.php`:
+  - Menambahkan section statistik karyawan di atas tabel
+  - Menambahkan dropdown filter status employment dengan checkbox
+  - Menambahkan search box untuk pencarian nama/NIK
+  - Menambahkan JavaScript untuk handling filter secara real-time
+
+
+---
+
+## **[Feature: Dynamic Pending Count Badge] - 2024-12-02**
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+- `BaseController.php`: Memperbarui method `renderSidebar()` untuk mengambil dan meneruskan jumlah pengajuan cuti pending ke sidebar admin
+
+**Models:**
+
+- `PengajuanCuti.php`: Menambahkan method `countPending()` untuk menghitung total pengajuan cuti dengan status pending
+
+**Views:**
+
+- `sidebar.php`: Menambahkan logic untuk mengambil pending count sebelum merender sidebar admin
+- `sidebar-admin.php`: Badge notifikasi pada menu "Pengajuan Cuti" kini menggunakan variabel `$pendingCount` yang dinamis
+
+
+---
+
+## **[Fix: Email Login & NIK Update] - 2024-12-01**
+
+### 🔄 **Database Schema Changes**
+
+**Tabel `users`:**
+
+* Kolom `username` diubah menjadi `email` (VARCHAR(150))
+* Nilai ENUM `status` diperbarui menjadi hanya (`active`, `disabled`) — opsi `locked` dihapus
+* Proses login kini menggunakan email, bukan username
+
+**Tabel `karyawan`:**
+
+* Kolom `nik` diubah dari VARCHAR(50) menjadi CHAR(16) sesuai standar KTP Indonesia
+
+### 🔄 **Backend Changes**
+
+**Controllers:**
+
+* `AuthController.php`: Seluruh metode login diperbarui untuk menggunakan autentikasi email
+
+  * `adminLogin()`, `karyawanLogin()`, `login()` sekarang memvalidasi email, bukan username
+  * Penyimpanan session diperbarui menjadi `$_SESSION['email']` menggantikan `$_SESSION['username']`
+
+**Models:**
+
+* `PengajuanCuti.php`: Diubah menggunakan `approver_email` menggantikan `approver_name`
+
+**Scripts:**
+
+* `register.php`: Diperbarui agar pembuatan user baru memakai email, bukan username
+
+**Views:**
+
+* Seluruh form login (`login-admin.php`, `login-karyawan.php`, `login.php`) diubah menjadi input email
+* Template sidebar diperbarui untuk menampilkan email menggantikan username
+* `sidebar.php`, `sidebar-admin.php`, `sidebar-karyawan.php`: kini memakai `$_SESSION['email']`
+
+### ⚠️ **Catatan Migrasi**
+
+* User yang sudah ada perlu mengonversi username mereka menjadi format email
+* Jalankan migration database sebelum melakukan deployment
+* Field NIK kini wajib 16 karakter sesuai format KTP
+
+
+---
+
+
+
+## [Feature: Toast Notification System] - 2024-12-01
+
+### Added
+
+#### **Sistem Notifikasi Toast yang Konsisten**
+Mengimplementasikan sistem flash message dan toast notification yang mengatasi masalah alert lama yang persist antar page dan bertahan terlalu lama.
+
+**Core Components:**
+
+1. **Helper Functions** (`app/Core/Helpers.php`)
+   - `setFlash($type, $message)` - Set flash message untuk page berikutnya
+   - `getFlash()` - Ambil dan hapus flash message dari session
+   - Tipe: `success`, `error`, `warning`, `info`
+   - Auto-cleanup setelah ditampilkan (tidak persist)
+
+2. **Toast Component** (`app/Views/layouts/components/toast.php`)
+   - Template HTML untuk toast notifications
+   - Support multiple toast stack vertikal
+   - Animasi slide-in dan slide-out yang smooth
+   - Responsive design (pojok kanan bawah)
+
+3. **Toast Manager JavaScript** (`public/assets/js/toast.js`)
+   - `ToastManager.show(type, message, duration)` - Tampilkan toast
+   - Shorthand: `ToastManager.success()`, `ToastManager.error()`, dll
+   - Alias: `showToast()` untuk kemudahan
+   - Auto-dismiss default 5 detik (customizable)
+   - Manual close dengan tombol X
+   - `dismissAll()` - Tutup semua toast sekaligus
+
+4. **Auto-Integration** (`app/Views/layouts/footer.php`)
+   - Include toast component otomatis
+   - Auto-render flash message dari PHP session
+   - Tidak perlu code tambahan di setiap view
+
+**Features:**
+- Toast otomatis muncul di pojok kanan bawah
+- Auto-dismiss setelah 5 detik (default)
+- Manual close dengan tombol X
+- Multiple toast support (bertumpuk vertikal)
+- Smooth animations (slide-in/slide-out)
+- **TIDAK persist antar page** - hanya muncul 1x
+- Color-coded berdasarkan tipe (success/error/warning/info)
+- Icon visual untuk setiap tipe toast
+
+
+
+### 🔄 Changed
+
+#### **Migrasi dari Inline Alerts ke Toast System**
+
+**Updated Files:**
+1. `app/Controllers/BaseController.php`
+   - `ensureAuthenticated()`: `$_SESSION['error']` → `setFlash('error', ...)`
+   - `ensureAdmin()`: `$_SESSION['error']` → `setFlash('error', ...)`
+   - `ensureKaryawan()`: `$_SESSION['error']` → `setFlash('error', ...)`
+
+2. `app/Views/auth/login-admin.php`
+   - ❌ Removed: Inline alert divs untuk error/success
+   - ✅ Toast otomatis muncul dari footer.php
+
+3. `app/Views/auth/login-karyawan.php`
+   - ❌ Removed: Inline alert divs untuk error/success
+   - ✅ Toast otomatis muncul dari footer.php
+
+4. `app/Views/admin/attendance/index.php`
+   - ❌ Removed: Inline alert divs (green/red backgrounds)
+   - ✅ Toast otomatis muncul dari footer.php
+
+5. `app/Views/admin/leave/index.php`
+   - ❌ Removed: Inline alert divs
+   - ❌ Removed: Manual `unset($_SESSION['error/success'])`
+   - ✅ Toast otomatis muncul dari footer.php
+
+**Before (Old Way):**
+```php
+// Di Controller
+$_SESSION['error'] = 'Error message';
+$_SESSION['success'] = 'Success message';
+
+// Di View
+<?php if (isset($error)): ?>
+    <div class="bg-red-100 border...">
+        <?= $error ?>
+    </div>
+<?php endif; ?>
+
+$data['error'] = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
+```
+
+**After (New Way):**
+```php
+// Di Controller
+setFlash('error', 'Error message');
+setFlash('success', 'Success message');
+redirect('/page');
+
+// Di View - TIDAK PERLU CODE!
+// Toast otomatis muncul dari footer.php
+```
+
+
+### 🗑️ Deprecated
+
+**Cara Lama (Jangan Digunakan Lagi):**
+- ❌ `$_SESSION['error'] = 'message'`
+- ❌ `$_SESSION['success'] = 'message'`
+- ❌ Inline alert divs di view files
+- ❌ Manual `unset($_SESSION['error'])`
+- ❌ Passing error/success ke view data
+
+**Gunakan Cara Baru:**
+- ✅ `setFlash('type', 'message')`
+- ✅ Toast otomatis dari footer.php
+
+
+
+
+
+### 🔒 Backward Compatibility
+
+- File lama dengan `$_SESSION['error']` **masih berfungsi**
+- Migrasi bisa dilakukan **bertahap**
+- Tidak ada breaking changes untuk existing code
+- Controllers yang belum diupdate tetap kompatibel
+
+
+---
+
+## [Refactor: form ui add employee] - 2024-12-01
 
 ### 🎨 Refactored
 #### **Improved Add Employee Form UI/UX**

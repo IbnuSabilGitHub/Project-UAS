@@ -72,6 +72,8 @@
             <div class="flex flex-row space-x-4">
                 <!-- Filter Tanggal (Last) -->
                 <div>
+
+                    <!-- Button dropdown periode -->
                     <button id="dropdownPeriodButton"
                         data-dropdown-toggle="dropdownPeriod"
                         class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
@@ -95,6 +97,7 @@
                         </svg>
                     </button>
 
+                    <!-- Dropdown menu -->
                     <div id="dropdownPeriod"
                         class="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-56">
                         <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownPeriodButton">

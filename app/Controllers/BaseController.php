@@ -9,7 +9,7 @@ class BaseController {
             session_start();
         }
         if (!isset($_SESSION['user_id'])) {
-            $_SESSION['error'] = 'Silakan login terlebih dahulu';
+            setFlash('error', 'Silakan login terlebih dahulu');
             redirect('/');
         }
     }
@@ -22,7 +22,7 @@ class BaseController {
             session_start();
         }
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-            $_SESSION['error'] = 'Akses ditolak';
+            setFlash('error', 'Akses ditolak');
             redirect('/admin/login');
         }
     }
@@ -35,7 +35,7 @@ class BaseController {
             session_start();
         }
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
-            $_SESSION['error'] = 'Akses ditolak';
+            setFlash('error', 'Akses ditolak');
             redirect('/karyawan/login');
         }
     }
