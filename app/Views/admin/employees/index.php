@@ -135,7 +135,7 @@
             <table class="w-full text-sm text-left rtl:text-right text-body">
                 <thead class="text-xs text-heading uppercase bg-neutral-secondary-soft">
                     <tr>
-                        <th scope="col" class="px-6 py-3 font-medium">#</th>
+                        <th scope="col" class="px-6 py-3 font-medium">NO</th>
                         <th scope="col" class="px-6 py-3 font-medium">NIK</th>
                         <th scope="col" class="px-6 py-3 font-medium">Nama</th>
                         <th scope="col" class="px-6 py-3 font-medium">Email</th>
@@ -148,28 +148,48 @@
                 </thead>
 
                 <tbody>
-                    <?php foreach ($karyawans as $k): ?>
+                    <?php foreach ($karyawans as $index => $k): ?>
                         <tr class="bg-neutral-primary border-b border-default">
+
+                            <!-- No -->
                             <td class="px-6 py-4">
-                                <?= htmlspecialchars($k['id']) ?>
+                                <?= htmlspecialchars($index + 1) ?>
                             </td>
+
+                            <!-- NIK -->
                             <td class="px-6 py-4">
                                 <?= htmlspecialchars($k['nik']) ?>
                             </td>
+
+                            <!-- Name -->
                             <th class="px-6 py-4 font-medium text-heading whitespace-nowrap">
                                 <?= htmlspecialchars($k['name']) ?>
                             </th>
+
+                            <!-- Email -->
                             <td class="px-6 py-4">
                                 <?= htmlspecialchars($k['email']) ?>
                             </td>
+
+                            <!-- Position -->
                             <td class="px-6 py-4">
                                 <?= htmlspecialchars($k['position']) ?>
                             </td>
-                            <td class="px-6 py-4">
-                                <?= htmlspecialchars($k['status']) ?>
-                            </td>
 
                             <!-- Karyawan status -->
+                            <td class="px-6 py-4">
+                                <?php if ($k['status'] === 'active'): ?>
+                                    <div class="flex items-center">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-success me-2"></div> Active
+                                    </div>
+                                <?php else: ?>
+                                    <div class="flex items-center">
+                                        <div class="h-2.5 w-2.5 rounded-full bg-danger me-2"></div> Inactive
+                                    </div>
+                                <?php endif; ?>
+                            </td>
+
+                            <!-- Employment Status -->
                             <td class="px-6 py-4">
                                 <?php
                                 $emp = $k['employment_status'] ?? 'active';
@@ -443,7 +463,7 @@
      */
     function handleDeactivateAccount(event, employeeId, employeeName) {
         event.preventDefault();
-        
+
         ToastManager.showAction({
             type: 'update',
             title: 'Nonaktifkan Akun Karyawan',
@@ -455,7 +475,7 @@
                 document.getElementById(`form-deactivate-${employeeId}`).submit();
             }
         });
-        
+
         return false;
     }
 
@@ -464,20 +484,19 @@
      */
     function handleActivateAccount(event, employeeId, employeeName) {
         event.preventDefault();
-        
+
         ToastManager.confirm(
             `Aktifkan akun untuk karyawan "${employeeName}"? Sistem akan membuat kredensial login dan mengirimkan password temporary.`,
             function() {
                 // Submit form
                 document.getElementById(`form-activate-${employeeId}`).submit();
-            },
-            {
+            }, {
                 title: 'Aktifkan Akun Karyawan',
                 confirmText: 'Ya, Aktifkan',
                 cancelText: 'Batal'
             }
         );
-        
+
         return false;
     }
 
@@ -486,7 +505,7 @@
      */
     function handleDeleteEmployee(event, employeeId, employeeName) {
         event.preventDefault();
-        
+
         ToastManager.showAction({
             type: 'delete',
             title: 'Hapus Karyawan Permanen',
@@ -496,7 +515,7 @@
             onConfirm: function() {
                 // Show loading
                 ToastManager.info('Menghapus data karyawan...');
-                
+
                 // Submit form
                 document.getElementById(`form-delete-${employeeId}`).submit();
             },
@@ -504,7 +523,7 @@
                 ToastManager.info('Penghapusan dibatalkan');
             }
         });
-        
+
         return false;
     }
 </script>
