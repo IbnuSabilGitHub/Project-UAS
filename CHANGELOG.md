@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+
+## **[Feature: alert crud in leave management] - 2024-12-07**
+### 🔄 **Frontend Changes**
+**Views:**
+- `admin/leave/index.php`: Menambahkan alert/notifikasi untuk aksi CRUD pada pengajuan cuti
+
 ## **[Feature: Alert Must Change Password] - 2024-12-05**
 ### 🔄 **Backend Changes**
 **Controllers:**

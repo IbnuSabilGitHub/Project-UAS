@@ -307,7 +307,12 @@
                                         <ul class="py-2 text-sm text-body" aria-labelledby="dropdownButton<?= $pc['id'] ?>">
                                             <?php if ($pc['status'] === 'pending'): ?>
                                                 <li>
-                                                    <form action="<?= url('/admin/cuti/approve') ?>" method="post" class="block" onsubmit="return confirm('Setujui pengajuan cuti ini?');">
+                                                    <form
+                                                        action="<?= url('/admin/cuti/approve') ?>"
+                                                        method="post"
+                                                        class="block"
+                                                        id="approve-form-<?= $pc['id'] ?>"
+                                                        onsubmit="return handleApprove(event, '<?= $pc['id'] ?>', '<?= htmlspecialchars(addslashes($pc['karyawan_name'])) ?>');">
                                                         <input type="hidden" name="id" value="<?= $pc['id'] ?>">
                                                         <button type="submit" class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-success-strong font-medium flex items-center">
                                                             <i class="fa-solid fa-check text-xs mr-2"></i>
@@ -341,7 +346,12 @@
                                                 <hr class="my-1 border-default-medium">
                                             </li>
                                             <li>
-                                                <form action="<?= url('/admin/cuti/delete') ?>" method="post" class="block" onsubmit="return confirm('Hapus pengajuan cuti ini?');">
+                                                <form
+                                                    action="<?= url('/admin/cuti/delete') ?>"
+                                                    method="post"
+                                                    class="block"
+                                                    id="delete-leave-form-<?= $pc['id'] ?>"
+                                                    onsubmit="return handleDeleteLeave(event, <?= $pc['id'] ?>, '<?= htmlspecialchars($pc['karyawan_name']) ?>');">
                                                     <input type="hidden" name="id" value="<?= $pc['id'] ?>">
                                                     <button type="submit" class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong flex items-center">
                                                         <i class="fa-solid fa-trash text-xs mr-2"></i>
@@ -373,7 +383,11 @@
                                                     </button>
                                                 </div>
                                                 <!-- Modal body -->
-                                                <form action="<?= url('/admin/cuti/reject') ?>" method="POST">
+                                                <form
+                                                    action="<?= url('/admin/cuti/reject') ?>"
+                                                    method="POST"
+                                                    id="reject-form-<?= $pc['id'] ?>"
+                                                    onsubmit="return handleReject(event, '<?= $pc['id'] ?>', '<?= htmlspecialchars($pc['karyawan_name']) ?>')">
                                                     <input type="hidden" name="id" value="<?= $pc['id'] ?>">
                                                     <div class="py-4 md:py-6">
                                                         <!-- Info Karyawan -->
@@ -422,15 +436,67 @@
 </div>
 
 <script>
+    function handleApprove(event, employeeId, employeeName) {
+        event.preventDefault();
+
+        ToastManager.showAction({
+            type: 'approve',
+            title: 'Konfirmasi Approve',
+            message: `Apakah Anda yakin menyetujui pengajuan cuti dari ${employeeName}?`,
+            confirmText: 'Setujui',
+            cancelText: 'Batal',
+            onConfirm: () => {
+                document.getElementById(`approve-form-${employeeId}`).submit();
+            }
+        });
+
+        return false;
+    }
+
+    function handleReject(event, employeeId, employeeName) {
+        event.preventDefault();
+
+        ToastManager.showAction({
+            type: 'reject',
+            title: 'Konfirmasi Reject',
+            message: `Apakah Anda yakin menolak pengajuan cuti dari ${employeeName}?`,
+            confirmText: 'Tolak',
+            cancelText: 'Batal',
+            onConfirm: () => {
+                document.getElementById(`reject-form-${employeeId}`).submit();
+            }
+        });
+
+        return false;
+    }
+
+
+
+    function handleDeleteLeave(event, employeeId, employeeName) {
+        event.preventDefault();
+
+        ToastManager.showAction({
+            type: 'delete',
+            title: 'Hapus Pengajuan Cuti',
+            message: `Apakah Anda yakin ingin menghapus pengajuan cuti untuk karyawan "${employeeName}" - "${employeeId}"?`,
+            confirmText: 'Hapus',
+            cancelText: 'Batal',
+            onConfirm: function() {
+                document.getElementById(`delete-leave-form-${employeeId}`).submit();
+            }
+        });
+        return false;
+    }
+
     function showDetailInfo(karyawan, reason, periode, durasi) {
         const message = `
-Karyawan: ${karyawan}
-Periode: ${periode}
-Durasi: ${durasi} hari
+        Karyawan: ${karyawan}
+        Periode: ${periode}
+        Durasi: ${durasi} hari
 
-Alasan:
-${reason}
-    `;
+        Alasan:
+        ${reason}
+            `;
         alert(message);
     }
 
