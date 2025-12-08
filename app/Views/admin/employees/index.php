@@ -133,7 +133,7 @@
         <!-- Table -->
         <div class="relative overflow-x-auto shadow-xs rounded-base border border-default" style="max-height: 650px;">
             <table class="w-full text-sm text-left rtl:text-right text-body">
-                <thead class="text-xs text-heading uppercase bg-neutral-secondary-soft sticky top-0 z-10">
+                <thead class="text-xs text-heading uppercase bg-neutral-secondary-soft sticky top-0">
                     <tr>
                         <th scope="col" class="px-6 py-3 font-medium">NO</th>
                         <th scope="col" class="px-6 py-3 font-medium">NIK</th>
