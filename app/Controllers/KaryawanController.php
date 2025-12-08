@@ -21,6 +21,7 @@ class KaryawanController extends BaseController {
         // Dapatkan filter dari query parameter
         $search = isset($_GET['search']) ? trim($_GET['search']) : '';
         $statusFilter = isset($_GET['status']) ? $_GET['status'] : [];
+        $positionFilter = isset($_GET['position']) ? $_GET['position'] : [];
         
         // dapatkan semua karyawan
         $karyawans = $this->model->allWithUser();
@@ -41,6 +42,13 @@ class KaryawanController extends BaseController {
             });
         }
         
+        // Terapkan filter posisi
+        if (!empty($positionFilter) && is_array($positionFilter)) {
+            $karyawans = array_filter($karyawans, function($k) use ($positionFilter) {
+                return in_array($k['position'], $positionFilter);
+            });
+        }
+        
         // Hitung statistik
         $allEmployees = $this->model->allWithUser();
         $statistics = [
@@ -55,7 +63,9 @@ class KaryawanController extends BaseController {
             'karyawans' => $karyawans,
             'statistics' => $statistics,
             'currentSearch' => $search,
-            'currentStatus' => $statusFilter
+            'currentStatus' => $statusFilter,
+            'currentPosition' => $positionFilter,
+            'availablePositions' => Karyawan::getAvailablePositions()
         ]);
     }
 
@@ -64,7 +74,11 @@ class KaryawanController extends BaseController {
      */
     public function create() {
         $this->ensureAdmin();
-        $this->render('admin/employees/form', ['title' => 'Tambah Karyawan', 'karyawan' => null]);
+        $this->render('admin/employees/form', [
+            'title' => 'Tambah Karyawan', 
+            'karyawan' => null,
+            'availablePositions' => Karyawan::getAvailablePositions()
+        ]);
     }
 
     /**
@@ -81,7 +95,7 @@ class KaryawanController extends BaseController {
             'name' => substr(trim($_POST['name'] ?? ''), 0, 191),
             'email' => substr(trim($_POST['email'] ?? ''), 0, 191),
             'phone' => substr(trim($_POST['phone'] ?? ''), 0, 50),
-            'position' => substr(trim($_POST['position'] ?? ''), 0, 100),
+            'position' => trim($_POST['position'] ?? ''),
             'join_date' => $_POST['join_date'] ?? null,
             'status' => $_POST['status'] ?? 'active'
         ];
@@ -94,7 +108,13 @@ class KaryawanController extends BaseController {
 
         // Validasi NIK harus 16 digit
         if (!preg_match('/^[0-9]{16}$/', $data['nik'])) {
-            $_SESSION['error'] = 'NIK harus tepat 16 digit angka';
+            setFlash('error', 'NIK harus tepat 16 digit angka');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi position harus sesuai ENUM
+        if (empty($data['position']) || !Karyawan::isValidPosition($data['position'])) {
+            setFlash('error', 'Posisi tidak valid. Pilih salah satu posisi yang tersedia');
             redirect('/admin/karyawan');
         }
 
@@ -143,7 +163,11 @@ class KaryawanController extends BaseController {
             setFlash('error', 'Karyawan tidak ditemukan');
             redirect('/admin/karyawan');
         }
-        $this->render('admin/employees/form', ['title' => 'Edit Karyawan', 'karyawan' => $karyawan]);
+        $this->render('admin/employees/form', [
+            'title' => 'Edit Karyawan', 
+            'karyawan' => $karyawan,
+            'availablePositions' => Karyawan::getAvailablePositions()
+        ]);
     }
 
     /**
@@ -165,7 +189,7 @@ class KaryawanController extends BaseController {
             'name' => substr(trim($_POST['name'] ?? ''), 0, 191),
             'email' => substr(trim($_POST['email'] ?? ''), 0, 191),
             'phone' => substr(trim($_POST['phone'] ?? ''), 0, 50),
-            'position' => substr(trim($_POST['position'] ?? ''), 0, 100),
+            'position' => trim($_POST['position'] ?? ''),
             'join_date' => $_POST['join_date'] ?? null,
             'status' => $_POST['status'] ?? 'active'
         ];
@@ -179,6 +203,12 @@ class KaryawanController extends BaseController {
         // Validasi NIK harus 16 digit
         if (!preg_match('/^[0-9]{16}$/', $data['nik'])) {
             $_SESSION['error'] = 'NIK harus tepat 16 digit angka';
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi position harus sesuai ENUM
+        if (empty($data['position']) || !Karyawan::isValidPosition($data['position'])) {
+            $_SESSION['error'] = 'Posisi tidak valid. Pilih salah satu posisi yang tersedia';
             redirect('/admin/karyawan');
         }
 

@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file.
 
+## **[Feature: Position ENUM Implementation] - 2024-12-08**
+### 🔄 **Database Changes**
+**Schema:**
+- `database/query.sql`:
+  - Mengubah kolom `position` di tabel `karyawan` dari VARCHAR(100) menjadi ENUM dengan nilai:
+    - Backend Developer
+    - Frontend Developer
+    - Fullstack Developer
+    - DevOps / Cloud Engineer
+    - QA / Software Tester
+
+**Migration:**
+- `database/migration_position_enum.sql`:
+  - Script migration untuk database existing
+
+### 🔄 **Backend Changes**
+**Models:**
+- `app/Models/Karyawan.php`:
+  - Menambahkan static method `getAvailablePositions()` untuk mendapatkan daftar posisi yang tersedia
+  - Menambahkan static method `isValidPosition()` untuk validasi posisi
+
+**Controllers:**
+- `app/Controllers/KaryawanController.php`:
+  - `index()`: Menambahkan filter berdasarkan posisi, passing `availablePositions` dan `currentPosition` ke view
+  - `create()`: Menambahkan passing `availablePositions` ke view
+  - `create_account()`: Menambahkan validasi position dengan `Karyawan::isValidPosition()`
+  - `edit()`: Menambahkan passing `availablePositions` ke view
+  - `update()`: Menambahkan validasi position dengan `Karyawan::isValidPosition()`
+
+### 🔄 **Frontend Changes**
+**Views:**
+- `app/Views/admin/employees/form.php`:
+  - Mengubah input text position menjadi dropdown select dengan opsi dari ENUM
+  - Menambahkan icon briefcase pada dropdown
+
+- `app/Views/admin/employees/index.php`:
+  - Menambahkan filter dropdown untuk posisi
+  - Menambahkan JavaScript handler untuk position filter
+  - Filter posisi terintegrasi dengan filter status dan pencarian
+
+---
+
 ## **[refactor: modal detail leave] - 2024-12-07**
 ### 🔄 **Frontend Changes**
 **Views:**

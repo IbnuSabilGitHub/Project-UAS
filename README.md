@@ -40,7 +40,13 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
 ### 👥 Manajemen Karyawan (Admin)
 - **CRUD Data Karyawan**
   - NIK (16 karakter sesuai KTP), nama, email, posisi, tanggal bergabung
-  - Filter karyawan berdasarkan status (Aktif, Cuti, Resign)
+  - **Posisi karyawan menggunakan ENUM** dengan pilihan:
+    - Backend Developer
+    - Frontend Developer
+    - Fullstack Developer
+    - DevOps / Cloud Engineer
+    - QA / Software Tester
+  - Filter karyawan berdasarkan status (Aktif, Cuti, Resign) dan posisi
   - Pencarian karyawan by nama atau NIK
   - Statistik real-time (total karyawan, by status, karyawan baru)
 - **Manajemen Akun**
@@ -126,7 +132,16 @@ npm install
    ```
    Atau jalankan query yang ada di folder `database/query.sql`
 
-4. **Konfigurasi Koneksi Database**
+4. **⚠️ Jika Database Sudah Ada (Migrasi dari Versi Lama)**
+   
+   Jika Anda sudah punya database `hris_db` dari versi sebelumnya, jalankan migration script untuk mengupdate kolom `position` menjadi ENUM:
+   ```sql
+   -- Import dari file: database/migration_position_enum.sql
+   ```
+   
+   **Catatan:** Migration ini akan mengubah kolom `position` dari VARCHAR menjadi ENUM. Pastikan data existing sudah sesuai dengan nilai ENUM yang tersedia, atau lakukan update manual terlebih dahulu.
+
+5. **Konfigurasi Koneksi Database**
    
    Project ini sudah menggunakan **environment variables (.env)** untuk konfigurasi database. Anda memiliki **2 cara**:
 

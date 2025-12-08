@@ -105,13 +105,18 @@
                         <div class="absolute inset-y-0 start-0 top-0 flex items-center ps-3.5 pointer-events-none">
                             <i class="fa-solid fa-briefcase text-body"></i>
                         </div>
-                        <input
+                        <select
                             name="position"
                             id="position"
                             required
-                            value="<?= htmlspecialchars($k['position'] ?? '') ?>"
-                            class="block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
-                            placeholder="Masukkan posisi/jabatan">
+                            class="block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium  text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs">
+                            <option class="text-body" value="" disabled <?= empty($k['position']) ? 'selected' : '' ?>>Pilih posisi</option>
+                            <?php foreach ($availablePositions as $pos): ?>
+                                <option class="text-header" value="<?= htmlspecialchars($pos) ?>" <?= (isset($k['position']) && $k['position'] === $pos) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($pos) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
 

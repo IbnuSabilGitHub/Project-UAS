@@ -106,6 +106,41 @@
                     </div>
                 </div>
 
+                <!-- Filter Posisi -->
+                <div>
+                    <button id="dropdownPositionFilterButton"
+                        data-dropdown-toggle="dropdownPositionFilter"
+                        class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+                        type="button">
+                        Posisi
+                        <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 9-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div id="dropdownPositionFilter"
+                        class="z-10 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-64">
+                        <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownPositionFilterButton">
+                            <?php foreach ($availablePositions as $index => $position): ?>
+                                <li>
+                                    <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
+                                        <div class="flex items-center h-5">
+                                            <input id="position-checkbox-<?= $index ?>" type="checkbox" value="<?= htmlspecialchars($position) ?>" name="position-filter"
+                                                class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
+                                                <?= (empty($currentPosition) || in_array($position, $currentPosition)) ? 'checked' : '' ?>>
+                                        </div>
+                                        <label for="position-checkbox-<?= $index ?>" class="ms-2 text-sm select-none font-medium text-heading">
+                                            <?= htmlspecialchars($position) ?>
+                                        </label>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+
                 <!-- Search berdasarkan nama/NIK karyawan -->
                 <form class="min-w-xs flex space-x-2" id="searchForm" method="GET">
                     <label for="simple-search" class="sr-only">Search</label>
@@ -362,6 +397,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const searchForm = document.getElementById('searchForm');
         const statusCheckboxes = document.querySelectorAll('input[name="status-filter"]');
+        const positionCheckboxes = document.querySelectorAll('input[name="position-filter"]');
 
         // Fungsi untuk menerapkan filter
         function applyFilters() {
@@ -385,12 +421,30 @@
                 });
             }
 
+            // Get checked positions
+            const checkedPositions = Array.from(positionCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            if (checkedPositions.length > 0 && checkedPositions.length < positionCheckboxes.length) {
+                checkedPositions.forEach(position => {
+                    url.searchParams.append('position[]', position);
+                });
+            }
+
             // Redirect dengan filter
             window.location.href = url.toString();
         }
 
         // deteksi perubahan pada checkbox status
         statusCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                applyFilters();
+            });
+        });
+
+        // deteksi perubahan pada checkbox position
+        positionCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
                 applyFilters();
             });

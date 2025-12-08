@@ -9,7 +9,7 @@ CREATE TABLE karyawan (
     name VARCHAR(150) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     phone VARCHAR(50) NULL,
-    position VARCHAR(100) NULL,
+    position ENUM('Backend Developer','Frontend Developer','Fullstack Developer','DevOps / Cloud Engineer','QA / Software Tester') NOT NULL,
     join_date DATE NULL,
     status ENUM('active','inactive') NOT NULL DEFAULT 'active',
     employment_status ENUM('active','resigned') NOT NULL DEFAULT 'active'

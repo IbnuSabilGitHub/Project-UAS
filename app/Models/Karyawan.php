@@ -13,6 +13,33 @@ class Karyawan
     }
 
     /**
+     * Mendapatkan daftar posisi yang tersedia (ENUM values)
+     * 
+     * @return array
+     */
+    public static function getAvailablePositions()
+    {
+        return [
+            'Backend Developer',
+            'Frontend Developer',
+            'Fullstack Developer',
+            'DevOps / Cloud Engineer',
+            'QA / Software Tester'
+        ];
+    }
+
+    /**
+     * Validasi apakah position valid sesuai ENUM
+     * 
+     * @param string $position
+     * @return bool
+     */
+    public static function isValidPosition($position)
+    {
+        return in_array($position, self::getAvailablePositions());
+    }
+
+    /**
      * Mendapatkan pesan error terakhir
      * 
      * @return string
