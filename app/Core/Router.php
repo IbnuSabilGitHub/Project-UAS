@@ -1,218 +1,127 @@
 <?php
 
 class Router {
+    private $routes = [];
+    
+    public function __construct() {
+        $this->registerRoutes();
+    }
+    
+    /**
+     * Daftarkan semua route aplikasi
+     */
+    private function registerRoutes() {
+        // Authentication Routes
+        $this->addRoute('GET', '/', 'AuthController', 'index');
+        $this->addRoute('GET', '/admin/login', 'AuthController', 'adminLoginPage');
+        $this->addRoute('POST', '/admin/login', 'AuthController', 'adminLogin');
+        $this->addRoute('GET', '/karyawan/login', 'AuthController', 'karyawanLoginPage');
+        $this->addRoute('POST', '/karyawan/login', 'AuthController', 'karyawanLogin');
+        $this->addRoute('GET', '/logout', 'AuthController', 'logout');
+        
+        // Dashboard Routes
+        $this->addRoute('GET', '/dashboard', 'AuthController', 'dashboard');
+        $this->addRoute('GET', '/admin/dashboard', 'AuthController', 'adminDashboard');
+        $this->addRoute('GET', '/karyawan/dashboard', 'AuthController', 'employeeDashboard');
+        
+        // Password Management
+        $this->addRoute('GET', '/change-password', 'AuthController', 'changePasswordPage');
+        $this->addRoute('POST', '/change-password', 'AuthController', 'changePassword');
+        
+        // Admin - Karyawan Management
+        $this->addRoute('GET', '/admin/karyawan', 'KaryawanController', 'index');
+        $this->addRoute('GET', '/admin/karyawan/create', 'KaryawanController', 'create');
+        $this->addRoute('POST', '/admin/karyawan/store', 'KaryawanController', 'create_account');
+        $this->addRoute('GET', '/admin/karyawan/edit', 'KaryawanController', 'edit');
+        $this->addRoute('POST', '/admin/karyawan/update', 'KaryawanController', 'update');
+        $this->addRoute('POST', '/admin/karyawan/delete', 'KaryawanController', 'delete');
+        $this->addRoute('POST', '/admin/karyawan/deactivate', 'KaryawanController', 'deactivate');
+        $this->addRoute('POST', '/admin/karyawan/activate', 'KaryawanController', 'activateAccount');
+        
+        // Admin - Cuti Management
+        $this->addRoute('GET', '/admin/cuti', 'CutiController', 'index');
+        $this->addRoute('POST', '/admin/cuti/approve', 'CutiController', 'approve');
+        $this->addRoute('POST', '/admin/cuti/reject', 'CutiController', 'reject');
+        $this->addRoute('POST', '/admin/cuti/delete', 'CutiController', 'delete');
+        
+        // Admin - Attendance Management
+        $this->addRoute('GET', '/admin/attendance', 'AttendanceController', 'adminIndex');
+        $this->addRoute('GET', '/admin/attendance/export', 'AttendanceController', 'export');
+        
+        // Karyawan - Attendance
+        $this->addRoute('GET', '/karyawan/attendance', 'AttendanceController', 'index');
+        $this->addRoute('POST', '/karyawan/attendance/checkin', 'AttendanceController', 'checkIn');
+        $this->addRoute('POST', '/karyawan/attendance/checkout', 'AttendanceController', 'checkOut');
+        
+        // Karyawan - Leave Request
+        $this->addRoute('GET', '/karyawan/leave', 'LeaveController', 'index');
+        $this->addRoute('GET', '/karyawan/leave/create', 'LeaveController', 'create');
+        $this->addRoute('POST', '/karyawan/leave/store', 'LeaveController', 'store');
+        $this->addRoute('POST', '/karyawan/leave/delete', 'LeaveController', 'delete');
+    }
+    
+    /**
+     *  Helper untuk menambahkan route
+     * 
+     * @param string $method HTTP method (GET, POST, etc.)
+     * @param string $uri URI route
+     * @param string $controller Nama controller
+     * @param string $action Nama action method
+     */
+    private function addRoute($method, $uri, $controller, $action) {
+        $this->routes[] = [
+            'method' => $method,
+            'uri' => $uri,
+            'controller' => $controller,
+            'action' => $action
+        ];
+    }
+    
+    /**
+     * Selesaikan route berdasarkan URI dan method
+     * 
+     * @param string $uri URI route
+     * @param string $method HTTP method (GET, POST, etc.)
+     */
     public function resolve($uri, $method) {
-
-        // Route untuk halaman index (pilihan login)
-        if ($uri === "/") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->index();
+        // Handle file preview routes (dynamic route)
+        if ($this->handleFileRoute($uri, $method)) {
             return;
         }
-
-        // Route untuk halaman login admin (GET)
-        if ($uri === "/admin/login" && $method === "GET") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->adminLoginPage();
-            return;
-        }
-
-        // Route untuk proses login admin (POST)
-        if ($uri === "/admin/login" && $method === "POST") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->adminLogin();
-            return;
-        }
-
-        // Route untuk halaman login karyawan (GET)
-        if ($uri === "/karyawan/login" && $method === "GET") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->karyawanLoginPage();
-            return;
-        }
-
-        // Route untuk proses login karyawan (POST)
-        if ($uri === "/karyawan/login" && $method === "POST") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->karyawanLogin();
-            return;
-        }
-
-        // Route untuk dashboard 
-        if ($uri === "/dashboard") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->dashboard();
-            return;
-        }
-
-        // Admin dashboard
-        if ($uri === "/admin/dashboard") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->adminDashboard();
-            return;
-        }
-
-        // Karyawan dashboard
-        if ($uri === "/karyawan/dashboard") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->employeeDashboard();
-            return;
-        }
-
-        // Route untuk logout
-        if ($uri === "/logout") {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            (new AuthController())->logout();
-            return;
-        }
-
-        // Routes untuk manajemen karyawan (admin)
-        if (strpos($uri, '/admin/karyawan') === 0) {
-            require_once __DIR__ . "/../Controllers/KaryawanController.php";
-            $kc = new KaryawanController();
-
-            if ($uri === '/admin/karyawan' && $method === 'GET') {
-                $kc->index();
-                return;
-            }
-
-            if ($uri === '/admin/karyawan/create' && $method === 'GET') {
-                $kc->create();
-                return;
-            }
-
-            if ($uri === '/admin/karyawan/store' && $method === 'POST') {
-                $kc->create_account();
-                return;
-            }
-
-            if ($uri === '/admin/karyawan/edit' && $method === 'GET') {
-                $kc->edit();
-                return;
-            }
-
-            if ($uri === '/admin/karyawan/update' && $method === 'POST') {
-                $kc->update();
-                return;
-            }
-
-            if ($uri === '/admin/karyawan/delete' && $method === 'POST') {
-                $kc->delete();
-                return;
-            }
-                if ($uri === '/admin/karyawan/deactivate' && $method === 'POST') {
-                    $kc->deactivate();
-                    return;
-                }
-            if ($uri === '/admin/karyawan/activate' && $method === 'POST') {
-                $kc->activateAccount();
+        
+        // Handle static routes
+        foreach ($this->routes as $route) {
+            if ($route['uri'] === $uri && $route['method'] === $method) {
+                $this->executeRoute($route['controller'], $route['action']);
                 return;
             }
         }
-
-        // Routes untuk pengajuan cuti (admin)
-        if (strpos($uri, '/admin/cuti') === 0) {
-            require_once __DIR__ . "/../Controllers/CutiController.php";
-            $cc = new CutiController();
-
-            if ($uri === '/admin/cuti' && $method === 'GET') {
-                $cc->index();
-                return;
-            }
-
-            if ($uri === '/admin/cuti/approve' && $method === 'POST') {
-                $cc->approve();
-                return;
-            }
-
-            if ($uri === '/admin/cuti/reject' && $method === 'POST') {
-                $cc->reject();
-                return;
-            }
-
-            if ($uri === '/admin/cuti/delete' && $method === 'POST') {
-                $cc->delete();
-                return;
-            }
-        }
-
-        if ($uri === '/change-password') {
-            require_once __DIR__ . "/../Controllers/AuthController.php";
-            $ac = new AuthController();
-            if ($method === 'GET') {
-                $ac->changePasswordPage();
-                return;
-            }
-            if ($method === 'POST') {
-                $ac->changePassword();
-                return;
-            }
-        }
-
-        // Routes untuk Attendance (karyawan)
-        if (strpos($uri, '/karyawan/attendance') === 0) {
-            require_once __DIR__ . "/../Controllers/AttendanceController.php";
-            $ac = new AttendanceController();
-
-            if ($uri === '/karyawan/attendance' && $method === 'GET') {
-                $ac->index();
-                return;
-            }
-
-            if ($uri === '/karyawan/attendance/checkin' && $method === 'POST') {
-                $ac->checkIn();
-                return;
-            }
-
-            if ($uri === '/karyawan/attendance/checkout' && $method === 'POST') {
-                $ac->checkOut();
-                return;
-            }
-        }
-
-        // Routes untuk Attendance (admin)
-        if (strpos($uri, '/admin/attendance') === 0) {
-            require_once __DIR__ . "/../Controllers/AttendanceController.php";
-            $ac = new AttendanceController();
-
-            if ($uri === '/admin/attendance' && $method === 'GET') {
-                $ac->adminIndex();
-                return;
-            }
-
-            if ($uri === '/admin/attendance/export' && $method === 'GET') {
-                $ac->export();
-                return;
-            }
-        }
-
-        // Routes untuk Leave Request (karyawan)
-        if (strpos($uri, '/karyawan/leave') === 0) {
-            require_once __DIR__ . "/../Controllers/LeaveController.php";
-            $lc = new LeaveController();
-
-            if ($uri === '/karyawan/leave' && $method === 'GET') {
-                $lc->index();
-                return;
-            }
-
-            if ($uri === '/karyawan/leave/create' && $method === 'GET') {
-                $lc->create();
-                return;
-            }
-
-            if ($uri === '/karyawan/leave/store' && $method === 'POST') {
-                $lc->store();
-                return;
-            }
-
-            if ($uri === '/karyawan/leave/delete' && $method === 'POST') {
-                $lc->delete();
-                return;
-            }
-        }
-
-        // Routes untuk view/preview file dengan authenticasi
+        
+        // 404 Not Found
+        $this->handleNotFound();
+    }
+    
+    /**
+     * Mengeksekusi controller action
+     * 
+     * @param string $controllerName Nama controller
+     * @param string $action Nama action method
+     */
+    private function executeRoute($controllerName, $action) {
+        $controllerPath = __DIR__ . "/../Controllers/{$controllerName}.php";
+        require_once $controllerPath;
+        
+        $controller = new $controllerName();
+        $controller->$action();
+    }
+    
+    /**
+     * Menangani dynamic route untuk file
+     * 
+     * @param string $uri URI route
+     * @param string $method HTTP method
+     */
+    private function handleFileRoute($uri, $method) {
         if (strpos($uri, '/file/leave/') === 0) {
             require_once __DIR__ . "/../Controllers/FileController.php";
             $fc = new FileController();
@@ -222,20 +131,24 @@ class Router {
             if (isset($parts[2]) && is_numeric($parts[2])) {
                 $leaveId = (int)$parts[2];
                 $fc->viewLeaveAttachment($leaveId);
-                return;
+                return true;
             }
             
             http_response_code(400);
             echo "Bad Request: Invalid file URL";
-            return;
+            return true;
         }
-
-
-        // 404 Not Found
+        
+        return false;
+    }
+    
+    /**
+     * Tangani 404 Not Found
+     */
+    private function handleNotFound() {
         http_response_code(404);
         require_once __DIR__ . "/../Views/errors/404.php";
         exit;
-        
     }
 }
 
