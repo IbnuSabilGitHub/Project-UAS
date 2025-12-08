@@ -4,18 +4,21 @@ require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/PengajuanCuti.php';
 require_once __DIR__ . '/../Models/Karyawan.php';
 
+/**
+ * CutiController - Mengelola pengajuan cuti untuk Admin
+ * 
+ * Fitur: view all leave requests, approve/reject, delete,
+ * filter & search, statistik cuti
+ */
 class CutiController extends BaseController {
     private $model;
     private $karyawanModel;
 
     public function __construct() {
+        parent::__construct(); // Initialize userModel
         $this->model = new PengajuanCuti();
         $this->karyawanModel = new Karyawan();
     }
-
-    /**
-     * Render view dengan data
-     * 
 
 
     /**
@@ -93,6 +96,8 @@ class CutiController extends BaseController {
 
     /**
      * Menampilkan daftar pengajuan cuti dengan filter
+     * 
+     * @return void
      */
     public function index() {
         $this->ensureAdmin();
@@ -127,12 +132,12 @@ class CutiController extends BaseController {
 
     /**
      * Approve pengajuan cuti
+     * 
+     * @return void
      */
     public function approve() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/cuti');
-        }
+        $this->validateMethod('POST', '/admin/cuti');
 
         $id = (int)($_POST['id'] ?? 0);
         if (!$id) {
@@ -151,12 +156,12 @@ class CutiController extends BaseController {
 
     /**
      * Reject pengajuan cuti
+     * 
+     * @return void
      */
     public function reject() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/cuti');
-        }
+        $this->validateMethod('POST', '/admin/cuti');
 
         $id = (int)($_POST['id'] ?? 0);
         if (!$id) {
@@ -184,12 +189,12 @@ class CutiController extends BaseController {
 
     /**
      * Menghapus pengajuan cuti
+     * 
+     * @return void
      */
     public function delete() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/cuti');
-        }
+        $this->validateMethod('POST', '/admin/cuti');
 
         $id = (int)($_POST['id'] ?? 0);
         if (!$id) {

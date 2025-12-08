@@ -1,34 +1,32 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/BaseController.php';
+require_once __DIR__ . '/../Models/User.php';
 require_once __DIR__ . '/../Models/LeaveRequest.php';
 require_once __DIR__ . '/../Models/PengajuanCuti.php';
 
 /**
- * Controller untuk view/preview file
+ * FileController - Mengelola view/preview file dengan authentication
+ * 
  * File disimpan di storage/ untuk keamanan
+ * Menggunakan User Model untuk authorization (MVC compliant)
  */
-class FileController {
+class FileController extends BaseController {
+    
+    public function __construct() {
+        parent::__construct(); // Initialize userModel
+    }
     
     /**
-     * Pastikan user sudah login
-     */
-    private function ensureAuthenticated() {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id'])) {
-            http_response_code(401);
-            die('Unauthorized: Silakan login terlebih dahulu');
-        }
-    }
-
-    /**
      * Cek apakah user berhak akses file cuti ini
+     * Menggunakan User Model (MVC compliant)
      * 
      * @param array $leave Data pengajuan cuti
      * @return bool
      */
     private function canAccessFile($leave) {
+        $this->startSession();
+        
         $role = $_SESSION['role'] ?? '';
         $userId = $_SESSION['user_id'] ?? 0;
 
@@ -39,15 +37,10 @@ class FileController {
 
         // Karyawan hanya bisa akses file miliknya sendiri
         if ($role === 'karyawan') {
-            // Get karyawan_id dari user
-            $db = new Database();
-            $conn = $db->getConnection();
-            $stmt = $conn->prepare("SELECT karyawan_id FROM users WHERE id = ?");
-            $stmt->bind_param('i', $userId);
-            $stmt->execute();
-            $result = $stmt->get_result()->fetch_assoc();
+            // Gunakan User Model untuk get karyawan_id (MVC compliant)
+            $karyawanId = $this->userModel->getKaryawanId($userId);
             
-            if ($result && $result['karyawan_id'] == $leave['karyawan_id']) {
+            if ($karyawanId && $karyawanId == $leave['karyawan_id']) {
                 return true;
             }
         }
@@ -61,6 +54,7 @@ class FileController {
      * @param int $leaveId ID pengajuan cuti
      */
     public function viewLeaveAttachment($leaveId) {
+        // Gunakan method dari BaseController
         $this->ensureAuthenticated();
 
         // Validasi ID

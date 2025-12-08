@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
 
+/**
+ * Attendance Model - Mengelola data absensi karyawan
+ * 
+ * Fitur: check-in, check-out, tracking status kehadiran,
+ * statistik absensi, dan history
+ */
 class Attendance {
     private $conn;
 
@@ -177,7 +183,9 @@ class Attendance {
         return $stmt->get_result()->fetch_assoc();
     }
 
-    // ===== ADMIN METHODS =====
+
+    
+    // ADMIN METHODS
 
     /**
      * Ambil semua absensi dengan filter untuk admin
@@ -238,59 +246,6 @@ class Attendance {
             $rows[] = $row;
         }
         return $rows;
-    }
-
-    /**
-     * Hitung total record dengan filter untuk pagination
-     * (Method ini tidak digunakan lagi setelah hapus pagination, tapi tetap dipertahankan untuk backward compatibility)
-     * 
-     * @param string $startDate
-     * @param string $endDate
-     * @param string $searchName
-     * @param array $statusFilter
-     * @return int
-     */
-    public function countAllWithFilter($startDate = '', $endDate = '', $searchName = '', $statusFilter = []) {
-        $sql = "
-            SELECT COUNT(*) as total
-            FROM attendance a
-            JOIN karyawan k ON a.karyawan_id = k.id
-            WHERE 1=1
-        ";
-        
-        $types = '';
-        $params = [];
-
-        if ($startDate && $endDate) {
-            $sql .= " AND DATE(a.check_in) BETWEEN ? AND ?";
-            $types .= 'ss';
-            $params[] = $startDate;
-            $params[] = $endDate;
-        }
-
-        if ($searchName) {
-            $sql .= " AND (k.name LIKE ? OR k.nik LIKE ?)";
-            $types .= 'ss';
-            $params[] = '%' . $searchName . '%';
-            $params[] = '%' . $searchName . '%';
-        }
-
-        if (!empty($statusFilter) && count($statusFilter) < 3) {
-            $placeholders = str_repeat('?,', count($statusFilter) - 1) . '?';
-            $sql .= " AND a.status IN ($placeholders)";
-            $types .= str_repeat('s', count($statusFilter));
-            $params = array_merge($params, $statusFilter);
-        }
-
-        $stmt = $this->conn->prepare($sql);
-        
-        if ($types) {
-            $stmt->bind_param($types, ...$params);
-        }
-
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        return $result['total'] ?? 0;
     }
 
     /**

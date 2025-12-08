@@ -2,6 +2,159 @@
 
 All notable changes to this project will be documented in this file.
 
+
+---
+
+## **[Refactor: MVC Architecture Compliance - Full System Refactor] - 2024-12-09**
+
+### **Major Refactoring MVC Responsibility Separation**
+
+Refactoring menyeluruh untuk memastikan kepatuhan pada arsitektur MVC dengan pemisahan yang tegas antara Model, View, dan Controller. Menghilangkan semua pelanggaran MVC seperti SQL query di dalam Controller.
+
+
+### **Backend Changes**
+
+#### **Core Architecture**
+
+**Router** (`app/Core/Router.php`):
+
+* Direfactor dari banyak struktur if-else menjadi route mapping berbasis array
+* **Metode Baru**:
+
+  * `registerRoutes()` – Registrasi route terpusat dengan struktur array
+  * `addRoute($method, $pattern, $controller, $action)` – Helper untuk menambahkan route
+  * `executeRoute($controller, $action)` – Eksekusi action controller dengan instansiasi
+  * `handleFileRoute($path)` – Handler route dinamis untuk `/file/leave/{id}`
+
+**BaseController** (`app/Controllers/BaseController.php`):
+
+* **Properti Baru**:
+
+  * `protected $userModel` – Instance User Model untuk seluruh controller turunan
+* **Konstruktor yang Ditingkatkan**:
+
+  * Auto-initialize `$this->userModel = new User()`
+* **Metode yang Direfactor**:
+
+  * `getKaryawanId()` – **SQL DIHAPUS**, kini memakai `$this->userModel->getKaryawanId()`
+* **Metode Helper Baru**:
+
+  * `validateMethod($method, $redirectTo)` – Validasi metode HTTP (GET/POST)
+  * `redirectIfAuthenticated()` – Redirect jika pengguna sudah login
+  * `getFlash($key)` – Ambil flash message dari session
+  * `clearFlash($keys)` – Hapus beberapa flash message sekaligus
+
+
+#### **Controllers  MVC Compliance**
+
+**AuthController** (`app/Controllers/AuthController.php`):
+
+* **SEMUA SQL QUERY DIHAPUS**
+* `adminLogin()`:
+
+  * Menggunakan `$this->userModel->findByEmail()`
+  * Menggunakan `$this->userModel->authenticate()` untuk verifikasi password
+  * Menggunakan helper: `isAdmin()`, `isActive()`
+* `karyawanLogin()`:
+
+  * Direfactor penuh, SQL dihapus
+  * Menggunakan metode model untuk semua operasi autentikasi
+* `changePassword()`:
+
+  * Menggunakan `$this->userModel->updatePassword()`
+* `employeeDashboard()`:
+
+  * Menggunakan `getKaryawanId()` dari BaseController
+
+**AttendanceController**:
+
+* Inisialisasi `$this->userModel` dari BaseController
+* Gunakan helper `getKaryawanId()`
+
+**LeaveController**:
+
+* `getKaryawanId()` lokal dihapus
+* Validasi HTTP memakai `validateMethod()`
+* Flash message memakai `getFlash()`
+
+**KaryawanController**:
+
+* Konsisten memakai `validateMethod()`
+* PHPDoc ditambahkan untuk `generateTempPassword()`
+
+**CutiController**:
+
+* Semua metode POST memakai `validateMethod()`
+* `approve()`, `reject()`, `delete()` konsisten memakai validasi HTTP
+
+**FileController**:
+
+* `canAccessFile()` direfactor
+
+  * SQL dihapus, memakai `$this->userModel->getKaryawanId()`
+  * Sesuai pemisahan MVC
+
+
+#### **Models  Documentation**
+
+**Attendance Model**:
+
+* PHPDoc lengkap
+* Semua metode diberi tipe @param dan @return
+* Penjelasan logika bisnis perhitungan absensi
+
+**Karyawan Model**:
+
+* PHPDoc lengkap
+* Dokumentasi pada semua metode statis
+* Penjelasan validasi ENUM
+
+**LeaveRequest Model**:
+
+* PHPDoc lengkap
+* Dokumentasi query kompleks
+* Penjelasan logika perhitungan kuota cuti
+
+
+### **Bug Fixes**
+
+#### **Critical Fixes**
+
+1. **SQL di AuthController**
+
+   * **Masalah**: `karyawanLogin()` berisi query SQL langsung
+   * **Solusi**: Diganti penuh dengan pemanggilan metode Model
+   * **Perubahan**:
+
+     * `$this->db->query()` → `$this->userModel->findByEmail()`
+     * Verifikasi password manual → `$this->userModel->authenticate()`
+     * Cek role manual → `$this->userModel->isKaryawan()`
+
+
+### **Files Changed**
+
+**New Files**:
+
+* `app/Models/User.php` – Model User terpusat
+
+**Modified Files**:
+
+* `app/Core/Router.php`
+* `app/Controllers/BaseController.php`
+* `app/Controllers/AuthController.php`
+* `app/Controllers/AttendanceController.php`
+* `app/Controllers/LeaveController.php`
+* `app/Controllers/KaryawanController.php`
+* `app/Controllers/CutiController.php`
+* `app/Controllers/FileController.php`
+* `app/Models/Attendance.php`
+* `app/Models/Karyawan.php`
+* `app/Models/LeaveRequest.php`
+
+
+
+---
+
 ## **[Feature: Position ENUM Implementation] - 2024-12-08**
 ### 🔄 **Database Changes**
 **Schema:**

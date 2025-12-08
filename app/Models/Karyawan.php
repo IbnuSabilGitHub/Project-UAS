@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
 
+/**
+ * Karyawan Model - Mengelola data karyawan
+ * 
+ * Fitur: CRUD karyawan, manajemen akun user,
+ * validasi position ENUM, statistik karyawan
+ */
 class Karyawan
 {
     private $conn;
@@ -73,7 +79,17 @@ class Karyawan
      */
     public function allWithUser()
     {
-        $sql = "SELECT k.*, u.id AS user_id, u.email AS user_email, u.must_change_password, u.status AS user_status FROM karyawan k LEFT JOIN users u ON u.karyawan_id = k.id ORDER BY k.id DESC";
+        $sql = "
+            SELECT 
+                k.*, 
+                u.id AS user_id, 
+                u.email AS user_email, 
+                u.must_change_password, 
+                u.status AS user_status 
+            FROM karyawan k 
+            LEFT JOIN users u ON u.karyawan_id = k.id 
+            ORDER BY k.id DESC
+        ";
         $result = $this->conn->query($sql);
         $rows = [];
         if ($result) {
@@ -114,6 +130,7 @@ class Karyawan
             return false;
         }
         $stmt->bind_param('sssssss', $data['nik'], $data['name'], $data['email'], $data['phone'], $data['position'], $data['join_date'], $data['status']);
+        
         if ($stmt->execute()) {
             return $this->conn->insert_id;
         }
@@ -175,7 +192,10 @@ class Karyawan
         $createdAt = date('Y-m-d H:i:s');
         $mustChange = 1;
         $status = 'active';
-        $stmt = $this->conn->prepare("INSERT INTO users (email, password_hash, role, karyawan_id, status, must_change_password, password_last_changed, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, ?)");
+        $stmt = $this->conn->prepare("
+            INSERT INTO users (email, password_hash, role, karyawan_id, status, must_change_password, password_last_changed, created_at) 
+            VALUES (?, ?, ?, ?, ?, ?, NULL, ?)
+");
         // 7 placeholders => types: s (email), s (hash), s (role), i (karyawan_id), s (status), i (must_change), s (created_at)
         $stmt->bind_param('sssisis', $email, $passwordHash, $role, $karyawanId, $status, $mustChange, $createdAt);
         return $stmt->execute();
@@ -251,7 +271,12 @@ class Karyawan
         }
 
         // Karyawan berdasarkan posisi/jabatan
-        $result = $this->conn->query("SELECT position, COUNT(*) as count FROM karyawan GROUP BY position ORDER BY count DESC LIMIT 10");
+        $result = $this->conn->query(" SELECT position, COUNT(*) as count 
+                                        FROM karyawan 
+                                        GROUP BY position 
+                                        ORDER BY count DESC 
+                                        LIMIT 10
+        ");
         $stats['by_position'] = [];
         while ($row = $result->fetch_assoc()) {
             $stats['by_position'][$row['position']] = (int)$row['count'];
@@ -262,11 +287,24 @@ class Karyawan
         $stats['total_akun_aktif'] = $result->fetch_assoc()['total'];
 
         // Karyawan tanpa akun
-        $result = $this->conn->query("SELECT COUNT(*) as total FROM karyawan WHERE id NOT IN (SELECT karyawan_id FROM users WHERE karyawan_id IS NOT NULL)");
+        $result = $this->conn->query("
+            SELECT COUNT(*) as total 
+            FROM karyawan 
+            WHERE id NOT IN (
+                SELECT karyawan_id 
+                FROM users 
+                WHERE karyawan_id IS NOT NULL
+            )
+        ");
         $stats['total_tanpa_akun'] = $result->fetch_assoc()['total'];
 
         // Karyawan bergabung bulan ini
-        $result = $this->conn->query("SELECT COUNT(*) as total FROM karyawan WHERE MONTH(join_date) = MONTH(CURRENT_DATE()) AND YEAR(join_date) = YEAR(CURRENT_DATE())");
+        $result = $this->conn->query("
+            SELECT COUNT(*) as total 
+            FROM karyawan 
+            WHERE MONTH(join_date) = MONTH(CURRENT_DATE()) 
+                AND YEAR(join_date) = YEAR(CURRENT_DATE())
+        ");
         $stats['bergabung_bulan_ini'] = $result->fetch_assoc()['total'];
 
         return $stats;

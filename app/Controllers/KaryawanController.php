@@ -3,17 +3,27 @@ require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/Karyawan.php';
 
+/**
+ * KaryawanController - Mengelola CRUD karyawan (Admin only)
+ * 
+ * Fitur: list karyawan, create, edit, delete, activate/deactivate account,
+ * filter & search, statistik karyawan
+ */
 class KaryawanController extends BaseController {
     
     private $model;
 
     public function __construct() {
+        parent::__construct(); // Initialize userModel
         $this->model = new Karyawan();
+
     }
 
 
     /**
      * Menampilkan daftar karyawan
+     * 
+     * @return void
      */
     public function index() {
         $this->ensureAdmin();
@@ -71,6 +81,8 @@ class KaryawanController extends BaseController {
 
     /**
      * Menampilkan form tambah karyawan
+     * 
+     * @return void
      */
     public function create() {
         $this->ensureAdmin();
@@ -83,12 +95,12 @@ class KaryawanController extends BaseController {
 
     /**
      * Membuat akun karyawan baru
+     * 
+     * @return void
      */
     public function create_account() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/karyawan');
-        }
+        $this->validateMethod('POST', '/admin/karyawan');
 
         $data = [
             'nik' => substr(trim($_POST['nik'] ?? ''), 0, 50),
@@ -151,6 +163,8 @@ class KaryawanController extends BaseController {
 
     /**
      * Menampilkan form edit karyawan sesuai ID dari query parameter
+     * 
+     * @return void
      */
     public function edit() {
         $this->ensureAdmin();
@@ -172,12 +186,12 @@ class KaryawanController extends BaseController {
 
     /**
      * Memperbarui data karyawan sesuai ID
+     * 
+     * @return void
      */
     public function update() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/karyawan');
-        }
+        $this->validateMethod('POST', '/admin/karyawan');
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
         if (!$id) {
             setFlash('error', 'ID tidak valid');
@@ -229,12 +243,12 @@ class KaryawanController extends BaseController {
 
     /**
      * Menghapus data karyawan sesuai ID
+     * 
+     * @return void
      */
     public function delete() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/karyawan');
-        }
+        $this->validateMethod('POST', '/admin/karyawan');
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
         if (!$id) {
             setFlash('error', 'ID tidak valid');
@@ -255,12 +269,12 @@ class KaryawanController extends BaseController {
 
     /**
      * Mengaktifkan akun karyawan sesuai ID dari form
+     * 
+     * @return void
      */
     public function activateAccount() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/karyawan');
-        }
+        $this->validateMethod('POST', '/admin/karyawan');
         $karyawanId = isset($_POST['karyawan_id']) ? (int)$_POST['karyawan_id'] : 0;
         if (!$karyawanId) {
             setFlash('error', 'ID karyawan tidak valid');
@@ -289,12 +303,14 @@ class KaryawanController extends BaseController {
         redirect('/admin/karyawan');
     }
 
-    /** Nonaktifkan karyawan */
+    /** 
+     * Nonaktifkan karyawan 
+     * 
+     * @return void
+     */
     public function deactivate() {
         $this->ensureAdmin();
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/karyawan');
-        }
+        $this->validateMethod('POST', '/admin/karyawan');
         $id = isset($_POST['id']) ? (int)$_POST['id'] : 0;
         if (!$id) {
             setFlash('error', 'ID tidak valid');
@@ -311,11 +327,13 @@ class KaryawanController extends BaseController {
     /**
      * Menghasilkan password sementara acak
      * 
-     * @param int $length
-     * @return string
+     * Helper method untuk generate temporary password saat membuat akun karyawan.
+     * Berada di controller karena logic ini spesifik untuk business flow pembuatan akun.
+     * Password ini akan ditampilkan ke admin untuk diberikan ke karyawan.
+     * 
+     * @return string Random password (10 karakter hexadecimal)
      */
     private function generateTempPassword() {
-        $pw = bin2hex(random_bytes(5)); // 10 karakter random
-        return $pw;
+        return bin2hex(random_bytes(5)); // 10 karakter random
     }
 }

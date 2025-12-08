@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
 
+/**
+ * LeaveRequest Model - Mengelola pengajuan cuti karyawan
+ * 
+ * Fitur: create leave request, upload attachment,
+ * approve/reject, tracking status, statistik cuti
+ */
 class LeaveRequest {
     private $conn;
     private $uploadDir;

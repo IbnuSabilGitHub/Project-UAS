@@ -3,30 +3,31 @@ require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/LeaveRequest.php';
 
+/**
+ * LeaveController - Mengelola pengajuan cuti karyawan
+ * 
+ * Fitur untuk karyawan: create leave request, view history,
+ * delete pending request
+ */
 class LeaveController extends BaseController {
     private $model;
 
     public function __construct() {
+        parent::__construct(); // Initialize userModel
         $this->model = new LeaveRequest();
-    }
-
-
-    private function getKaryawanId() {
-        $conn = (new Database())->getConnection();
-        $stmt = $conn->prepare("SELECT karyawan_id FROM users WHERE id = ?");
-        $stmt->bind_param('i', $_SESSION['user_id']);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        return $result['karyawan_id'] ?? null;
     }
 
     /**
      * Halaman riwayat pengajuan cuti karyawan
+     * 
+     * @return void
      */
     public function index() {
         $this->ensureKaryawan();
         
+        // Gunakan helper method dari BaseController (MVC compliant)
         $karyawanId = $this->getKaryawanId();
+        
         if (!$karyawanId) {
             setFlash('error', 'Data karyawan tidak ditemukan');
             redirect('/karyawan/dashboard');
@@ -41,26 +42,26 @@ class LeaveController extends BaseController {
             'leaves' => $leaves,
             'totalApproved' => $totalApproved,
             'totalRejected' => $totalRejected,
-            'success' => $_SESSION['success'] ?? null,
-            'error' => $_SESSION['error'] ?? null
+            'success' => $this->getFlash('success'),
+            'error' => $this->getFlash('error')
         ];
 
-        unset($_SESSION['success'], $_SESSION['error']);
         $this->render('employee/leave/index', $data);
     }
 
     /**
      * Halaman form pengajuan cuti
+     * 
+     * @return void
      */
     public function create() {
         $this->ensureKaryawan();
 
         $data = [
             'title' => 'Ajukan Cuti',
-            'error' => $_SESSION['error'] ?? null
+            'error' => $this->getFlash('error')
         ];
 
-        unset($_SESSION['error']);
         $this->render('employee/leave/create', $data);
     }
 
@@ -94,15 +95,16 @@ class LeaveController extends BaseController {
 
     /**
      * Proses submit pengajuan cuti
+     * 
+     * @return void
      */
     public function store() {
         $this->ensureKaryawan();
+        $this->validateMethod('POST', '/karyawan/leave');
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/karyawan/leave');
-        }
-
+        // Gunakan helper method dari BaseController
         $karyawanId = $this->getKaryawanId();
+        
         if (!$karyawanId) {
             setFlash('error', 'Data karyawan tidak ditemukan');
             redirect('/karyawan/dashboard');
@@ -181,13 +183,12 @@ class LeaveController extends BaseController {
 
     /**
      * Hapus pengajuan cuti (hanya yang pending)
+     * 
+     * @return void
      */
     public function delete() {
         $this->ensureKaryawan();
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/karyawan/leave');
-        }
+        $this->validateMethod('POST', '/karyawan/leave');
 
         $id = (int)($_POST['id'] ?? 0);
         $karyawanId = $this->getKaryawanId();

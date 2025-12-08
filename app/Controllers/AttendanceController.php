@@ -3,28 +3,32 @@ require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/Attendance.php';
 
+/**
+ * AttendanceController - Mengelola fitur absensi karyawan
+ * 
+ * Fitur untuk karyawan: check-in, check-out, view history
+ * Fitur untuk admin: view semua absensi, filter, export CSV
+ */
 class AttendanceController extends BaseController {
     private $model;        
 
     public function __construct() {
+        parent::__construct(); // Initialize userModel dari BaseController
         $this->model = new Attendance();
     }
 
+    // KARYAWAN METHODS
 
     /**
-     * Halaman attendance karyawan
+     * Halaman absensi karyawan
+     * 
+     * @return void
      */
     public function index() {
         $this->ensureKaryawan();
         
-        // Ambil karyawan_id dari session
-        $conn = (new Database())->getConnection();
-        $stmt = $conn->prepare("SELECT karyawan_id FROM users WHERE id = ?");
-        $stmt->bind_param('i', $_SESSION['user_id']);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        $karyawanId = $result['karyawan_id'];
-
+        $karyawanId = $this->getKaryawanId();
+        
         if (!$karyawanId) {
             setFlash('error', 'Data karyawan tidak ditemukan');
             redirect('/karyawan/dashboard');
@@ -32,8 +36,10 @@ class AttendanceController extends BaseController {
 
         // Cek status hari ini
         $todayStatus = $this->model->hasCheckedInToday($karyawanId);
-        // Ambil riwayat
+        
+        // Ambil riwayat 30 hari terakhir
         $history = $this->model->getHistory($karyawanId, 30);
+        
         // Ambil statistik bulan ini
         $stats = $this->model->getMonthlyStats($karyawanId);
 
@@ -42,32 +48,23 @@ class AttendanceController extends BaseController {
             'todayStatus' => $todayStatus,
             'history' => $history,
             'stats' => $stats,
-            'success' => $_SESSION['success'] ?? null,
-            'error' => $_SESSION['error'] ?? null
+            'success' => $this->getFlash('success'),
+            'error' => $this->getFlash('error')
         ];
 
-        unset($_SESSION['success'], $_SESSION['error']);
         $this->render('employee/attendance', $data);
     }
 
     /**
-     * Proses check-in
+     * Proses check-in karyawan
+     * 
+     * @return void
      */
     public function checkIn() {
         $this->ensureKaryawan();
+        $this->validateMethod('POST', '/karyawan/attendance');
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/karyawan/attendance');
-        }
-
-        // Ambil karyawan_id
-        $conn = (new Database())->getConnection();
-        $stmt = $conn->prepare("SELECT karyawan_id FROM users WHERE id = ?");
-        $stmt->bind_param('i', $_SESSION['user_id']);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        $karyawanId = $result['karyawan_id'];
-
+        $karyawanId = $this->getKaryawanId();
         $notes = trim($_POST['notes'] ?? '');
 
         if ($this->model->checkIn($karyawanId, $notes)) {
@@ -80,23 +77,15 @@ class AttendanceController extends BaseController {
     }
 
     /**
-     * Proses check-out
+     * Proses check-out karyawan
+     * 
+     * @return void
      */
     public function checkOut() {
         $this->ensureKaryawan();
+        $this->validateMethod('POST', '/karyawan/attendance');
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/karyawan/attendance');
-        }
-
-        // Ambil karyawan_id
-        $conn = (new Database())->getConnection();
-        $stmt = $conn->prepare("SELECT karyawan_id FROM users WHERE id = ?");
-        $stmt->bind_param('i', $_SESSION['user_id']);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        $karyawanId = $result['karyawan_id'];
-
+        $karyawanId = $this->getKaryawanId();
         $notes = trim($_POST['notes'] ?? '');
 
         if ($this->model->checkOut($karyawanId, $notes)) {
@@ -108,22 +97,22 @@ class AttendanceController extends BaseController {
         redirect('/karyawan/attendance');
     }
 
-
-
     // ADMIN METHODS
 
     /**
-     * Halaman attendance untuk admin (melihat semua data)
+     * Halaman manajemen absensi untuk admin
+     * 
+     * @return void
      */
     public function adminIndex() {
         $this->ensureAdmin();
 
-        // Ambil parameter filter
+        // Ambil parameter filter dari query string
         $period = $_GET['period'] ?? 'today';
         $searchName = $_GET['search'] ?? '';
         $statusFilter = $_GET['status'] ?? [];
         
-        // Jika status dikirim sebagai array kosong atau tidak ada, tampilkan semua
+        // Normalize status filter menjadi array
         if (!is_array($statusFilter)) {
             $statusFilter = [$statusFilter];
         }
@@ -131,10 +120,15 @@ class AttendanceController extends BaseController {
         // Convert period ke date range
         $dateRange = $this->convertPeriodToDateRange($period);
 
-        // Ambil data absensi dengan filter (tanpa pagination)
-        $attendances = $this->model->getWithFilters($dateRange['start'], $dateRange['end'], $searchName, $statusFilter);
+        // Ambil data absensi dengan filter
+        $attendances = $this->model->getWithFilters(
+            $dateRange['start'], 
+            $dateRange['end'], 
+            $searchName, 
+            $statusFilter
+        );
 
-        // Statistik ringkas
+        // Statistik ringkas berdasarkan filter
         $stats = $this->model->getAdminStats($dateRange['start'], $dateRange['end']);
 
         $data = [
@@ -144,21 +138,57 @@ class AttendanceController extends BaseController {
             'currentPeriod' => $period,
             'currentSearch' => $searchName,
             'currentStatus' => $statusFilter,
-            'email' => $_SESSION['email'] ?? null,
-            'role' => $_SESSION['role'] ?? null,
-            'success' => $_SESSION['success'] ?? null,
-            'error' => $_SESSION['error'] ?? null
+            'success' => $this->getFlash('success'),
+            'error' => $this->getFlash('error')
         ];
 
-        unset($_SESSION['success'], $_SESSION['error']);
         $this->render('admin/attendance/index', $data);
     }
 
     /**
-     * Convert period string ke date range
+     * Export data absensi ke CSV
      * 
-     * @param string $period
-     * @return array ['start' => string, 'end' => string]
+     * @return void
+     */
+    public function export() {
+        $this->ensureAdmin();
+
+        // Ambil semua data absensi
+        $attendances = $this->model->getAll(10000);
+
+        // Set header untuk download CSV
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=absensi_' . date('Y-m-d') . '.csv');
+
+        // Output CSV
+        $output = fopen('php://output', 'w');
+        
+        // Header CSV
+        fputcsv($output, ['NIK', 'Nama', 'Check-in', 'Check-out', 'Status', 'Catatan']);
+
+        // Data rows
+        foreach ($attendances as $attendance) {
+            fputcsv($output, [
+                $attendance['nik'] ?? '-',
+                $attendance['karyawan_name'] ?? '-',
+                $attendance['check_in'] ?? '-',
+                $attendance['check_out'] ?? '-',
+                $attendance['status'] ?? '-',
+                $attendance['notes'] ?? '-'
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    // HELPER METHODS
+
+    /**
+     * Konversi periode ke rentang tanggal
+     * 
+     * @param string $period Identifier periode (today, week, month, all)
+     * @return array Associative array dengan keys 'start' dan 'end'
      */
     private function convertPeriodToDateRange($period) {
         $end = date('Y-m-d');
@@ -182,57 +212,5 @@ class AttendanceController extends BaseController {
         }
 
         return ['start' => $start, 'end' => $end];
-    }
-
-    /**
-     * Export data absensi ke CSV
-     * Export semua data tanpa filter
-     */
-    public function export() {
-        $this->ensureAdmin();
-
-        // Ambil semua data tanpa filter
-        $attendances = $this->model->getAll(10000);
-
-        // Set header untuk download CSV
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=absensi_' . date('Y-m-d') . '.csv');
-
-        $output = fopen('php://output', 'w');
-        
-        // Header CSV
-        fputcsv($output, ['Tanggal', 'NIK', 'Nama Karyawan', 'Check-in', 'Check-out', 'Durasi (Jam)', 'Status', 'Catatan']);
-
-        // Data
-        foreach ($attendances as $record) {
-            $duration = '';
-            if ($record['check_out']) {
-                $diff = strtotime($record['check_out']) - strtotime($record['check_in']);
-                $hours = floor($diff / 3600);
-                $minutes = floor(($diff % 3600) / 60);
-                $duration = "{$hours}:{$minutes}";
-            }
-
-            $statusLabel = match($record['status']) {
-                'present' => 'Hadir',
-                'late' => 'Terlambat',
-                'half_day' => 'Half Day',
-                default => $record['status']
-            };
-
-            fputcsv($output, [
-                date('d/m/Y', strtotime($record['check_in'])),
-                $record['nik'],
-                $record['name'],
-                date('H:i:s', strtotime($record['check_in'])),
-                $record['check_out'] ? date('H:i:s', strtotime($record['check_out'])) : '-',
-                $duration,
-                $statusLabel,
-                $record['notes'] ?? ''
-            ]);
-        }
-
-        fclose($output);
-        exit;
     }
 }

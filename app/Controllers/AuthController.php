@@ -1,10 +1,17 @@
 <?php
 require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/BaseController.php';
+require_once __DIR__ . '/../Models/User.php';
 require_once __DIR__ . '/../Models/PengajuanCuti.php';
 require_once __DIR__ . '/../Models/Attendance.php';
 require_once __DIR__ . '/../Models/Karyawan.php';
 
+/**
+ * AuthController - Mengelola authentication dan authorization
+ * 
+ * Fitur: login (admin dan karyawan), logout, change password,
+ * dashboard routing berdasarkan role
+ */
 class AuthController extends BaseController
 {
     private $db;
@@ -14,6 +21,7 @@ class AuthController extends BaseController
 
     public function __construct()
     {
+        parent::__construct(); // Initialize userModel dari BaseController
         $this->db = new Database();
         $this->modelLeave = new PengajuanCuti();
         $this->modelAttendance = new Attendance();
@@ -21,50 +29,13 @@ class AuthController extends BaseController
     }
 
     /**
-     * Pastikan user adalah admin/super_admin
-     */
-    protected function ensureAdmin()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-            setFlash('error', 'Akses ditolak');
-            redirect('/admin/login');
-        }
-    }
-
-    /**
-     * Pastikan user adalah karyawan
-     */
-    protected function ensureKaryawan()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
-            setFlash('error', 'Akses ditolak');
-            redirect('/karyawan/login');
-        }
-    }
-
-    /**
      * Halaman index - pilihan login
+     * 
+     * @return void
      */
     public function index()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        // Jika sudah login, redirect ke dashboard sesuai role
-        if (isset($_SESSION['user_id'])) {
-            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-                redirect('/admin/dashboard');
-            } else {
-                redirect('/karyawan/dashboard');
-            }
-        }
+        $this->redirectIfAuthenticated();
 
         $data = [
             'title' => 'HRIS - Pilih Login'
@@ -75,20 +46,12 @@ class AuthController extends BaseController
 
     /**
      * Halaman login admin
+     * 
+     * @return void
      */
     public function adminLoginPage()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (isset($_SESSION['user_id'])) {
-            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-                redirect('/admin/dashboard');
-            } else {
-                redirect('/karyawan/dashboard');
-            }
-        }
+        $this->redirectIfAuthenticated();
 
         $data = [
             'error' => $_SESSION['error'] ?? null,
@@ -103,20 +66,12 @@ class AuthController extends BaseController
 
     /**
      * Halaman login karyawan
+     * 
+     * @return void
      */
     public function karyawanLoginPage()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (isset($_SESSION['user_id'])) {
-            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-                redirect('/admin/dashboard');
-            } else {
-                redirect('/karyawan/dashboard');
-            }
-        }
+        $this->redirectIfAuthenticated();
 
         $data = [
             'error' => $_SESSION['error'] ?? null,
@@ -131,16 +86,13 @@ class AuthController extends BaseController
 
     /**
      * Proses login admin
+     * 
+     * @return void
      */
     public function adminLogin()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/admin/login');
-        }
+        $this->startSession();
+        $this->validateMethod('POST', '/admin/login');
 
         $email = trim($_POST['email'] ?? '');
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -151,26 +103,21 @@ class AuthController extends BaseController
             redirect('/admin/login');
         }
 
-        $conn = $this->db->getConnection();
-        $stmt = $conn->prepare("SELECT id, email, password_hash, role, must_change_password, status FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        // Gunakan User Model untuk authentication
+        $user = $this->userModel->findByEmail($email);
 
-        if ($result->num_rows === 0) {
+        if (!$user) {
             setFlash('error', 'Email atau password salah');
             redirect('/admin/login');
         }
 
-        $user = $result->fetch_assoc();
-
         // Cek apakah user adalah admin/super_admin
-        if (!in_array($user['role'], ['admin', 'super_admin'])) {
+        if (!$this->userModel->isAdmin($user)) {
             setFlash('error', 'Anda tidak memiliki akses admin');
             redirect('/admin/login');
         }
 
-        if ($user['status'] !== 'active') {
+        if (!$this->userModel->isActive($user)) {
             setFlash('error', 'Akun dinonaktifkan');
             redirect('/admin/login');
         }
@@ -186,10 +133,6 @@ class AuthController extends BaseController
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
         setFlash('success', 'Login berhasil!');
-
-        if (!empty($user['must_change_password'])) {
-            redirect('/change-password');
-        }
 
         redirect('/admin/dashboard');
     }
@@ -199,13 +142,8 @@ class AuthController extends BaseController
      */
     public function karyawanLogin()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/karyawan/login');
-        }
+        $this->startSession();
+        $this->validateMethod('POST', '/karyawan/login');
 
         $email = trim($_POST['email'] ?? '');
         $email = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -216,27 +154,22 @@ class AuthController extends BaseController
             redirect('/karyawan/login');
         }
 
-        $conn = $this->db->getConnection();
-        $stmt = $conn->prepare("SELECT id, email, password_hash, role, must_change_password, status FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        // Gunakan User Model untuk authentication (MVC compliant)
+        $user = $this->userModel->findByEmail($email);
 
-        if ($result->num_rows === 0) {
+        if (!$user) {
             setFlash('error', 'Email atau password salah');
             redirect('/karyawan/login');
         }
 
-        $user = $result->fetch_assoc();
-
         // Cek apakah user adalah karyawan
-        if ($user['role'] !== 'karyawan') {
+        if (!$this->userModel->isKaryawan($user)) {
             setFlash('error', 'Gunakan halaman login admin untuk akun administrator');
             redirect('/karyawan/login');
         }
 
         // Cek status akun
-        if ($user['status'] !== 'active') {
+        if (!$this->userModel->isActive($user)) {
             setFlash('error', 'Akun dinonaktifkan');
             redirect('/karyawan/login');
         }
@@ -252,135 +185,33 @@ class AuthController extends BaseController
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
         $_SESSION['role'] = $user['role'];
-        $_SESSION['must_change_password'] = !empty($user['must_change_password']);
+        $_SESSION['must_change_password'] = $this->userModel->mustChangePassword($user);
         setFlash('success', 'Login berhasil!');
 
         redirect('/karyawan/dashboard');
     }
 
-
-    // Menampilkan halaman login
-    public function loginPage()
-    {
-        // Start session di controller
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (isset($_SESSION['user_id'])) {
-            // Jika sudah login, redirect ke dashboard sesuai role
-            if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-                redirect('/admin/dashboard');
-            } else {
-                redirect('/karyawan/dashboard');
-            }
-        }
-
-        // Siapkan data untuk view
-        $data = [
-            'error' => $_SESSION['error'] ?? null,
-            'success' => $_SESSION['success'] ?? null,
-            'title' => 'Login - HRIS'
-        ];
-
-        unset($_SESSION['error'], $_SESSION['success']);
-
-        $this->renderWithoutSidebar('auth/login', $data);
-    }
-
-    // Proses login
-    public function login()
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            redirect('/login'); //backward compatibility
-        }
-
-        // Sanitas input email
-        $email = trim($_POST['email'] ?? '');
-        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-
-        // password tidak disanitasi agar sesuai dengan hash asli
-        $password = $_POST['password'] ?? '';
-
-        if (empty($email) || empty($password)) {
-            $_SESSION['error'] = 'Email dan password harus diisi';
-            redirect('/login');//backward compatibility
-        }
-
-        // Konksi db
-        $conn = $this->db->getConnection();
-
-        // Query user berdasarkan email
-        $stmt = $conn->prepare("SELECT id, email, password_hash, role, must_change_password, status FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $invalid_login = function () {
-            $_SESSION['error'] = 'Email atau password salah';
-            redirect('/login');//backward compatibility
-        };
-
-        // Cek apakah user ditemukan atau tidak
-        if ($result->num_rows === 0) {
-            $invalid_login();
-        }
-
-        // Ambil data user dengan fetch_assoc
-        $user = $result->fetch_assoc();
-
-
-        // Cek status akun
-        if ($user['status'] !== 'active') {
-            $_SESSION['error'] = 'Akun dinonaktifkan';
-            redirect('/login');//backward compatibility
-        }
-
-        // Verifikasi password
-        if (!password_verify($password, $user['password_hash'])) {
-            $invalid_login();
-        }
-
-        session_regenerate_id(true); // cegah session fixation
-
-        // Login berhasil
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['role'] = $user['role'];
-        $_SESSION['success'] = 'Login berhasil!';
-
-        // Redirect jika wajib ganti password
-        if (!empty($user['must_change_password'])) {
-            redirect('/change-password');
-        }
-        // Redirect berdasarkan role
-        if ($user['role'] === 'admin' || $user['role'] === 'super_admin') {
-            redirect('/admin/dashboard');
-        } else {
-            redirect('/karyawan/dashboard');
-        }
-    }
-
-    // Logout user
+    /**
+     * Proses logout
+     * 
+     * @return void
+     */
     public function logout()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        $this->startSession();
         // Hapus semua data session
         session_destroy();
         redirect('/');//backward compatibility
     }
 
+    /**
+     * Halaman utama aplikasi
+     * 
+     * @return void
+     */
     public function indexPage()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        $this->startSession();
 
         if (isset($_SESSION['user_id'])) {
             redirect('/dashboard');
@@ -392,15 +223,13 @@ class AuthController extends BaseController
     // Legacy dashboard route: redirect ke role dashboard
     /**
      * Render halaman dashboard sesuai role
+     * 
+     * @return void
      */
     public function dashboard()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id'])) {
-            redirect('/login');//backward compatibility
-        }
+        $this->ensureAuthenticated();
+
         if (in_array($_SESSION['role'], ['admin', 'super_admin'])) {
             redirect('/admin/dashboard');
         } else {
@@ -410,14 +239,13 @@ class AuthController extends BaseController
 
     /**
      * Render halaman dashboard admin
+     * 
+     * @return void
      */
     public function adminDashboard()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $this->ensureAdmin();
+
         $statsLeave = $this->modelLeave->getStatistics();
         $statsAttendance = $this->modelAttendance->getAdminStats();
         $allStats = $this->modelKaryawan->getStatistics();
@@ -450,20 +278,10 @@ class AuthController extends BaseController
      */
     public function employeeDashboard()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
         $this->ensureKaryawan();
 
-        // Ambil karyawan_id dari session user
-        $conn = $this->db->getConnection();
-        $stmt = $conn->prepare("SELECT karyawan_id FROM users WHERE id = ?");
-        $stmt->bind_param('i', $_SESSION['user_id']);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $user = $result->fetch_assoc();
-        $karyawanId = $user['karyawan_id'] ?? null;
+        // Gunakan helper method dari BaseController (MVC compliant)
+        $karyawanId = $this->getKaryawanId();
 
         // Ambil statistik personal karyawan
         $statsLeave = [];
@@ -478,11 +296,11 @@ class AuthController extends BaseController
             'title' => 'Karyawan Dashboard',
             'email' => $_SESSION['email'],
             'role' => $_SESSION['role'],
-            'success' => $_SESSION['success'] ?? null,
+            'success' => $this->getFlash('success'),
             'statsLeave' => $statsLeave,
             'statsAttendance' => $statsAttendance
         ];
-        unset($_SESSION['success']);
+        
         $this->render('employee/dashboard', $data);
     }
 
@@ -491,12 +309,8 @@ class AuthController extends BaseController
      */
     public function changePasswordPage()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        if (!isset($_SESSION['user_id'])) {
-            redirect('/login');//backward compatibility
-        }
+        $this->ensureAuthenticated();
+
         $data = [
             'title' => 'Ganti Password',
             'error' => $_SESSION['error'] ?? null,
@@ -514,14 +328,9 @@ class AuthController extends BaseController
      */
     public function changePassword()
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_SESSION['user_id'])) {
-            redirect('/login');//backward compatibility
-        }
-
+        $this->ensureAuthenticated();
+        $this->validateMethod('POST', '/change-password');
+        
         $new = $_POST['new_password'] ?? '';
         $confirm = $_POST['confirm_password'] ?? '';
 
@@ -536,11 +345,9 @@ class AuthController extends BaseController
         }
 
         $hash = password_hash($new, PASSWORD_BCRYPT);
-        $conn = $this->db->getConnection();
-        $stmt = $conn->prepare("UPDATE users SET password_hash = ?, must_change_password = 0, password_last_changed = NOW() WHERE id = ?");
-        $stmt->bind_param('si', $hash, $_SESSION['user_id']);
         
-        if ($stmt->execute()) {
+        // Gunakan User Model untuk update password (MVC compliant)
+        if ($this->userModel->updatePassword($_SESSION['user_id'], $hash)) {
             $_SESSION['must_change_password'] = false;
             setFlash('success', 'Password berhasil diubah');
             redirect('/dashboard');
