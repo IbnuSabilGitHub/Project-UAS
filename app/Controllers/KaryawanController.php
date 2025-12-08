@@ -120,7 +120,7 @@ class KaryawanController extends BaseController {
 
         // Validasi tanggal join tidak boleh masa depan
         if (!empty($data['join_date']) && strtotime($data['join_date']) > time()) {
-            $_SESSION['error'] = 'Tanggal masuk tidak boleh di masa depan';
+            setFlash('error', 'Tanggal masuk tidak boleh di masa depan');
             redirect('/admin/karyawan');
         }
 
@@ -202,19 +202,19 @@ class KaryawanController extends BaseController {
 
         // Validasi NIK harus 16 digit
         if (!preg_match('/^[0-9]{16}$/', $data['nik'])) {
-            $_SESSION['error'] = 'NIK harus tepat 16 digit angka';
+            setFlash('error', 'NIK harus tepat 16 digit angka');
             redirect('/admin/karyawan');
         }
 
         // Validasi position harus sesuai ENUM
         if (empty($data['position']) || !Karyawan::isValidPosition($data['position'])) {
-            $_SESSION['error'] = 'Posisi tidak valid. Pilih salah satu posisi yang tersedia';
+            setFlash('error', 'Posisi tidak valid. Pilih salah satu posisi yang tersedia');
             redirect('/admin/karyawan');
         }
 
         // Validasi tanggal join tidak boleh masa depan
         if (!empty($data['join_date']) && strtotime($data['join_date']) > time()) {
-            $_SESSION['error'] = 'Tanggal masuk tidak boleh di masa depan';
+            setFlash('error', 'Tanggal masuk tidak boleh di masa depan');
             redirect('/admin/karyawan');
         }
 
