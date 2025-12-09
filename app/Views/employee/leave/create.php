@@ -183,12 +183,12 @@
         const allowedExtensions = /\.(pdf|jpg|jpeg|png)$/i;
 
         if (file.size > maxSize) {
-            alert('Ukuran file maksimal 10MB');
+            ToastManager.error('Ukuran file maksimal 10MB');
             return attachmentInput.value = '';
         }
 
         if (!allowedExtensions.test(file.name)) {
-            alert('Format file tidak valid. Hanya: PDF, JPG, JPEG, PNG');
+            ToastManager.error('Format file tidak valid.');
             return attachmentInput.value = '';
         }
     });
@@ -200,7 +200,7 @@
 
         if (!startDate || !endDate) {
             e.preventDefault();
-            return alert('Silakan pilih tanggal mulai dan tanggal selesai');
+            return ToastManager.error('Silakan pilih tanggal mulai dan tanggal selesai');
         }
 
         // Pastikan hitungan terbaru
@@ -208,7 +208,7 @@
 
         if (parseInt(totalDaysInput.value) <= 0) {
             e.preventDefault();
-            return alert(`Total hari cuti harus lebih dari 0. Total: ${totalDaysInput.value}`);
+            return ToastManager.error(`Total hari cuti harus lebih dari 0. Total: ${totalDaysInput.value}`);
         }
     });
 

@@ -71,8 +71,8 @@ class LeaveRequest {
      * @return string|false Filename yang diupload atau false jika gagal
      */
     private function uploadFile($file) {
-        // Validasi ukuran (max 5MB)
-        if ($file['size'] > 5 * 1024 * 1024) {
+        // Validasi ukuran (max 10MB)
+        if ($file['size'] > 10 * 1024 * 1024) {
             return false;
         }
 

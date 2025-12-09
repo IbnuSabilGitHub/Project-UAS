@@ -154,7 +154,7 @@ class LeaveController extends BaseController {
             
             // Validasi ukuran file (max 10MB)
             if ($_FILES['attachment']['size'] > $maxSize) {
-                setFlash('error', 'Ukuran file maksimal 5MB');
+                setFlash('error', 'Ukuran file maksimal 10MB');
                 redirect('/karyawan/leave/create');
             }
             
