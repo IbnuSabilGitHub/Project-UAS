@@ -160,7 +160,7 @@
 
 <!-- Modal Container -->
 <div id="detailModal"
-    class="fixed inset-0 z-50 hidden flex items-start justify-center overflow-y-auto p-6 mt-14">
+    class="fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto p-6 mt-14">
     <div id="modalBox"
         class="bg-neutral-primary-soft border border-default rounded-base shadow-lg w-full max-w-xl
                opacity-0 scale-95 transition-all duration-200 mt-20">

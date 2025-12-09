@@ -62,7 +62,7 @@
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
                                         <input id="helper-radio-7" name="date-filter-radio" type="radio" value="7"
-                                            class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
+                                            class="w-4 h-4 text-neutral-primary bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (isset($currentDateFilter) && $currentDateFilter === '7') ? 'checked' : '' ?>>
                                     </div>
                                     <div class="ms-2 text-sm">
@@ -76,7 +76,7 @@
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
                                         <input id="helper-radio-30" name="date-filter-radio" type="radio" value="30"
-                                            class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
+                                            class="w-4 h-4 text-neutral-primary bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (isset($currentDateFilter) && $currentDateFilter === '30') ? 'checked' : '' ?>>
                                     </div>
                                     <div class="ms-2 text-sm">
@@ -90,7 +90,7 @@
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
                                         <input id="helper-radio-60" name="date-filter-radio" type="radio" value="60"
-                                            class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
+                                            class="w-4 h-4 text-neutral-primary bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (isset($currentDateFilter) && $currentDateFilter === '60') ? 'checked' : '' ?>>
                                     </div>
                                     <div class="ms-2 text-sm">
@@ -104,7 +104,7 @@
                                 <div class="flex p-2 w-full hover:bg-neutral-tertiary-medium hover:text-heading rounded">
                                     <div class="flex items-center h-5">
                                         <input id="helper-radio-all" name="date-filter-radio" type="radio" value=""
-                                            class="w-4 h-4 text-neutral-primary border-default-strong bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
+                                            class="w-4 h-4 text-neutral-primary bg-neutral-secondary-strong rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none"
                                             <?= (empty($currentDateFilter)) ? 'checked' : '' ?>>
                                     </div>
                                     <div class="ms-2 text-sm">
@@ -459,7 +459,7 @@
 
 <!-- Modal Container -->
 <div id="detailModal"
-    class="fixed inset-0 z-50 hidden flex items-start justify-center overflow-y-auto p-6 mt-14">
+    class="fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto p-6 mt-14">
     <div id="modalBox"
         class="bg-neutral-primary-soft border border-default rounded-base shadow-lg w-full max-w-xl
                opacity-0 scale-95 transition-all duration-200 mt-20">

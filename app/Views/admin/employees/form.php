@@ -141,7 +141,7 @@
                             datepicker-max-date="<?= date('Y-m-d') ?>"
                             type="text"
                             max="<?= date('Y-m-d') ?>"
-                            class="block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3 py-2.5 shadow-xsplaceholder:text-body"
+                            class="block w-full ps-9 pe-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand px-3  shadow-xsplaceholder:text-body"
                             placeholder="Select date">
                     </div>
                 </div>
@@ -158,7 +158,7 @@
                                 name="status"
                                 value="active"
                                 <?= (!isset($k['status']) || $k['status'] === 'active') ? 'checked' : '' ?>
-                                class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none">
+                                class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border appearance-none">
                             <label for="status-active" class="w-full py-4 select-none ms-2 text-sm font-medium text-heading">
                                 Active
                             </label>
@@ -172,7 +172,7 @@
                                 name="status"
                                 value="inactive"
                                 <?= (isset($k['status']) && $k['status'] === 'inactive') ? 'checked' : '' ?>
-                                class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border border-default appearance-none">
+                                class="w-4 h-4 text-neutral-primary border-default-medium bg-neutral-secondary-medium rounded-full checked:border-brand focus:ring-2 focus:outline-none focus:ring-brand-subtle border appearance-none">
                             <label for="status-inactive" class="w-full py-4 select-none ms-2 text-sm font-medium text-heading">
                                 Inactive
                             </label>

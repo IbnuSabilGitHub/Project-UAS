@@ -26,7 +26,7 @@
             <div class="space-y-4 md:space-y-6 py-4 md:py-6">
                 <!-- Warning Alert -->
                 <div class="flex items-start p-4 text-warning-strong rounded-base bg-warning-soft border border-warning-subtle" role="alert">
-                    <svg class="flex-shrink-0 w-5 h-5 mt-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <svg class="shrink-0 w-5 h-5 mt-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                     <div class="ms-3 text-sm">
@@ -102,7 +102,7 @@
 
                 <!-- Critical Warning -->
                 <div class="flex items-start p-4 text-danger-strong rounded-base bg-danger-soft border border-danger-subtle" role="alert">
-                    <svg class="flex-shrink-0 w-5 h-5 mt-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <svg class="shrink-0 w-5 h-5 mt-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 13V8m0 8h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                     <div class="ms-3 text-sm">

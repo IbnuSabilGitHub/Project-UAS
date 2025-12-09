@@ -1,8 +1,8 @@
-<div class="p-4 sm:ml-64 mt-14 bg-neutral-primary">
+The class `bg-gradient-to-r` can be written as `bg-linear-to-r`<div class="p-4 sm:ml-64 mt-14 bg-neutral-primary">
   <!-- Success Alert -->
   <?php if (!empty($success)): ?>
     <div id="alert-success" class="flex items-center p-4 mb-4 text-green-800 border border-green-300 rounded-lg bg-green-50" role="alert">
-      <svg class="flex-shrink-0 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <svg class="shrink-0 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
       </svg>
       <span class="sr-only">Info</span>
@@ -14,7 +14,7 @@
   <div class="bg-neutral-primary-soft border-2 border-default rounded-lg shadow-lg overflow-hidden">
     
     <!-- Header with Sidebar Color -->
-    <div class="bg-gradient-to-r from-neutral-primary via-neutral-primary-soft to-neutral-primary-soft px-6 py-5 border-b-2 border-default shadow-sm">
+    <div class="bg-linear-to-r from-neutral-primary via-neutral-primary-soft to-neutral-primary-soft px-6 py-5 border-b-2 border-default shadow-sm">
       <div class="flex items-center gap-3">
         <div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
           <!-- User-provided icon (IconScout style) -->
@@ -34,7 +34,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
         <!-- Total Karyawan Card -->
-        <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-body text-sm font-medium mb-3">Total Karyawan</p>
@@ -49,7 +49,7 @@
         </div>
 
         <!-- Akun Aktif Card -->
-        <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-body text-sm font-medium mb-3">Akun Aktif</p>
@@ -62,7 +62,7 @@
         </div>
 
         <!-- Bergabung Bulan Ini Card -->
-        <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
+        <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
           <div class="flex items-start justify-between">
             <div>
               <p class="text-body text-sm font-medium mb-3">Bergabung Bulan Ini</p>
@@ -79,7 +79,7 @@
       </div>
 
       <!-- Karyawan Berdasarkan Status -->
-      <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
         <h2 class="text-lg font-bold text-heading mb-4 pb-3 border-b-2 border-default flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           Karyawan Berdasarkan Status
@@ -120,7 +120,7 @@
       </div>
 
       <!-- Karyawan Berdasarkan Posisi -->
-      <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
         <h2 class="text-lg font-bold text-heading mb-5 pb-3 border-b-2 border-default flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
           Karyawan Berdasarkan Posisi
@@ -148,7 +148,7 @@
                 <span class="text-xs font-bold text-body bg-white/50 dark:bg-neutral-primary-soft px-2 py-1 rounded"><?= $count ?></span>
               </div>
               <div class="w-full bg-neutral-secondary rounded-full h-2 overflow-hidden">
-                <div class="bg-gradient-to-r <?= $gradient ?> h-2 rounded-full transition-all duration-500 group-hover:shadow-lg" style="width: <?= number_format($percentage, 0) ?>%;"></div>
+                <div class="bg-linear-to-r <?= $gradient ?> h-2 rounded-full transition-all duration-500 group-hover:shadow-lg" style="width: <?= number_format($percentage, 0) ?>%;"></div>
               </div>
               <p class="text-xs text-body mt-1"><?= number_format($percentage, 1) ?>% dari total</p>
             </div>
@@ -163,7 +163,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
         <!-- Statistik Cuti -->
-        <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 class="text-lg font-bold text-heading mb-5 pb-3 border-b-2 border-default flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
             Statistik Cuti
@@ -205,7 +205,7 @@
         </div>
 
         <!-- Statistik Absensi -->
-        <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
           <h3 class="text-lg font-bold text-heading mb-5 pb-3 border-b-2 border-default flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Statistik Absensi

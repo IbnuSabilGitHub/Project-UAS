@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
 <div class="min-h-screen bg-base-200 flex items-center justify-center p-4">
     <div class="max-w-5xl w-full flex flex-row items-center justify-center gap-16">
-        <div class="flex-shrink-0">
+        <div class="shrink-0">
             <img
                 src="<?= asset('img/404.png') ?>"
                 alt="404 illustration"

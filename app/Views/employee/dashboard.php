@@ -7,7 +7,7 @@
   <div class="bg-neutral-primary-soft border-2 border-default rounded-lg shadow-lg overflow-hidden">
     
     <!-- Header -->
-    <div class="bg-gradient-to-r from-neutral-primary via-neutral-primary-soft to-neutral-primary-soft px-6 py-5 border-b-2 border-default shadow-sm">
+    <div class="bg-linear-to-r from-neutral-primary via-neutral-primary-soft to-neutral-primary-soft px-6 py-5 border-b-2 border-default shadow-sm">
       <div class="flex items-center gap-3">
         <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="user-circle" class="w-6 h-6" aria-hidden="true">
@@ -24,7 +24,7 @@
     <div class="p-6 space-y-6">
       
       <!-- STATISTIK CUTI -->
-      <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
         <h2 class="text-lg font-bold text-heading mb-5 pb-3 border-b-2 border-default flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -35,7 +35,7 @@
         <!-- Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <!-- Total Cuti -->
-          <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
+          <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-body text-xs font-medium mb-2">Total Pengajuan</p>
@@ -50,7 +50,7 @@
           </div>
 
           <!-- Pending -->
-          <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
+          <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-body text-xs font-medium mb-2">Pending</p>
@@ -65,7 +65,7 @@
           </div>
 
           <!-- Approved -->
-          <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
+          <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-body text-xs font-medium mb-2">Disetujui</p>
@@ -80,7 +80,7 @@
           </div>
 
           <!-- Rejected -->
-          <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
+          <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-5 hover:shadow-lg hover:border-default-medium transition-all duration-300 transform hover:-translate-y-1">
             <div class="flex items-start justify-between">
               <div>
                 <p class="text-body text-xs font-medium mb-2">Ditolak</p>
@@ -186,7 +186,7 @@
       </div>
 
       <!-- ==================== STATISTIK ABSENSI ==================== -->
-      <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
         <h2 class="text-lg font-bold text-heading mb-5 pb-3 border-b-2 border-default flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
@@ -287,7 +287,7 @@
       </div>
 
       <!-- ==================== RIWAYAT 7 HARI TERAKHIR ==================== -->
-      <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+      <div class="bg-linear-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
         <h2 class="text-lg font-bold text-heading mb-5 pb-3 border-b-2 border-default flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
