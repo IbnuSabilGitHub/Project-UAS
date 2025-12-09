@@ -1,15 +1,3 @@
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HRIS - Pilih Login</title>
-  <link rel="stylesheet" href="<?= url('/assets/css/output.css') ?>">
-  <script src="<?= url('/assets/js/apply-theme.js') ?>"></script>
-</head>
-
-<body class="bg-neutral-secondary-soft">
   <div class="flex items-center justify-center min-h-screen w-full p-4">
     <div class="w-full max-w-4xl">
       <!-- Header -->
@@ -90,8 +78,3 @@
       </div>
     </div>
   </div>
-
-  <script src="<?= url('/assets/js/theme.js') ?>"></script>
-</body>
-
-</html>

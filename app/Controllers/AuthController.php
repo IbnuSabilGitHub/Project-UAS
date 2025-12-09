@@ -54,12 +54,8 @@ class AuthController extends BaseController
         $this->redirectIfAuthenticated();
 
         $data = [
-            'error' => $_SESSION['error'] ?? null,
-            'success' => $_SESSION['success'] ?? null,
             'title' => 'Login Admin - HRIS'
         ];
-
-        unset($_SESSION['error'], $_SESSION['success']);
 
         $this->renderWithoutSidebar('auth/login-admin', $data);
     }
@@ -74,12 +70,8 @@ class AuthController extends BaseController
         $this->redirectIfAuthenticated();
 
         $data = [
-            'error' => $_SESSION['error'] ?? null,
-            'success' => $_SESSION['success'] ?? null,
             'title' => 'Login Karyawan - HRIS'
         ];
-
-        unset($_SESSION['error'], $_SESSION['success']);
 
         $this->renderWithoutSidebar('auth/login-karyawan', $data);
     }
@@ -264,12 +256,10 @@ class AuthController extends BaseController
             'title' => 'Admin Dashboard',
             'email' => $_SESSION['email'],
             'role' => $_SESSION['role'],
-            'success' => $_SESSION['success'] ?? null,
             'statsLeave' => $statsLeave,
             'statsAttendance' => $statsAttendance,
             'statsKaryawan' => $statsKaryawan
         ];
-        unset($_SESSION['success']);
         $this->render('admin/dashboard', $data);
     }
 
@@ -312,15 +302,10 @@ class AuthController extends BaseController
         $this->ensureAuthenticated();
 
         $data = [
-            'title' => 'Ganti Password',
-            'error' => $_SESSION['error'] ?? null,
-            'success' => $_SESSION['success'] ?? null
+            'title' => 'Ganti Password'
         ];
 
-        // Bersihkan pesan session setelah diambil
-        unset($_SESSION['error'], $_SESSION['success']);
         $this->renderWithoutSidebar('auth/change-password', $data);
-
     }
 
     /**

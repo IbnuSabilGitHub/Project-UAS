@@ -2,16 +2,6 @@
 <?php require_once __DIR__ . '/../layouts/sidebar.php'; ?>
 
 <div class="p-4 sm:ml-64 mt-14 bg-neutral-primary">
-  <!-- Success Alert -->
-  <?php if (!empty($success)): ?>
-    <div id="alert-success" class="flex items-center p-4 mb-4 text-green-800 border border-green-300 rounded-lg bg-green-50" role="alert">
-      <svg class="flex-shrink-0 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-      </svg>
-      <span class="sr-only">Info</span>
-      <div class="ms-3 text-sm font-medium"><?= htmlspecialchars($success) ?></div>
-    </div>
-  <?php endif; ?>
 
   <!-- Main Dashboard Container -->
   <div class="bg-neutral-primary-soft border-2 border-default rounded-lg shadow-lg overflow-hidden">
@@ -33,7 +23,7 @@
 
     <div class="p-6 space-y-6">
       
-      <!-- ==================== STATISTIK CUTI ==================== -->
+      <!-- STATISTIK CUTI -->
       <div class="bg-gradient-to-br from-neutral-primary-soft to-neutral-primary border-2 border-default rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
         <h2 class="text-lg font-bold text-heading mb-5 pb-3 border-b-2 border-default flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-cyan-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -397,16 +387,6 @@
 
     </div>
   </div>
-
-  <script>
-    // Alert auto-hide after 5 seconds
-    setTimeout(() => {
-      const alert = document.getElementById('alert-success');
-      if (alert) {
-        alert.style.display = 'none';
-      }
-    }, 5000);
-  </script>
 </div>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>

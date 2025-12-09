@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## **[Refactor: Deprecate Inline Alerts in Favor of Toast Notifications] - 2024-12-10**
+Hapus semua alert inline di views dan menggantinya dengan sistem toast notification yang konsisten di seluruh aplikasi.
+
+
+
+### **Files Changed**
+**Views:**
+  Mengehapus alert inline di berbagai views:
+        modified:   app/Views/admin/attendance/index.php
+        modified:   app/Views/admin/employees/index.php
+        modified:   app/Views/auth/change-password.php
+        modified:   app/Views/employee/attendance.php
+        modified:   app/Views/employee/dashboard.php
+        modified:   app/Views/employee/leave/create.php
+        modified:   app/Views/employee/leave/index.php
+        modified:   app/Views/index.php
+        deleted:    app/Views/layouts/components/alerts.php
+        deleted:    app/Views/layouts/components/pagination.php
+
+**Controllers:**
+        modified:   app/Controllers/AuthController.php - menghapus deprecated alert
+
+
 ## **[Refactor: MVC Architecture Compliance - Full System Refactor] - 2024-12-09**
 
 ### **Major Refactoring MVC Responsibility Separation**
