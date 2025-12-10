@@ -105,8 +105,7 @@ class AuthController extends BaseController
 
         // Cek apakah user adalah admin/super_admin
         if (!$this->userModel->isAdmin($user)) {
-            setFlash('error', 'Anda tidak memiliki akses admin');
-            redirect('/admin/login');
+            $this->show403();
         }
 
         if (!$this->userModel->isActive($user)) {
