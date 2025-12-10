@@ -266,13 +266,14 @@
                                             </a>
                                         </li>
 
-                                        <li>
-                                            <hr class="my-1 border-default-medium">
-                                        </li>
+
 
                                         <?php if (!empty($k['user_id'])): ?>
                                             <!-- Nonaktifkan Akun (hanya jika akun ada dan aktif) -->
                                             <?php if (($k['employment_status'] ?? 'active') === 'active'): ?>
+                                                <li>
+                                                    <hr class="my-1 border-default-medium">
+                                                </li>
                                                 <li>
                                                     <form action="<?= url('/admin/karyawan/deactivate') ?>"
                                                         method="post"
@@ -289,6 +290,9 @@
                                             <?php endif; ?>
                                         <?php else: ?>
                                             <!-- Aktifkan Akun (jika belum ada akun) -->
+                                            <li>
+                                                <hr class="my-1 border-default-medium">
+                                            </li>
                                             <li>
                                                 <form action="<?= url('/admin/karyawan/activate') ?>"
                                                     method="post"

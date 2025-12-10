@@ -5,6 +5,124 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## **[Fix: Multi-Environment Path Detection & Asset Loading] - 2024-12-10**
+
+### **🔧 Critical Fix: Path Generation untuk Berbagai Environment**
+
+Memperbaiki masalah path yang menyebabkan CSS, JavaScript, dan assets tidak terbaca saat aplikasi dijalankan di environment selain XAMPP htdocs (seperti PHP built-in server atau Apache Virtual Host).
+
+### **Problem Solved**
+**Before:**
+- Assets tidak terbaca saat menggunakan `php -S localhost:8000 -t public`
+- Path salah di Virtual Host dengan document root di `public/`
+- URL generation error: `http://localhost:8000/public/assets/...` (404)
+- **Double slash di URL**: `http://hris.test//admin/login` ❌
+- **Double slash di URL**: `http://localhost:8000//karyawan/login` ❌
+
+**After:**
+-  Otomatis deteksi document root location
+-  Generate path yang benar untuk semua environment
+-  Support XAMPP htdocs, PHP Server, Virtual Host, Nginx
+-  **No more double slash**: `/admin/login` ✓
+-  **Clean URLs**: Konsisten di semua environment
+
+### **Changes**
+
+#### **1. Core Helpers** (`app/Core/Helpers.php`)
+**New Functions:**
+- `is_public_document_root()` - Deteksi apakah document root di folder `public/` atau root project
+  ```php
+  // Cek dari SCRIPT_FILENAME apakah mengandung '/public/'
+  return strpos($scriptPath, '/public/') !== false;
+  ```
+
+**Updated Functions:**
+- `base_url()` - Improved detection untuk berbagai environment
+  - Support HTTPS detection yang lebih baik
+  - Automatic path adjustment untuk public/ document root
+  - Handle edge cases (root "/", Windows path separator)
+  
+- `url($path)` - **Fixed double slash bug**
+  ```php
+  // OLD (BUGGY):
+  return rtrim(base_url(), '/') . '/' . ltrim($path, '/');
+  // Hasil: "//admin/login" jika base_url() kosong 
+  
+  // NEW (FIXED):
+  $cleanPath = '/' . ltrim($path, '/');
+  if (empty($baseUrl)) {
+      return $cleanPath;  // Return "/admin/login" 
+  }
+  return rtrim($baseUrl, '/') . $cleanPath;
+  ```
+
+- `redirect($path)` - Same fix untuk menghindari double slash di redirect
+  
+- `asset($path)` - Smart asset path generation dengan clean path logic
+  ```php
+  // XAMPP htdocs: /HRIS/public/assets/css/output.css
+  // Virtual Host: /assets/css/output.css
+  // PHP Server: /assets/css/output.css (jika -t public)
+  ```
+
+#### **2. New Files**
+
+**`docs/DEPLOYMENT.md`** - Comprehensive deployment guide
+- Setup instructions untuk 4 environment:
+  - XAMPP/WAMP (Subfolder htdocs)
+  - PHP Built-in Server
+  - Apache Virtual Host
+  - Nginx
+- Troubleshooting common issues
+- Environment comparison table
+- Production deployment checklist
+
+
+#### **3. Documentation Updates**
+
+**`README.md`** - Updated setup section
+- Multi-environment support highlighted
+- 4 cara menjalankan aplikasi dengan pros/cons
+- Link ke DEPLOYMENT.md untuk panduan detail
+- Testing instructions dengan test-path.php
+
+### **Technical Details**
+
+**Path Detection Algorithm:**
+```php
+1. Check SCRIPT_FILENAME for '/public/' substring
+2. If found → Document root is public/ (Virtual Host/PHP Server mode)
+3. If not → Document root is project root (XAMPP htdocs mode)
+4. Adjust base_url() and asset() accordingly
+```
+
+**Environment Detection:**
+| Environment | Document Root | base_url() | asset() |
+|-------------|---------------|------------|---------|
+| XAMPP htdocs | `/htdocs/HRIS/` | `/HRIS` | `/HRIS/public/assets/...` |
+| PHP Server (root) | `/HRIS/` | `` | `/public/assets/...` |
+| PHP Server (public) | `/HRIS/public/` | `` | `/assets/...` |
+| Virtual Host | `/HRIS/public/` | `` | `/assets/...` |
+
+
+### **Migration Guide**
+Tidak ada breaking changes. Update otomatis berlaku untuk semua environment:
+1. Pull latest code
+2. Clear browser cache
+3. Test dengan `test-path.php`
+4. Verify assets terbaca dengan benar
+
+### **Files Modified**
+```
+modified:   app/Core/Helpers.php
+modified:   README.md
+new file:   docs/DEPLOYMENT.md
+new file:   test-path.php
+modified:   CHANGELOG.md
+```
+
+---
+
 ## **[Refactor: Deprecate Inline Alerts in Favor of Toast Notifications] - 2024-12-10**
 Hapus semua alert inline di views dan menggantinya dengan sistem toast notification yang konsisten di seluruh aplikasi.
 

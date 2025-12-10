@@ -155,15 +155,15 @@
 
 <!-- Overlay -->
 <div id="modalOverlay"
-    class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-200 ">
+    class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-200">
 </div>
 
 <!-- Modal Container -->
 <div id="detailModal"
-    class="fixed inset-0 z-50 hidden items-start justify-center overflow-y-auto p-6 mt-14">
+    class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto p-6">
     <div id="modalBox"
         class="bg-neutral-primary-soft border border-default rounded-base shadow-lg w-full max-w-xl
-               opacity-0 scale-95 transition-all duration-200 mt-20">
+               opacity-0 scale-95 transition-all duration-200 my-8">
 
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-default p-4">

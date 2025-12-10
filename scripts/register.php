@@ -21,11 +21,11 @@ require_once dirname(__DIR__) . '/app/Core/Database.php';
 
 $db = new Database();
 $conn = $db->getConnection();
-$email = 'kelompok8@gmail.com';
-$password = 'kelompok8';
-$role = 'admin'; // atau 'karyawan'
+$email = 'ibnu@gmail.com';
+$password = 'ibnu123';
+$role = 'super_admin'; // atau 'karyawan'
 
-if($role === 'admin'){
+if($role === 'admin' || $role === 'super_admin') {
     $karyawan_id = null; // admin tidak terkait dengan karyawan manapun
 } else {
     echo "Untuk membuat user karyawan, buat dulu data karyawannya";

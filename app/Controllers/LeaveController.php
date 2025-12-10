@@ -145,19 +145,8 @@ class LeaveController extends BaseController {
 
         // Validasi file upload jika ada
         $file = null;
-        $maxSize = 10 * 1024 * 1024; // 10MB 
         if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] !== UPLOAD_ERR_NO_FILE) {
-            if ($_FILES['attachment']['error'] !== UPLOAD_ERR_OK) {
-                setFlash('error', 'Error saat upload file');
-                redirect('/karyawan/leave/create');
-            }
-            
-            // Validasi ukuran file (max 10MB)
-            if ($_FILES['attachment']['size'] > $maxSize) {
-                setFlash('error', 'Ukuran file maksimal 10MB');
-                redirect('/karyawan/leave/create');
-            }
-            
+            // Jangan validasi di controller, biar model yang handle dengan error message detail
             $file = $_FILES['attachment'];
         }
 

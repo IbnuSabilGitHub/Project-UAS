@@ -198,6 +198,82 @@ Jalankan perintah berikut untuk compile Tailwind CSS:
 npm run dev
 ```
 Atau jika ingin watch mode (auto-compile saat ada perubahan):
+
+### 5️⃣ Running the Application
+
+**📌 PENTING: Multi-Environment Support**
+
+Aplikasi HRIS mendukung berbagai environment deployment dengan **automatic path detection**:
+
+#### **Option 1: XAMPP/WAMP (Subfolder htdocs)** ✅ Default
+```
+URL: http://localhost/HRIS/
+Document Root: htdocs/HRIS/
+```
+Cara menjalankan:
+1. Copy project ke `C:/xampp/htdocs/HRIS/`
+2. Start Apache dan MySQL di XAMPP Control Panel
+3. Akses: `http://localhost/HRIS/`
+
+#### **Option 2: PHP Built-in Server** 🚀 Recommended untuk Development
+```bash
+# Document root di folder public/ (Recommended)
+php -S localhost:8000 -t public
+
+# Atau document root di root project
+php -S localhost:8000
+```
+URL: `http://localhost:8000`
+
+**Keuntungan:**
+- Tidak perlu XAMPP/Apache
+- Cepat untuk testing
+- Port bisa diganti (8080, 3000, dll)
+
+#### **Option 3: Apache Virtual Host** 🎯 Recommended untuk Production
+Setup virtual host dengan document root di `public/`:
+```apache
+<VirtualHost *:80>
+    ServerName hris.local
+    DocumentRoot "C:/xampp/htdocs/HRIS/public"
+    <Directory "C:/xampp/htdocs/HRIS/public">
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+```
+URL: `http://hris.local`
+
+#### **Option 4: Nginx**
+```nginx
+server {
+    listen 80;
+    server_name hris.local;
+    root /var/www/hris/public;
+    
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        include fastcgi_params;
+    }
+}
+```
+
+**📖 Dokumentasi Lengkap:**
+Untuk panduan deployment detail di berbagai environment, lihat: **`docs/DEPLOYMENT.md`**
+
+**🧪 Testing Path Detection:**
+Jalankan file test untuk memverifikasi path bekerja dengan benar:
+```
+http://localhost/HRIS/test-path.php      (XAMPP)
+http://localhost:8000/test-path.php      (PHP Server)
+http://hris.local/test-path.php          (Virtual Host)
+```
+
+### 6️⃣ Create Admin Account
 ```bash
 npx @tailwindcss/cli -i ./public/assets/css/input.css -o ./public/assets/css/output.css --watch
 ```
