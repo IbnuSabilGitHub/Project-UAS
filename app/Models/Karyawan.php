@@ -116,6 +116,48 @@ class Karyawan
     }
 
     /**
+     * Cek apakah NIK sudah terdaftar
+     * 
+     * @param string $nik
+     * @param int|null $excludeId ID karyawan yang dikecualikan (untuk update)
+     * @return bool
+     */
+    public function isNikExists($nik, $excludeId = null)
+    {
+        if ($excludeId) {
+            $stmt = $this->conn->prepare("SELECT id FROM karyawan WHERE nik = ? AND id != ? LIMIT 1");
+            $stmt->bind_param('si', $nik, $excludeId);
+        } else {
+            $stmt = $this->conn->prepare("SELECT id FROM karyawan WHERE nik = ? LIMIT 1");
+            $stmt->bind_param('s', $nik);
+        }
+        $stmt->execute();
+        $res = $stmt->get_result();
+        return $res->num_rows > 0;
+    }
+
+    /**
+     * Cek apakah email sudah terdaftar
+     * 
+     * @param string $email
+     * @param int|null $excludeId ID karyawan yang dikecualikan (untuk update)
+     * @return bool
+     */
+    public function isEmailExists($email, $excludeId = null)
+    {
+        if ($excludeId) {
+            $stmt = $this->conn->prepare("SELECT id FROM karyawan WHERE email = ? AND id != ? LIMIT 1");
+            $stmt->bind_param('si', $email, $excludeId);
+        } else {
+            $stmt = $this->conn->prepare("SELECT id FROM karyawan WHERE email = ? LIMIT 1");
+            $stmt->bind_param('s', $email);
+        }
+        $stmt->execute();
+        $res = $stmt->get_result();
+        return $res->num_rows > 0;
+    }
+
+    /**
      * Membuat data karyawan baru
      * 
      * @param array $data
