@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/Attendance.php';
+require_once __DIR__ . '/../Models/Karyawan.php';
 
 /**
  * AttendanceController - Mengelola fitur absensi karyawan
@@ -10,11 +11,13 @@ require_once __DIR__ . '/../Models/Attendance.php';
  * Fitur untuk admin: view semua absensi, filter, export CSV
  */
 class AttendanceController extends BaseController {
-    private $model;        
+    private $model;
+    private $karyawanModel;
 
     public function __construct() {
         parent::__construct(); // Initialize userModel dari BaseController
         $this->model = new Attendance();
+        $this->karyawanModel = new Karyawan();
     }
 
     // KARYAWAN METHODS
@@ -33,6 +36,10 @@ class AttendanceController extends BaseController {
             setFlash('error', 'Data karyawan tidak ditemukan');
             redirect('/karyawan/dashboard');
         }
+        
+        // Ambil data karyawan untuk cek status
+        $karyawan = $this->karyawanModel->find($karyawanId);
+        $isActive = $karyawan && $karyawan['status'] === 'active';
 
         // Cek status hari ini
         $todayStatus = $this->model->hasCheckedInToday($karyawanId);
@@ -48,6 +55,8 @@ class AttendanceController extends BaseController {
             'todayStatus' => $todayStatus,
             'history' => $history,
             'stats' => $stats,
+            'karyawan' => $karyawan,
+            'isActive' => $isActive,
             'success' => $this->getFlash('success'),
             'error' => $this->getFlash('error')
         ];
@@ -66,6 +75,13 @@ class AttendanceController extends BaseController {
 
         $karyawanId = $this->getKaryawanId();
         $notes = trim($_POST['notes'] ?? '');
+        
+        // Validasi: cek status karyawan harus active
+        $karyawan = $this->karyawanModel->find($karyawanId);
+        if (!$karyawan || $karyawan['status'] !== 'active') {
+            setFlash('error', 'Status karyawan tidak aktif. Anda tidak dapat melakukan absensi.');
+            redirect('/karyawan/attendance');
+        }
 
         if ($this->model->checkIn($karyawanId, $notes)) {
             setFlash('success', 'Check-in berhasil!');
@@ -87,6 +103,13 @@ class AttendanceController extends BaseController {
 
         $karyawanId = $this->getKaryawanId();
         $notes = trim($_POST['notes'] ?? '');
+        
+        // Validasi: cek status karyawan harus active
+        $karyawan = $this->karyawanModel->find($karyawanId);
+        if (!$karyawan || $karyawan['status'] !== 'active') {
+            setFlash('error', 'Status karyawan tidak aktif. Anda tidak dapat melakukan absensi.');
+            redirect('/karyawan/attendance');
+        }
 
         if ($this->model->checkOut($karyawanId, $notes)) {
             setFlash('success', 'Check-out berhasil!');

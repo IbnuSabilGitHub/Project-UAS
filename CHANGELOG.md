@@ -5,7 +5,34 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## **[fix: validation min date attendance] - 2024-12-11**
+## **[Feature: Inactive Employee Attendance Restriction] - 2024-12-10**
+
+Menambahkan fitur validasi untuk mencegah karyawan dengan status `inactive` melakukan absensi. Validasi dilakukan di backend dan frontend untuk keamanan ganda.
+
+### **Backend Changes**
+
+**AttendanceController** (`app/Controllers/AttendanceController.php`):
+- Tambah `require_once` untuk Karyawan model
+- Tambah property `$karyawanModel` untuk akses data karyawan
+- Method `index()`: Kirim data `$karyawan` dan `$isActive` ke view
+- Method `checkIn()`: Validasi status karyawan sebelum proses check-in
+- Method `checkOut()`: Validasi status karyawan sebelum proses check-out
+- Jika status `inactive`, tampilkan error dan redirect
+
+
+### **Frontend Changes**
+
+**Employee Attendance View** (`app/Views/employee/attendance.php`):
+- Tambah kondisi `<?php if (!$isActive): ?>` sebelum form
+- Tampilkan alert merah dengan pesan "Status Tidak Aktif!"
+- Disable button dan textarea jika karyawan inactive
+- Ganti button text menjadi "Absensi Tidak Tersedia" dengan icon ban
+- Styling disabled state dengan `cursor-not-allowed` dan warna neutral
+
+
+
+---
+
 ## **[Refactor: Deprecate Inline Alerts in Favor of Toast Notifications] - 2024-12-10**
 Hapus semua alert inline di views dan menggantinya dengan sistem toast notification yang konsisten di seluruh aplikasi.
 

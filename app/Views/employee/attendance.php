@@ -65,7 +65,31 @@
         <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
             <h2 class="text-xl font-semibold mb-4 text-heading">Absensi</h2>
 
-            <?php if (!$todayStatus): ?>
+            <?php if (!$isActive): ?>
+                <!-- Karyawan Inactive - Tidak bisa absensi -->
+                <div class="flex items-start p-4 mb-4 text-sm text-fg-danger rounded-base bg-danger-soft border border-danger-subtle" role="alert">
+                    <svg class="w-5 h-5 me-2 shrink-0 mt-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z"/>
+                    </svg>
+                    <div>
+                        <span class="font-semibold">Status Tidak Aktif!</span>
+                        <p class="mt-1">Anda tidak dapat melakukan absensi karena status karyawan Anda saat ini <strong>tidak aktif</strong>. Silakan hubungi admin/HR untuk informasi lebih lanjut.</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-heading mb-2">Catatan (opsional)</label>
+                        <textarea disabled rows="3"
+                            class="bg-neutral-tertiary-medium border border-default-medium text-body text-sm rounded-base block w-full px-3 py-2.5 shadow cursor-not-allowed"
+                            placeholder="Fitur absensi dinonaktifkan"></textarea>
+                    </div>
+                    <button type="button" disabled
+                        class="w-full text-white bg-neutral-tertiary-medium cursor-not-allowed font-medium leading-5 rounded-base text-sm px-4 py-2.5">
+                        <i class="fa-solid fa-ban me-2"></i>Absensi Tidak Tersedia
+                    </button>
+                </div>
+            <?php elseif (!$todayStatus): ?>
                 <!-- Form Check-in -->
                 <form action="<?= url('/karyawan/attendance/checkin') ?>" method="POST">
                     <div class="mb-4">
