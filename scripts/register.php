@@ -23,9 +23,9 @@ $db = new Database();
 $conn = $db->getConnection();
 $email = 'kelompok8@gmail.com';
 $password = 'kelompok8';
-$role = 'admin'; // atau 'karyawan'
+$role = 'super_admin'; // atau 'karyawan'
 
-if($role === 'admin'){
+if($role === 'admin' || $role === 'karyawan') {
     $karyawan_id = null; // admin tidak terkait dengan karyawan manapun
 } else {
     echo "Untuk membuat user karyawan, buat dulu data karyawannya";

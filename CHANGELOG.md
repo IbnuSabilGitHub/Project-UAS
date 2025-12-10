@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## **[fix: validation min date attendance] - 2024-12-11**
 ## **[Refactor: Deprecate Inline Alerts in Favor of Toast Notifications] - 2024-12-10**
 Hapus semua alert inline di views dan menggantinya dengan sistem toast notification yang konsisten di seluruh aplikasi.
 
