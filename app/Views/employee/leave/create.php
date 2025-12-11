@@ -25,7 +25,11 @@
                 <label class="block text-sm font-medium text-heading mb-2 ">
                     Pilih Rentang Tanggal
                 </label>
-                <div id="date-range-picker" date-rangepicker datepicker-format="yyyy-mm-dd" class="flex items-center gap-4 w-full">
+                <div
+                    id="date-range-picker"
+                    date-rangepicker datepicker-format="yyyy-mm-dd"
+                    datepicker-min-date="<?= date('Y-m-d') ?>"
+                    class="flex items-center gap-4 w-full">
                     <!-- start date -->
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -106,16 +110,16 @@
 <script>
     function handleCancelLeaveForm(event) {
         event.preventDefault();
-        
+
         // Cek apakah form sudah diisi
         const leaveType = document.getElementById('leave_type').value;
         const startDate = document.getElementById('start_date').value;
         const endDate = document.getElementById('end_date').value;
         const reason = document.getElementById('reason').value;
         const attachment = document.getElementById('attachment').files.length;
-        
+
         const hasData = leaveType || startDate || endDate || reason.trim() !== '' || attachment > 0;
-        
+
         if (hasData) {
             ToastManager.showAction({
                 type: 'confirm',
@@ -159,7 +163,7 @@
             return setTotalDays(0);
         }
 
-        const diffDays = Math.floor((end - start) / 86400000) + 1; // 86400000 = 1000 * 60 * 60 * 24
+        const diffDays = Math.floor((end - start) / 86400000) + 1;
         setTotalDays(diffDays);
     }
 
@@ -167,11 +171,6 @@
     ['change', 'input', 'changeDate'].forEach(evt => {
         startDateInput.addEventListener(evt, calculateDays);
         endDateInput.addEventListener(evt, calculateDays);
-    });
-
-    // Update min end date
-    startDateInput.addEventListener('change', () => {
-        endDateInput.min = startDateInput.value;
     });
 
     // Validasi File
@@ -208,7 +207,7 @@
 
         if (parseInt(totalDaysInput.value) <= 0) {
             e.preventDefault();
-            return ToastManager.error(`Total hari cuti harus lebih dari 0. Total: ${totalDaysInput.value}`);
+            return ToastManager.error('Total hari cuti harus lebih dari 0');
         }
     });
 

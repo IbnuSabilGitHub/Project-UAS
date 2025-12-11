@@ -124,6 +124,18 @@ class KaryawanController extends BaseController {
             redirect('/admin/karyawan');
         }
 
+        // Validasi format email
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            setFlash('error', 'Format email tidak valid');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi email harus punya domain yang valid (minimal .xx)
+        if (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $data['email'])) {
+            setFlash('error', 'Email harus menggunakan domain yang valid (contoh: user@gmail.com)');
+            redirect('/admin/karyawan');
+        }
+
         // Validasi position harus sesuai ENUM
         if (empty($data['position']) || !Karyawan::isValidPosition($data['position'])) {
             setFlash('error', 'Posisi tidak valid. Pilih salah satu posisi yang tersedia');
@@ -133,6 +145,18 @@ class KaryawanController extends BaseController {
         // Validasi tanggal join tidak boleh masa depan
         if (!empty($data['join_date']) && strtotime($data['join_date']) > time()) {
             setFlash('error', 'Tanggal masuk tidak boleh di masa depan');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi NIK tidak boleh duplikat
+        if ($this->model->isNikExists($data['nik'])) {
+            setFlash('error', 'NIK sudah terdaftar. Silakan gunakan NIK yang berbeda');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi email tidak boleh duplikat
+        if ($this->model->isEmailExists($data['email'])) {
+            setFlash('error', 'Email sudah terdaftar. Silakan gunakan email yang berbeda');
             redirect('/admin/karyawan');
         }
 
@@ -220,6 +244,18 @@ class KaryawanController extends BaseController {
             redirect('/admin/karyawan');
         }
 
+        // Validasi format email
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            setFlash('error', 'Format email tidak valid. Contoh: user@example.com');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi email harus punya domain yang valid (minimal .xx)
+        if (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $data['email'])) {
+            setFlash('error', 'Email harus menggunakan domain yang valid (contoh: user@gmail.com)');
+            redirect('/admin/karyawan');
+        }
+
         // Validasi position harus sesuai ENUM
         if (empty($data['position']) || !Karyawan::isValidPosition($data['position'])) {
             setFlash('error', 'Posisi tidak valid. Pilih salah satu posisi yang tersedia');
@@ -229,6 +265,18 @@ class KaryawanController extends BaseController {
         // Validasi tanggal join tidak boleh masa depan
         if (!empty($data['join_date']) && strtotime($data['join_date']) > time()) {
             setFlash('error', 'Tanggal masuk tidak boleh di masa depan');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi NIK tidak boleh duplikat (kecuali milik sendiri)
+        if ($this->model->isNikExists($data['nik'], $id)) {
+            setFlash('error', 'NIK sudah terdaftar oleh karyawan lain');
+            redirect('/admin/karyawan');
+        }
+
+        // Validasi email tidak boleh duplikat (kecuali milik sendiri)
+        if ($this->model->isEmailExists($data['email'], $id)) {
+            setFlash('error', 'Email sudah terdaftar oleh karyawan lain');
             redirect('/admin/karyawan');
         }
 

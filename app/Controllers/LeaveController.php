@@ -125,7 +125,19 @@ class LeaveController extends BaseController {
             redirect('/karyawan/leave/create');
         }
 
-        // Validasi tanggal
+        // Validasi tanggal: tidak boleh di masa lalu
+        $today = date('Y-m-d');
+        if ($startDate < $today) {
+            setFlash('error', 'Tanggal mulai cuti tidak boleh di masa lalu');
+            redirect('/karyawan/leave/create');
+        }
+        
+        if ($endDate < $today) {
+            setFlash('error', 'Tanggal selesai cuti tidak boleh di masa lalu');
+            redirect('/karyawan/leave/create');
+        }
+        
+        // Validasi: end date harus >= start date
         if ($startDate > $endDate) {
             setFlash('error', 'Tanggal mulai tidak boleh lebih besar dari tanggal selesai');
             redirect('/karyawan/leave/create');

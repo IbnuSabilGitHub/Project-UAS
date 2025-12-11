@@ -75,8 +75,7 @@ class FileController extends BaseController {
 
         // Cek permission
         if (!$this->canAccessFile($leave)) {
-            http_response_code(403);
-            die('Forbidden: Anda tidak memiliki akses ke file ini');
+            $this->show403();
         }
 
         // Cek apakah ada file

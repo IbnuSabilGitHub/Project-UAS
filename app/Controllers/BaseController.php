@@ -34,8 +34,7 @@ class BaseController {
         $this->startSession();
         
         if (!isset($_SESSION['user_id'])) {
-            setFlash('error', 'Silakan login terlebih dahulu');
-            redirect('/');
+            $this->show403();
         }
     }
 
@@ -48,8 +47,7 @@ class BaseController {
         $this->startSession();
         
         if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'super_admin'])) {
-            setFlash('error', 'Akses ditolak');
-            redirect('/admin/login');
+            $this->show403();
         }
     }
 
@@ -62,9 +60,19 @@ class BaseController {
         $this->startSession();
         
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'karyawan') {
-            setFlash('error', 'Akses ditolak');
-            redirect('/karyawan/login');
+            $this->show403();
         }
+    }
+    
+    /**
+     * Tampilkan halaman 403 Forbidden
+     * 
+     * @return void
+     */
+    protected function show403() {
+        http_response_code(403);
+        require_once __DIR__ . '/../Views/errors/403.php';
+        exit;
     }
     
     /**

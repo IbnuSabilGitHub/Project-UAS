@@ -160,10 +160,10 @@
 
 <!-- Modal Container -->
 <div id="detailModal"
-    class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto p-6">
+    class="fixed inset-0 z-50 hidden flex items-center justify-center overflow-y-auto p-6">
     <div id="modalBox"
         class="bg-neutral-primary-soft border border-default rounded-base shadow-lg w-full max-w-xl
-               opacity-0 scale-95 transition-all duration-200 my-8">
+               opacity-0 scale-95 transition-all duration-200">
 
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-default p-4">
@@ -186,10 +186,8 @@
 
         <!-- Body (auto-filled) -->
         <div id="modalContent" class="p-4 space-y-4 text-body leading-relaxed"></div>
-
     </div>
 </div>
-
 
 
 
