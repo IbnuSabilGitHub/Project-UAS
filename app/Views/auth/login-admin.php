@@ -1,4 +1,4 @@
-<div class="flex items-center justify-center min-h-screen w-full">
+<div class="flex items-center justify-center min-h-screen w-full p-4">
     <div class="w-full max-w-sm bg-neutral-primary-soft p-6 border border-default rounded-base shadow-xs">
         <form method="POST" action="<?= url('/admin/login') ?>" class="space-y-6">
             <div class="text-center mb-6">

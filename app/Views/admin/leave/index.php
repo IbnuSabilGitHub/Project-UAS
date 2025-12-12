@@ -6,32 +6,32 @@
     <!-- Statistik pengajuan cuti  -->
     <?php if (isset($statistics) && !empty($statistics)): ?>
         <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
-            <h2 class="text-xl font-semibold mb-4 text-heading">Statistik Pengajuan Cuti Karyawan</h2>
+            <h2 class="text-xl md:text-2xl font-semibold mb-4 text-heading">Statistik Pengajuan Cuti Karyawan</h2>
 
             <!-- Card -->
-            <div class="grid md:grid-cols-4 gap-4 mb-6">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
                 <!-- Total Pengajuan (referensi) -->
-                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['total'] ?? 0 ?></p>
-                    <p class="text-body">Total Pengajuan</p>
+                <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                    <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $statistics['total'] ?? 0 ?></p>
+                    <p class="text-sm sm:text-base text-body">Total Pengajuan</p>
                 </div>
 
                 <!-- Pending -->
-                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['pending'] ?? 0 ?></p>
-                    <p class="text-body">Pending</p>
+                <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                    <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $statistics['pending'] ?? 0 ?></p>
+                    <p class="text-sm sm:text-base text-body">Pending</p>
                 </div>
 
                 <!-- Approved -->
-                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['approved'] ?? 0 ?></p>
-                    <p class="text-body">Approved</p>
+                <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                    <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $statistics['approved'] ?? 0 ?></p>
+                    <p class="text-sm sm:text-base text-body">Approved</p>
                 </div>
 
                 <!-- Rejected -->
-                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['rejected'] ?? 0 ?></p>
-                    <p class="text-body">Rejected</p>
+                <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                    <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $statistics['rejected'] ?? 0 ?></p>
+                    <p class="text-sm sm:text-base text-body">Rejected</p>
                 </div>
             </div>
         </div>
@@ -39,16 +39,16 @@
     <?php endif; ?>
 
     <div class="flex-1 overflow-y-auto overflow-x-auto shadow-md sm:rounded-base bg-neutral-secondary-soft p-4 space-y-4">
-        <div class="flex flex-row items-center justify-between w-full">
-            <h1 class="text-2xl font-bold text-heading">Daftar Pengajuan Cuti</h1>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+            <h1 class="text-xl md:text-2xl font-bold text-heading">Daftar Pengajuan Cuti</h1>
 
-            <!-- Warpper filter -->
-            <div class="flex flex-row space-x-4">
+            <!-- Wrapper filter -->
+            <div class="flex flex-wrap gap-2">
                 <!-- Filter Tanggal (Last) -->
-                <div>
+                <div class="w-full sm:w-auto">
 
                     <!-- Button dropdown periode -->
-                    <button id="dropdownHelperRadioButton" data-dropdown-toggle="dropdownHelperRadio" class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none" type="button">
+                    <button id="dropdownHelperRadioButton" data-dropdown-toggle="dropdownHelperRadio" class="w-full sm:w-auto inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none" type="button">
                         Last
                         <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
@@ -119,10 +119,10 @@
                 </div>
 
                 <!-- Filter Status (Checkbox) -->
-                <div>
+                <div class="w-full sm:w-auto">
                     <button id="dropdownHelperCheckboxButton"
                         data-dropdown-toggle="dropdownHelperCheckbox"
-                        class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+                        class="w-full sm:w-auto inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
                         type="button">
                         Status
                         <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -182,9 +182,9 @@
                     </div>
                 </div>
                 <!-- Search berdasarkan nama karyawan -->
-                <form class="min-w-xs flex space-x-2" id="searchForm" method="GET">
+                <form class="w-full sm:w-auto sm:min-w-[250px] flex gap-2" id="searchForm" method="GET">
                     <label for="simple-search" class="sr-only">Search</label>
-                    <div class="relative w-full">
+                    <div class="relative flex-1 sm:w-auto">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-solid fa-user text-sm text-body"></i>
                         </div>
@@ -199,8 +199,8 @@
                 </form>
             </div>
         </div>
-        <div class="relative overflow-x-auto shadow-xs rounded-base border border-default" style="max-height: 650px;">
-            <table class="w-full text-sm text-left rtl:text-right text-body">
+        <div class="relative overflow-x-auto shadow-xs rounded-base border border-default max-h-[500px] sm:max-h-[650px]">
+            <table class="w-full text-sm text-left rtl:text-right text-body min-w-[900px]">
                 <thead class="text-xs text-heading uppercase bg-neutral-secondary-soft sticky top-0">
                     <tr>
                         <th scope="col" class="px-6 py-3 font-medium">No</th>

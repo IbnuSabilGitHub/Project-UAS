@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## **[Fix: Responsive UI Issues on Admin Dashboard] - 2024-12-10**
+Memperbaiki berbagai masalah UI responsif pada dashboard admin untuk memastikan tampilan yang konsisten di berbagai ukuran layar.
+
+
+### Frontend Changes
+**Views:**
+- `app/Views/admin/dashboard.php`
+- `app/Views/admin/attendance/index.php`
+- `app/Views/admin/dashboard.php`
+- `app/Views/admin/employees/index.php`
+- `app/Views/admin/leave/index.php`
+- `app/Views/auth/login-admin.php`
+
 ## **[Fix: Multi-Environment Path Detection & Asset Loading] - 2024-12-10**
 
 ### **🔧 Critical Fix: Path Generation untuk Berbagai Environment**
