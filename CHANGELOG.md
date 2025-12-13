@@ -5,7 +5,13 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## **[Fix: Responsive UI Issues on Admin Dashboard] - 2024-12-10**
+## **[Refactor: Mobile-Responsive UI/UX Enhancement] - 2024-12-13**
+
+Refactor menyeluruh pada semua halaman untuk meningkatkan responsiveness dan mobile-friendliness dengan pola desain yang konsisten.
+
+---
+
+## **[Fix: Responsive UI Issues on Admin Dashboard] - 2024-12-12**
 Memperbaiki berbagai masalah UI responsif pada dashboard admin untuk memastikan tampilan yang konsisten di berbagai ukuran layar.
 
 

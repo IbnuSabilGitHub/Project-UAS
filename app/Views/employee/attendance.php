@@ -1,38 +1,37 @@
 <?php require_once __DIR__ . '/../layouts/header.php'; ?>
 
-<div class="p-4 sm:ml-64 mt-14">
-    <h1 class="text-3xl font-bold mb-6 text-heading">Absensi Saya</h1>
+<div class="px-4 py-6 sm:ml-64 mt-14">
 
     <!-- Statistik Bulan Ini -->
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
-        <h2 class="text-xl font-semibold mb-4 text-heading">Statistik Bulan Ini</h2>
-        <div class="grid md:grid-cols-4 gap-4">
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
-                <p class="text-3xl font-bold text-heading"><?= $stats['total_days'] ?? 0 ?></p>
-                <p class="text-sm text-body">Total Hari Hadir</p>
+        <h2 class="text-xl md:text-2xl font-semibold mb-4 text-heading">Statistik Bulan Ini</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $stats['total_days'] ?? 0 ?></p>
+                <p class="text-sm sm:text-base text-body">Total Hari Hadir</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
-                <p class="text-3xl font-bold text-heading"><?= $stats['on_time'] ?? 0 ?></p>
-                <p class="text-sm text-body">Tepat Waktu</p>
+            <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $stats['on_time'] ?? 0 ?></p>
+                <p class="text-sm sm:text-base text-body">Tepat Waktu</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
-                <p class="text-3xl font-bold text-heading"><?= $stats['late'] ?? 0 ?></p>
-                <p class="text-sm text-body">Terlambat</p>
+            <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $stats['late'] ?? 0 ?></p>
+                <p class="text-sm sm:text-base text-body">Terlambat</p>
             </div>
-            <div class="bg-neutral-primary-soft p-4 rounded-base border border-default">
-                <p class="text-3xl font-bold text-heading">
+            <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading">
                     <?= isset($stats['avg_hours']) && $stats['avg_hours'] ? number_format($stats['avg_hours'], 1) : '0' ?>
                 </p>
-                <p class="text-sm text-body">Rata-rata Jam Kerja</p>
+                <p class="text-sm sm:text-base text-body">AVG Jam Kerja</p>
             </div>
         </div>
     </div>
 
     <!-- Status Hari Ini & Form Check-in/out -->
-    <div class="grid md:grid-cols-2 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
         <!-- Status Hari Ini -->
         <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
-            <h2 class="text-xl font-semibold mb-4 text-heading">Status Hari Ini</h2>
+            <h2 class="text-xl md:text-2xl font-semibold mb-4 text-heading">Status Hari Ini</h2>
             <div class="mb-4">
                 <p class="text-body"><strong>Tanggal:</strong> <?= date('d F Y') ?></p>
                 <p class="text-body"><strong>Waktu Sekarang:</strong> <span id="currentTime"><?= date('H:i:s') ?></span></p>
@@ -63,7 +62,7 @@
 
         <!-- Form Check-in/out -->
         <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
-            <h2 class="text-xl font-semibold mb-4 text-heading">Absensi</h2>
+            <h2 class="text-xl md:text-2xl font-semibold mb-4 text-heading">Absensi</h2>
 
             <?php if (!$isActive): ?>
                 <!-- Karyawan Inactive - Tidak bisa absensi -->
@@ -135,7 +134,7 @@
 
     <!-- Riwayat Absensi -->
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
-        <h2 class="text-xl font-semibold mb-4 text-heading">Riwayat Absensi (30 Hari Terakhir)</h2>
+        <h2 class="text-xl md:text-2xl font-semibold mb-4 text-heading">Riwayat Absensi (30 Hari Terakhir)</h2>
 
         <?php if (empty($history)): ?>
             <div class="text-center py-12">
@@ -145,16 +144,16 @@
                 <p class="mt-4 text-gray-600">Belum ada riwayat absensi</p>
             </div>
         <?php else: ?>
-            <div class="relative overflow-x-auto shadow-xs rounded-base border border-default" style="max-height: 600px;">
-                <table class="w-full text-sm text-left rtl:text-right text-body">
+            <div class="relative overflow-x-auto shadow-xs rounded-base border border-default max-h-[500px] sm:max-h-[600px]">
+                <table class="w-full text-sm text-left rtl:text-right text-body min-w-[700px]">
                     <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default sticky top-0 z-10">
                         <tr>
-                            <th scope="col" class="px-6 py-3 font-medium">Tanggal</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Check-in</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Check-out</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Durasi</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Status</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Catatan</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Tanggal</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Check-in</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Check-out</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Durasi</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Status</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Catatan</th>
                         </tr>
                     </thead>
                     <tbody>

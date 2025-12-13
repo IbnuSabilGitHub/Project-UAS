@@ -1,4 +1,4 @@
-<div class="p-4 sm:ml-64 mt-14">
+<div class="px-4 py-6 sm:ml-64 mt-14">
 
     <!-- Statistik Absensi -->
     <?php if (isset($stats) && !empty($stats)): ?>

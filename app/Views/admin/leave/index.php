@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . '/../../layouts/header.php'; ?>
 <?php require_once __DIR__ . '/../../layouts/sidebar.php'; ?>
 
-<div class="p-4 sm:ml-64 mt-14">
+<div class="px-4 py-6 sm:ml-64 mt-14">
 
     <!-- Statistik pengajuan cuti  -->
     <?php if (isset($statistics) && !empty($statistics)): ?>
