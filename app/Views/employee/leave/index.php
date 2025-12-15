@@ -1,42 +1,40 @@
 <?php require_once __DIR__ . '/../../layouts/header.php'; ?>
 
-<div class="p-4 sm:ml-64 mt-14">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold text-heading">Riwayat Cuti Saya</h1>
-        <a href="<?= url('/karyawan/leave/create') ?>"
-            class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-            <i class="fa-solid fa-circle-plus text-lg w-4 h-4 me-2.5 -ms-0.5"></i>
-            Ajukan Cuti Baru
-        </a>
-    </div>
-
+<div class="px-4 py-6 sm:ml-64 mt-14">
     <!-- Summary -->
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
         <h2 class="text-xl font-semibold mb-4 text-heading">Ringkasan Cuti Tahun Ini</h2>
-        <div class="grid md:grid-cols-3 gap-4">
-            <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading "><?= $totalApproved ?></p>
-                <p class="text-body">Total Cuti Disetujui</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading "><?= $totalApproved ?></p>
+                <p class="text-sm sm:text-base text-body">Total Cuti Disetujui</p>
             </div>
-            <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $totalRejected ?></p>
-                <p class="text-body">Total Cuti Ditolak</p>
+            <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $totalRejected ?></p>
+                <p class="text-sm sm:text-base text-body">Total Cuti Ditolak</p>
             </div>
-            <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default ">
-                <p class="mb-2 text-2xl font-semibold tracking-tight text-heading">
+            <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default ">
+                <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading">
                     <?= count(array_filter($leaves, function ($l) {
                         return $l['status'] === 'pending';
                     })) ?>
                 </p>
-                <p class="text-body">Menunggu Persetujuan</p>
+                <p class="text-sm sm:text-base text-body">Menunggu Persetujuan</p>
             </div>
         </div>
     </div>
 
     <!-- Daftar Pengajuan Cuti -->
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
-        <h2 class="text-xl font-semibold mb-4 text-heading">Daftar Pengajuan Cuti</h2>
-
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+            <h2 class="text-xl md:text-2xl font-semibold text-heading">Daftar Pengajuan Cuti</h2>
+            <a href="<?= url('/karyawan/leave/create') ?>"
+                class="w-full sm:w-auto inline-flex items-center justify-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                <i class="fa-solid fa-circle-plus text-lg w-4 h-4 me-2.5 -ms-0.5"></i>
+                <span class="hidden sm:inline">Ajukan Cuti Baru</span>
+                <span class="sm:inline md:hidden">Ajukan Cuti</span>
+            </a>
+        </div>
         <?php if (empty($leaves)): ?>
             <div class="text-center py-12">
                 <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,17 +48,17 @@
             </div>
         <?php else: ?>
 
-            <div class="relative overflow-x-auto shadow-xs rounded-base border border-default" style="max-height: 600px;">
-                <table class="w-full text-sm text-left rtl:text-right text-body">
+            <div class="relative overflow-x-auto shadow-xs rounded-base border border-default max-h-[500px] sm:max-h-[600px]">
+                <table class="w-full text-sm text-left rtl:text-right text-body min-w-[800px]">
                     <thead class="text-sm text-body bg-neutral-secondary-soft border-b border-default sticky top-0 z-10">
                         <tr>
-                            <th scope="col" class="px-6 py-3 font-medium">No</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Jenis Cuti</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Tanggal</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Durasi</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Status</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Lampiran</th>
-                            <th scope="col" class="px-6 py-3 font-medium">Aksi</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">No</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Jenis Cuti</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Tanggal</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Durasi</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Status</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Lampiran</th>
+                            <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -155,7 +153,7 @@
 
 <!-- Overlay -->
 <div id="modalOverlay"
-    class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-200 ">
+    class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-200">
 </div>
 
 <!-- Modal Container -->

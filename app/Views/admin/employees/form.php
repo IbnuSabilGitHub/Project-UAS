@@ -1,4 +1,4 @@
-<div class="p-4 sm:ml-64 mt-14">
+<div class="px-4 py-6 sm:ml-64 mt-14">
     <h1 class="text-2xl font-bold mb-4 text-heading"><?= $title ?></h1>
 
     <div class="max-w-4xl  bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">

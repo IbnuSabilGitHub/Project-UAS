@@ -28,10 +28,16 @@ class LeaveRequest {
         $attachmentFile = null;
 
         // Handle file upload jika ada
-        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+        if ($file && isset($file['error'])) {
+            // Cek error upload
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                $errorMsg = $this->getUploadErrorMessage($file['error']);
+                return ['success' => false, 'message' => $errorMsg];
+            }
+            
             $attachmentFile = $this->uploadFile($file);
             if (!$attachmentFile) {
-                return ['success' => false, 'message' => 'Gagal upload file'];
+                return ['success' => false, 'message' => 'Gagal upload file. Pastikan file adalah PDF/JPG/PNG dan ukuran maksimal 10MB'];
             }
         }
 
@@ -78,9 +84,29 @@ class LeaveRequest {
 
         // Validasi tipe file (hanya PDF, JPG, PNG)
         $allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($finfo, $file['tmp_name']);
-        finfo_close($finfo);
+        
+        // Fallback jika finfo_open tidak tersedia (fileinfo extension not enabled)
+        if (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $mimeType = finfo_file($finfo, $file['tmp_name']);
+            finfo_close($finfo);
+        } else {
+            // Fallback: validasi berdasarkan extension saja
+            $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+            $allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+            
+            if (!in_array($extension, $allowedExtensions)) {
+                return false;
+            }
+            
+            // Set mime type berdasarkan extension
+            $mimeType = match($extension) {
+                'pdf' => 'application/pdf',
+                'jpg', 'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                default => 'application/octet-stream'
+            };
+        }
 
         if (!in_array($mimeType, $allowedTypes)) {
             return false;
@@ -101,6 +127,28 @@ class LeaveRequest {
         }
 
         return false;
+    }
+
+    /**
+     * Get user-friendly error message untuk PHP upload errors
+     * 
+     * @param int $errorCode
+     * @return string
+     */
+    private function getUploadErrorMessage($errorCode) {
+        $phpMaxSize = ini_get('upload_max_filesize');
+        $postMaxSize = ini_get('post_max_size');
+        
+        return match($errorCode) {
+            UPLOAD_ERR_INI_SIZE => "File terlalu besar. Maksimal ukuran upload PHP adalah {$phpMaxSize}. Hubungi administrator untuk menaikkan limit.",
+            UPLOAD_ERR_FORM_SIZE => "File terlalu besar. Maksimal 10MB.",
+            UPLOAD_ERR_PARTIAL => "File hanya terupload sebagian. Silakan coba lagi.",
+            UPLOAD_ERR_NO_FILE => "Tidak ada file yang dipilih.",
+            UPLOAD_ERR_NO_TMP_DIR => "Folder temporary tidak ditemukan. Hubungi administrator.",
+            UPLOAD_ERR_CANT_WRITE => "Gagal menulis file ke disk. Hubungi administrator.",
+            UPLOAD_ERR_EXTENSION => "Upload file diblokir oleh extension PHP.",
+            default => "Error upload file (code: {$errorCode}). Silakan coba lagi."
+        };
     }
 
     /**

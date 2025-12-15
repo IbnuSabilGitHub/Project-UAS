@@ -1,44 +1,44 @@
-<div class="p-4 sm:ml-64 mt-14">
+<div class="px-4 py-6 sm:ml-64 mt-14">
 
     <!-- Statistik Karyawan -->
     <?php if (isset($statistics) && !empty($statistics)): ?>
         <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 mb-6 border border-default">
-            <h2 class="text-xl font-semibold mb-4 text-heading">Statistik Karyawan</h2>
+            <h2 class="text-xl md:text-2xl font-semibold mb-4 text-heading">Statistik Karyawan</h2>
 
             <!-- Card -->
-            <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
                 <!-- Total Karyawan -->
-                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['total'] ?? 0 ?></p>
-                    <p class="text-body">Total Karyawan</p>
+                <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                    <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $statistics['total'] ?? 0 ?></p>
+                    <p class="text-sm sm:text-base text-body">Total Karyawan</p>
                 </div>
 
                 <!-- Active -->
-                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['active'] ?? 0 ?></p>
-                    <p class="text-body">Aktif</p>
+                <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                    <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $statistics['active'] ?? 0 ?></p>
+                    <p class="text-sm sm:text-base text-body">Aktif</p>
                 </div>
 
                 <!-- Resigned -->
-                <div class="flex flex-col bg-neutral-primary p-6 rounded-base border border-default">
-                    <p class="mb-2 text-2xl font-semibold tracking-tight text-heading"><?= $statistics['resigned'] ?? 0 ?></p>
-                    <p class="text-body">Resign</p>
+                <div class="flex flex-col bg-neutral-primary p-4 sm:p-6 rounded-base border border-default">
+                    <p class="mb-2 text-xl sm:text-2xl font-semibold tracking-tight text-heading"><?= $statistics['resigned'] ?? 0 ?></p>
+                    <p class="text-sm sm:text-base text-body">Resign</p>
                 </div>
             </div>
         </div>
     <?php endif; ?>
 
-    <div class="overflow-y-auto overflow-x-auto shadow-md sm:rounded-base bg-neutral-secondary-soft p-4 space-y-4">
-        <div class="flex flex-row items-center justify-between w-full">
-            <h1 class="text-2xl font-bold text-heading">List Karyawan </h1>
+    <div class="flex-1 overflow-y-auto overflow-x-auto shadow-md sm:rounded-base bg-neutral-secondary-soft p-4 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
+            <h1 class="text-xl md:text-2xl font-bold text-heading">List Karyawan </h1>
 
             <!-- Wrapper filter -->
-            <div class="flex flex-row space-x-4">
+            <div class="flex flex-wrap gap-2">
                 <!-- Filter Status Employment -->
-                <div>
+                <div class="w-full sm:w-auto">
                     <button id="dropdownHelperCheckboxButton"
                         data-dropdown-toggle="dropdownHelperCheckbox"
-                        class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+                        class="w-full sm:w-auto inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
                         type="button">
                         Employment
                         <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -85,10 +85,10 @@
                 </div>
 
                 <!-- Filter Posisi -->
-                <div>
+                <div class="w-full sm:w-auto">
                     <button id="dropdownPositionFilterButton"
                         data-dropdown-toggle="dropdownPositionFilter"
-                        class="inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
+                        class="w-full sm:w-auto inline-flex items-center justify-center text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none"
                         type="button">
                         Posisi
                         <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -120,9 +120,9 @@
                 </div>
 
                 <!-- Search berdasarkan nama/NIK karyawan -->
-                <form class="min-w-xs flex space-x-2" id="searchForm" method="GET">
+                <form class="w-full sm:w-auto sm:min-w-[250px] flex gap-2" id="searchForm" method="GET">
                     <label for="simple-search" class="sr-only">Search</label>
-                    <div class="relative w-full">
+                    <div class="relative flex-1 sm:w-auto">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-solid fa-user text-sm text-body"></i>
                         </div>
@@ -132,31 +132,32 @@
                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" />
                         </svg>
-                        <span class="sr-only">Icon description</span>
+                        <span class="sr-only">Search</span>
                     </button>
                 </form>
 
                 <a href="<?= url('/admin/karyawan/create') ?>"
-                    class="inline-flex items-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-                    Tambah Karyawan
+                    class="w-full sm:w-auto inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                    <span class="hidden sm:inline">Tambah Karyawan</span>
+                    <span class="sm:hidden">Tambah</span>
                 </a>
             </div>
         </div>
 
         <!-- Table -->
-        <div class="relative overflow-x-auto shadow-xs rounded-base border border-default" style="max-height: 650px;">
-            <table class="w-full text-sm text-left rtl:text-right text-body">
+        <div class="relative overflow-x-auto shadow-xs rounded-base border border-default max-h-[500px] sm:max-h-[650px]">
+            <table class="w-full text-sm text-left rtl:text-right text-body min-w-[900px]">
                 <thead class="text-xs text-heading uppercase bg-neutral-secondary-soft sticky top-0">
                     <tr>
-                        <th scope="col" class="px-6 py-3 font-medium">NO</th>
-                        <th scope="col" class="px-6 py-3 font-medium">NIK</th>
-                        <th scope="col" class="px-6 py-3 font-medium">Nama</th>
-                        <th scope="col" class="px-6 py-3 font-medium">Email</th>
-                        <th scope="col" class="px-6 py-3 font-medium">Posisi</th>
-                        <th scope="col" class="px-6 py-3 font-medium">Status</th>
-                        <th scope="col" class="px-6 py-3 font-medium">Employment</th>
-                        <th scope="col" class="px-6 py-3 font-medium">Akun</th>
-                        <th scope="col" class="px-6 py-3 font-medium">Aksi</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">NO</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">NIK</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Nama</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Email</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Posisi</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Status</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Employment</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Akun</th>
+                        <th scope="col" class="px-3 sm:px-6 py-3 font-medium">Aksi</th>
                     </tr>
                 </thead>
 
@@ -266,13 +267,14 @@
                                             </a>
                                         </li>
 
-                                        <li>
-                                            <hr class="my-1 border-default-medium">
-                                        </li>
+
 
                                         <?php if (!empty($k['user_id'])): ?>
                                             <!-- Nonaktifkan Akun (hanya jika akun ada dan aktif) -->
                                             <?php if (($k['employment_status'] ?? 'active') === 'active'): ?>
+                                                <li>
+                                                    <hr class="my-1 border-default-medium">
+                                                </li>
                                                 <li>
                                                     <form action="<?= url('/admin/karyawan/deactivate') ?>"
                                                         method="post"
@@ -289,6 +291,9 @@
                                             <?php endif; ?>
                                         <?php else: ?>
                                             <!-- Aktifkan Akun (jika belum ada akun) -->
+                                            <li>
+                                                <hr class="my-1 border-default-medium">
+                                            </li>
                                             <li>
                                                 <form action="<?= url('/admin/karyawan/activate') ?>"
                                                     method="post"

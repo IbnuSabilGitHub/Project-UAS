@@ -1,8 +1,8 @@
 <?php require_once __DIR__ . '/../../layouts/header.php'; ?>
 
-<div class="p-4 sm:ml-64 mt-14">
+<div class="px-4 py-6 sm:ml-64 mt-14">
     <div class="bg-neutral-primary-soft shadow-xs rounded-base p-6 border border-default">
-        <h1 class="text-3xl font-bold mb-6 text-heading">Ajukan Cuti</h1>
+        <h1 class="text-xl md:text-2xl font-bold mb-6 text-heading">Ajukan Cuti</h1>
 
         <form action="<?= url('/karyawan/leave/store') ?>" method="POST" enctype="multipart/form-data" id="leaveForm">
             <!-- Jenis Cuti -->
@@ -98,7 +98,7 @@
                 <button
                     type="button"
                     onclick="handleCancelLeaveForm(event)"
-                    class="flex items-center justify-center flex-1 text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-full text-sm px-4 py-2.5">
+                    class="flex items-center justify-center flex-1 text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5">
                     Batal
                 </button>
             </div>

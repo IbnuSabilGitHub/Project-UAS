@@ -92,10 +92,29 @@ class FileController extends BaseController {
             die('Not Found: File tidak ditemukan di server');
         }
 
-        // Detect MIME type
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($finfo, $filePath);
-        finfo_close($finfo);
+        // Detect MIME type dengan fallback
+        $mimeType = 'application/octet-stream'; // Default
+        
+        if (function_exists('finfo_open')) {
+            // Gunakan finfo jika tersedia
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $detectedMime = finfo_file($finfo, $filePath);
+            finfo_close($finfo);
+            
+            if ($detectedMime) {
+                $mimeType = $detectedMime;
+            }
+        } else {
+            // Fallback: detect dari extension
+            $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+            $mimeType = match($extension) {
+                'pdf' => 'application/pdf',
+                'jpg', 'jpeg' => 'image/jpeg',
+                'png' => 'image/png',
+                'gif' => 'image/gif',
+                default => 'application/octet-stream'
+            };
+        }
 
         // Set headers untuk download
         header('Content-Type: ' . $mimeType);
