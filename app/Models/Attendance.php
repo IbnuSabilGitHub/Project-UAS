@@ -53,26 +53,31 @@ class Attendance {
         $status = 'present';
         
         // Aturan untuk menentukan status kehadiran:
-        // - Hadir tepat waktu (present): Check-in sebelum atau tepat jam 09:00
+        // - Jam kerja valid: 06:00 - 23:59 (di luar jam ini = terlambat)
+        // - Hadir tepat waktu (present): Check-in jam 06:00 - 09:00
         // - Half day: Check-in antara jam 09:01 sampai 09:15 (toleransi 15 menit)
-        // - Terlambat (late): Check-in setelah jam 09:15
+        // - Terlambat (late): Check-in setelah jam 09:15 atau sebelum jam 06:00
 
         $hour = (int)date('H');
         $minute = (int)date('i');
         
         // Konversi ke menit untuk perbandingan yang lebih akurat
         $currentTimeInMinutes = ($hour * 60) + $minute;
+        $workStartTime = (6 * 60); // 06:00 = 360 menit (batas awal jam kerja)
         $onTimeLimit = (9 * 60); // 09:00 = 540 menit
         $toleranceLimit = (9 * 60) + 15; // 09:15 = 555 menit
         
-        if ($currentTimeInMinutes > $toleranceLimit) {
+        if ($currentTimeInMinutes < $workStartTime) {
+            // Sebelum jam 06:00 (tengah malam 00:00 - 05:59) = terlambat
+            $status = 'late';
+        } elseif ($currentTimeInMinutes > $toleranceLimit) {
             // Setelah jam 09:15 = terlambat
             $status = 'late';
         } elseif ($currentTimeInMinutes > $onTimeLimit) {
             // Antara 09:01 - 09:15 = half day (toleransi)
             $status = 'half_day';
         } else {
-            // Sebelum atau tepat 09:00 = hadir tepat waktu
+            // Jam 06:00 - 09:00 = hadir tepat waktu
             $status = 'present';
         }
 

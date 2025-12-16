@@ -20,7 +20,7 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
   - Login Karyawan: `/karyawan/login`
   - Validasi role-based access
 - **Session Management**
-  - Login berbasis email (bukan username)
+  - Login berbasis email
   - Validasi status akun (active/disabled)
   - Wajib ganti password pertama kali login
   - Redirect otomatis ke dashboard sesuai role
@@ -48,7 +48,7 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
     - QA / Software Tester
   - Filter karyawan berdasarkan status (Aktif, Cuti, Resign) dan posisi
   - Pencarian karyawan by nama atau NIK
-  - Statistik real-time (total karyawan, by status, karyawan baru)
+  - Statistik (total karyawan, by status, karyawan baru)
 - **Manajemen Akun**
   - Buat akun otomatis saat tambah karyawan (opsional)
   - Generate temporary password acak
@@ -64,6 +64,11 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
   - Check-in/Check-out harian (1x per hari)
   - Validasi jam kerja (terlambat, half day)
   - Riwayat absensi personal
+  - Aturan untuk menentukan status kehadiran:
+     - Jam kerja valid: 06:00 - 23:59 (di luar jam ini = terlambat)
+     - Hadir tepat waktu (present): Check-in jam 06:00 - 09:00
+     - Half day: Check-in antara jam 09:01 sampai 09:15 (toleransi 15 menit)
+     - Terlambat (late): Check-in setelah jam 09:15 atau sebelum jam 06:00
 - **Fitur Admin**
   - View semua absensi karyawan
   - Filter by periode (Hari Ini, Minggu Ini, Bulan Ini, Semua Data)
@@ -76,7 +81,6 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
 - **Fitur Karyawan**
   - Ajukan cuti dengan 4 jenis: Annual, Sick, Emergency, Unpaid
   - Upload dokumen pendukung (PDF/JPG/PNG, max 10MB)
-  - Validasi jatah cuti tahunan (default 12 hari/tahun)
   - Perhitungan otomatis total hari cuti
   - Tracking status: Pending, Approved, Rejected
   - View riwayat pengajuan dengan statistik personal

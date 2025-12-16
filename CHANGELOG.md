@@ -2,8 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+---
+
+## **[Fix: Attendance Late Check-in Logic] - 2024-12-16**
+ Validasi ditambahkan sehingga check-in sebelum pukul 06:00 dianggap terlambat (mencegah check-in tengah malam dihitung sebagai tepat waktu).
+
 
 ---
+
 
 ## **[Refactor: Mobile-Responsive UI/UX Enhancement] - 2024-12-13**
 
