@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## **[Feature: Leave Request Search Filter Update] - 2025-12-16**
+
+Meningkatkan fungsionalitas search filter pada halaman pengajuan cuti agar konsisten dengan halaman manajemen karyawan.
+
+### Backend Changes
+**Models:**
+- `app/Models/PengajuanCuti.php`:
+  - Method `getWithFilters()`: Update search logic untuk support pencarian berdasarkan **nama ATAU NIK** karyawan
+  - Query SQL: `AND (k.name LIKE ? OR k.nik LIKE ?)` (konsisten dengan Attendance model)
+
+### Frontend Changes
+**Views:**
+- `app/Views/admin/leave/index.php`:
+  - HTML comment: "nama karyawan" → "nama/NIK karyawan"
+  - Input placeholder: "Cari nama karyawan..." → "Cari nama/NIK karyawan..."
+
+
+
+---
+
 ## **[Fix: Attendance Late Check-in Logic] - 2024-12-16**
  Validasi ditambahkan sehingga check-in sebelum pukul 06:00 dianggap terlambat (mencegah check-in tengah malam dihitung sebagai tepat waktu).
 

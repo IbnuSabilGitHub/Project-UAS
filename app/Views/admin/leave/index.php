@@ -181,14 +181,14 @@
                         </ul>
                     </div>
                 </div>
-                <!-- Search berdasarkan nama karyawan -->
+                <!-- Search berdasarkan nama/NIK karyawan -->
                 <form class="w-full sm:w-auto sm:min-w-[250px] flex gap-2" id="searchForm" method="GET">
                     <label for="simple-search" class="sr-only">Search</label>
                     <div class="relative flex-1 sm:w-auto">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <i class="fa-solid fa-user text-sm text-body"></i>
                         </div>
-                        <input type="text" name="search" id="simple-search" value="<?= htmlspecialchars($currentSearch ?? '') ?>" class="px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body" placeholder="Cari nama karyawan..." />
+                        <input type="text" name="search" id="simple-search" value="<?= htmlspecialchars($currentSearch ?? '') ?>" class="px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium rounded-base ps-9 text-heading text-sm focus:ring-brand focus:border-brand block w-full placeholder:text-body" placeholder="Cari nama/NIK karyawan..." />
                     </div>
                     <button type="submit" class="inline-flex items-center justify-center shrink-0 text-white bg-brand hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs rounded-base w-10 h-10 focus:outline-none">
                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">

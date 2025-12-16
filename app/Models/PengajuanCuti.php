@@ -198,7 +198,7 @@ class PengajuanCuti {
     /**
      * Mengambil data pengajuan cuti dengan filter
      * 
-     * @param string $search - Nama karyawan
+     * @param string $search - Nama atau NIK karyawan
      * @param array $statusFilter - Array status ['approved', 'pending', 'rejected']
      * @param string $dateFilter - Range tanggal (7, 30, 60 hari)
      * @return array
@@ -214,11 +214,13 @@ class PengajuanCuti {
         $params = [];
         $types = '';
         
-        // Filter search berdasarkan nama karyawan
+        // Filter search berdasarkan nama atau NIK karyawan
         if (!empty($search)) {
-            $sql .= " AND k.name LIKE ?";
-            $params[] = '%' . $search . '%';
-            $types .= 's';
+            $sql .= " AND (k.name LIKE ? OR k.nik LIKE ?)";
+            $searchParam = '%' . $search . '%';
+            $params[] = $searchParam;
+            $params[] = $searchParam;
+            $types .= 'ss';
         }
         
         // Filter berdasarkan status (checkbox - bisa multiple)
