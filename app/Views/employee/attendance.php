@@ -51,12 +51,19 @@
                     <?php endif; ?>
                 </div>
             <?php else: ?>
-                <div class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-warning rounded-base bg-warning-soft border border-warning-subtle" role="alert">
-                    <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
-                    <p><span class="font-medium me-1">Warning alert!</span>Anda belum check-in hari ini</p>
-                </div>
+                <?php if (isset($isOnLeave) && $isOnLeave): ?>
+                    <div class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-brand rounded-base bg-brand-soft border border-brand-subtle" role="alert">
+                        <i class="fa-solid fa-calendar-day me-2 text-fg-brand"></i>
+                        <p><span class="font-medium me-1">Hari Cuti!</span>Hari ini adalah jadwal cuti Anda yang telah disetujui.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="flex items-start sm:items-center p-4 mb-4 text-sm text-fg-warning rounded-base bg-warning-soft border border-warning-subtle" role="alert">
+                        <svg class="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        <p><span class="font-medium me-1">Warning alert!</span>Anda belum check-in hari ini</p>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
 
@@ -86,6 +93,28 @@
                     <button type="button" disabled
                         class="w-full text-white bg-neutral-tertiary-medium cursor-not-allowed font-medium leading-5 rounded-base text-sm px-4 py-2.5">
                         <i class="fa-solid fa-ban me-2"></i>Absensi Tidak Tersedia
+                    </button>
+                </div>
+            <?php elseif (isset($isOnLeave) && $isOnLeave): ?>
+                <!-- Karyawan Sedang Cuti - Tidak bisa absensi -->
+                <div class="flex items-start p-4 mb-4 text-sm text-fg-brand rounded-base bg-brand-soft border border-brand-subtle" role="alert">
+                    <i class="fa-solid fa-calendar-day me-2 text-xl shrink-0 mt-0.5"></i>
+                    <div>
+                        <span class="font-semibold text-fg-brand">Anda Sedang Cuti!</span>
+                        <p class="mt-1">Anda tidak dapat melakukan absensi hari ini karena Anda sedang berada dalam masa cuti yang telah disetujui oleh admin.</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-heading mb-2">Catatan (opsional)</label>
+                        <textarea disabled rows="3"
+                            class="bg-neutral-tertiary-medium border border-default-medium text-body text-sm rounded-base block w-full px-3 py-2.5 shadow cursor-not-allowed"
+                            placeholder="Fitur absensi dinonaktifkan selama cuti"></textarea>
+                    </div>
+                    <button type="button" disabled
+                        class="w-full text-white bg-neutral-tertiary-medium cursor-not-allowed font-medium leading-5 rounded-base text-sm px-4 py-2.5">
+                        <i class="fa-solid fa-calendar-times me-2"></i>Absensi Tidak Tersedia Selama Cuti
                     </button>
                 </div>
             <?php elseif (!$todayStatus): ?>

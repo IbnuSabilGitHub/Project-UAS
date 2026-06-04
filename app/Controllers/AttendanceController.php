@@ -3,6 +3,7 @@ require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../Models/Attendance.php';
 require_once __DIR__ . '/../Models/Karyawan.php';
+require_once __DIR__ . '/../Models/LeaveRequest.php';
 
 /**
  * AttendanceController - Mengelola fitur absensi karyawan
@@ -41,6 +42,10 @@ class AttendanceController extends BaseController {
         $karyawan = $this->karyawanModel->find($karyawanId);
         $isActive = $karyawan && $karyawan['status'] === 'active';
 
+        // Cek status cuti hari ini
+        $leaveRequestModel = new LeaveRequest();
+        $isOnLeave = $leaveRequestModel->isEmployeeOnLeave($karyawanId);
+
         // Cek status hari ini
         $todayStatus = $this->model->hasCheckedInToday($karyawanId);
         
@@ -57,6 +62,7 @@ class AttendanceController extends BaseController {
             'stats' => $stats,
             'karyawan' => $karyawan,
             'isActive' => $isActive,
+            'isOnLeave' => $isOnLeave,
             'success' => $this->getFlash('success'),
             'error' => $this->getFlash('error')
         ];
@@ -80,6 +86,13 @@ class AttendanceController extends BaseController {
         $karyawan = $this->karyawanModel->find($karyawanId);
         if (!$karyawan || $karyawan['status'] !== 'active') {
             setFlash('error', 'Status karyawan tidak aktif. Anda tidak dapat melakukan absensi.');
+            redirect('/karyawan/attendance');
+        }
+
+        // Validasi: cek apakah sedang cuti aktif hari ini
+        $leaveRequestModel = new LeaveRequest();
+        if ($leaveRequestModel->isEmployeeOnLeave($karyawanId)) {
+            setFlash('error', 'Anda sedang dalam masa cuti. Tidak dapat melakukan absensi.');
             redirect('/karyawan/attendance');
         }
 
@@ -108,6 +121,13 @@ class AttendanceController extends BaseController {
         $karyawan = $this->karyawanModel->find($karyawanId);
         if (!$karyawan || $karyawan['status'] !== 'active') {
             setFlash('error', 'Status karyawan tidak aktif. Anda tidak dapat melakukan absensi.');
+            redirect('/karyawan/attendance');
+        }
+
+        // Validasi: cek apakah sedang cuti aktif hari ini
+        $leaveRequestModel = new LeaveRequest();
+        if ($leaveRequestModel->isEmployeeOnLeave($karyawanId)) {
+            setFlash('error', 'Anda sedang dalam masa cuti. Tidak dapat melakukan absensi.');
             redirect('/karyawan/attendance');
         }
 

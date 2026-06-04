@@ -379,4 +379,28 @@ class LeaveRequest {
         $result = $stmt->get_result()->fetch_assoc();
         return $result['count'] > 0;
     }
+
+    /**
+     * Cek apakah karyawan sedang cuti pada tanggal tertentu (default hari ini)
+     * 
+     * @param int $karyawanId
+     * @param string|null $date Format Y-m-d
+     * @return bool
+     */
+    public function isEmployeeOnLeave($karyawanId, $date = null) {
+        if (!$date) {
+            $date = date('Y-m-d');
+        }
+        $stmt = $this->conn->prepare("
+            SELECT COUNT(*) as count
+            FROM leave_requests
+            WHERE karyawan_id = ?
+            AND status = 'approved'
+            AND ? BETWEEN start_date AND end_date
+        ");
+        $stmt->bind_param('is', $karyawanId, $date);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result['count'] > 0;
+    }
 }
