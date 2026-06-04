@@ -21,14 +21,31 @@ require_once dirname(__DIR__) . '/app/Core/Database.php';
 
 $db = new Database();
 $conn = $db->getConnection();
-$email = 'kelompok8@gmail.com';
-$password = 'kelompok8';
+$email = 'admin@hris.local';
+$password = 'admin123';
 $role = 'super_admin'; // atau 'karyawan'
 
-if($role === 'admin' || $role === 'karyawan') {
+if (php_sapi_name() === 'cli') {
+    echo "=== Pembuatan Akun Super Admin ===\n";
+    echo "Masukkan email admin [default: admin@hris.local]: ";
+    $inputEmail = trim(fgets(STDIN));
+    if (!empty($inputEmail)) {
+        $email = $inputEmail;
+    }
+    
+    echo "Masukkan password admin [default: admin123]: ";
+    $inputPassword = trim(fgets(STDIN));
+    if (!empty($inputPassword)) {
+        $password = $inputPassword;
+    }
+    echo "\nMembuat akun super admin dengan:\nEmail: $email\nPassword: $password\n\n";
+}
+
+if($role === 'super_admin' || $role === 'admin') {
     $karyawan_id = null; // admin tidak terkait dengan karyawan manapun
 } else {
-    echo "Untuk membuat user karyawan, buat dulu data karyawannya";
+    echo "Untuk membuat user karyawan, buat dulu data karyawannya\n";
+    exit;
 }
 
 # enkripsi password

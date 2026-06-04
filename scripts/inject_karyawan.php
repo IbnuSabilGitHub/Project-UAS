@@ -91,7 +91,7 @@ foreach ($mockData as $index => $data) {
     $name = $data['name'];
     $email = $data['email'];
     $phone = $data['phone'];
-    $join_date = $data['join_date'];
+    $join_date = $data['date'] ?? $data['join_date'] ?? date('Y-m-d');
 
     // Position (bisa di-random atau set default)
     $positions = [
