@@ -167,7 +167,7 @@
 
                             <!-- No -->
                             <td class="px-6 py-4">
-                                <?= htmlspecialchars($index + 1) ?>
+                                <?= htmlspecialchars(($page - 1) * $limit + $index + 1) ?>
                             </td>
 
                             <!-- NIK -->
@@ -254,91 +254,160 @@
                                         <path d="M2 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm6.041 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM14 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Z" />
                                     </svg>
                                 </button>
-
-                                <!-- Dropdown Menu -->
-                                <div id="dropdown<?= $k['id'] ?>" class="z-10 hidden bg-neutral-primary border border-default-medium rounded-base shadow-lg w-48">
-                                    <ul class="py-2 text-sm text-body" aria-labelledby="dropdownButton<?= $k['id'] ?>">
-                                        <!-- Edit -->
-                                        <li>
-                                            <a href="<?= url('/admin/karyawan/edit') ?>?id=<?= $k['id'] ?>"
-                                                class="flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-heading">
-                                                <i class="fa-solid fa-pen-to-square w-4"></i>
-                                                <span>Edit Karyawan</span>
-                                            </a>
-                                        </li>
-
-
-
-                                        <?php if (!empty($k['user_id'])): ?>
-                                            <!-- Nonaktifkan Akun (hanya jika akun ada dan aktif) -->
-                                            <?php if (($k['employment_status'] ?? 'active') === 'active'): ?>
-                                                <li>
-                                                    <hr class="my-1 border-default-medium">
-                                                </li>
-                                                <li>
-                                                    <form action="<?= url('/admin/karyawan/deactivate') ?>"
-                                                        method="post"
-                                                        class="block"
-                                                        id="form-deactivate-<?= $k['id'] ?>"
-                                                        onsubmit="return handleDeactivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
-                                                        <input type="hidden" name="id" value="<?= $k['id'] ?>">
-                                                        <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-warning-strong font-medium">
-                                                            <i class="fa-solid fa-user-slash w-4"></i>
-                                                            <span>Nonaktifkan Akun</span>
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                            <?php endif; ?>
-                                        <?php else: ?>
-                                            <!-- Aktifkan Akun (jika belum ada akun) -->
-                                            <li>
-                                                <hr class="my-1 border-default-medium">
-                                            </li>
-                                            <li>
-                                                <form action="<?= url('/admin/karyawan/activate') ?>"
-                                                    method="post"
-                                                    class="block"
-                                                    id="form-activate-<?= $k['id'] ?>"
-                                                    onsubmit="return handleActivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
-                                                    <input type="hidden" name="karyawan_id" value="<?= $k['id'] ?>">
-                                                    <button type="submit"
-                                                        class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-success-strong font-medium">
-                                                        <i class="fa-solid fa-user-check w-4"></i>
-                                                        <span>Aktifkan Akun</span>
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        <?php endif; ?>
-
-                                        <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin'): ?>
-                                            <li>
-                                                <hr class="my-1 border-default-medium">
-                                            </li>
-                                            <!-- Delete (Super Admin Only) -->
-                                            <li>
-                                                <form action="<?= url('/admin/karyawan/delete') ?>"
-                                                    method="post"
-                                                    class="block"
-                                                    id="form-delete-<?= $k['id'] ?>"
-                                                    onsubmit="return handleDeleteEmployee(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
-                                                    <input type="hidden" name="id" value="<?= $k['id'] ?>">
-                                                    <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong">
-                                                        <i class="fa-solid fa-trash w-4"></i>
-                                                        <span>Hapus Permanen</span>
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        <?php endif; ?>
-                                    </ul>
-                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
+        
+        <!-- Pagination UI -->
+        <?php if ($totalPages > 1): ?>
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-default mt-4">
+                <span class="text-sm text-body">
+                    Menampilkan <span class="font-semibold text-heading"><?= min($totalItems, ($page - 1) * $limit + 1) ?></span> - <span class="font-semibold text-heading"><?= min($totalItems, $page * $limit) ?></span> dari <span class="font-semibold text-heading"><?= $totalItems ?></span> karyawan
+                </span>
+                
+                <nav class="inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                    <!-- Tombol Previous -->
+                    <?php if ($page > 1): ?>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page - 1])) ?>" class="inline-flex items-center px-3 py-2 text-sm font-medium text-body bg-neutral-secondary-medium border border-default-medium rounded-l-base hover:bg-neutral-tertiary-medium hover:text-heading transition-colors">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </a>
+                    <?php else: ?>
+                        <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-body/40 bg-neutral-secondary-medium/50 border border-default-medium rounded-l-base cursor-not-allowed">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </span>
+                    <?php endif; ?>
+
+                    <!-- Halaman -->
+                    <?php
+                    $range = 1; // Menampilkan 1 halaman sebelum dan sesudah halaman aktif
+                    $showPrevEllipsis = false;
+                    $showNextEllipsis = false;
+                    
+                    for ($i = 1; $i <= $totalPages; $i++):
+                        if ($i == 1 || $i == $totalPages || ($i >= $page - $range && $i <= $page + $range)):
+                            $activeClass = ($i === $page)
+                                ? 'bg-brand text-white border-brand hover:bg-brand-strong'
+                                : 'bg-neutral-secondary-medium text-body border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading';
+                    ?>
+                            <a href="?<?= http_build_query(array_merge($_GET, ['page' => $i])) ?>" class="inline-flex items-center px-4 py-2 text-sm font-medium border transition-colors <?= $activeClass ?>">
+                                <?= $i ?>
+                            </a>
+                    <?php
+                        elseif ($i < $page - $range && !$showPrevEllipsis):
+                            $showPrevEllipsis = true;
+                    ?>
+                            <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-body bg-neutral-secondary-medium border border-default-medium">
+                                ...
+                            </span>
+                    <?php
+                        elseif ($i > $page + $range && !$showNextEllipsis):
+                            $showNextEllipsis = true;
+                    ?>
+                            <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-body bg-neutral-secondary-medium border border-default-medium">
+                                ...
+                            </span>
+                    <?php
+                        endif;
+                    endfor;
+                    ?>
+
+                    <!-- Tombol Next -->
+                    <?php if ($page < $totalPages): ?>
+                        <a href="?<?= http_build_query(array_merge($_GET, ['page' => $page + 1])) ?>" class="inline-flex items-center px-3 py-2 text-sm font-medium text-body bg-neutral-secondary-medium border border-default-medium rounded-r-base hover:bg-neutral-tertiary-medium hover:text-heading transition-colors">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </a>
+                    <?php else: ?>
+                        <span class="inline-flex items-center px-3 py-2 text-sm font-medium text-body/40 bg-neutral-secondary-medium/50 border border-default-medium rounded-r-base cursor-not-allowed">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </span>
+                    <?php endif; ?>
+                </nav>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
+
+<!-- Dropdown menus outside table container to prevent clipping -->
+<?php if (!empty($karyawans)): ?>
+    <?php foreach ($karyawans as $k): ?>
+        <div id="dropdown<?= $k['id'] ?>" class="z-50 hidden bg-neutral-primary border border-default-medium rounded-base shadow-lg w-48">
+            <ul class="py-2 text-sm text-body" aria-labelledby="dropdownButton<?= $k['id'] ?>">
+                <!-- Edit -->
+                <li>
+                    <a href="<?= url('/admin/karyawan/edit') ?>?id=<?= $k['id'] ?>"
+                        class="flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-heading">
+                        <i class="fa-solid fa-pen-to-square w-4"></i>
+                        <span>Edit Karyawan</span>
+                    </a>
+                </li>
+
+                <?php if (!empty($k['user_id'])): ?>
+                    <!-- Nonaktifkan Akun (hanya jika akun ada dan aktif) -->
+                    <?php if (($k['employment_status'] ?? 'active') === 'active'): ?>
+                        <li>
+                            <hr class="my-1 border-default-medium">
+                        </li>
+                        <li>
+                            <form action="<?= url('/admin/karyawan/deactivate') ?>"
+                                method="post"
+                                class="block"
+                                id="form-deactivate-<?= $k['id'] ?>"
+                                onsubmit="return handleDeactivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
+                                <input type="hidden" name="id" value="<?= $k['id'] ?>">
+                                <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-warning-strong font-medium">
+                                    <i class="fa-solid fa-user-slash w-4"></i>
+                                    <span>Nonaktifkan Akun</span>
+                                </button>
+                            </form>
+                        </li>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <!-- Aktifkan Akun (jika belum ada akun) -->
+                    <li>
+                        <hr class="my-1 border-default-medium">
+                    </li>
+                    <li>
+                        <form action="<?= url('/admin/karyawan/activate') ?>"
+                            method="post"
+                            class="block"
+                            id="form-activate-<?= $k['id'] ?>"
+                            onsubmit="return handleActivateAccount(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
+                            <input type="hidden" name="karyawan_id" value="<?= $k['id'] ?>">
+                            <button type="submit"
+                                class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-success-strong font-medium">
+                                <i class="fa-solid fa-user-check w-4"></i>
+                                <span>Aktifkan Akun</span>
+                            </button>
+                        </form>
+                    </li>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'super_admin'): ?>
+                    <li>
+                        <hr class="my-1 border-default-medium">
+                    </li>
+                    <!-- Delete (Super Admin Only) -->
+                    <li>
+                        <form action="<?= url('/admin/karyawan/delete') ?>"
+                            method="post"
+                            class="block"
+                            id="form-delete-<?= $k['id'] ?>"
+                            onsubmit="return handleDeleteEmployee(event, '<?= $k['id'] ?>', '<?= htmlspecialchars($k['name'], ENT_QUOTES) ?>');">
+                            <input type="hidden" name="id" value="<?= $k['id'] ?>">
+                            <button type="submit" class="w-full text-left flex items-center gap-2 px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong">
+                                <i class="fa-solid fa-trash w-4"></i>
+                                <span>Hapus Permanen</span>
+                            </button>
+                        </form>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
 
 <!-- Include Modal Temporary Password -->
 <?php require_once __DIR__ . '/../../layouts/components/modal-temp-password.php'; ?>

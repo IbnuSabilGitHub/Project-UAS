@@ -67,15 +67,30 @@ class KaryawanController extends BaseController {
             'on_leave' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'on_leave')),
             'resigned' => count(array_filter($allEmployees, fn($k) => ($k['employment_status'] ?? 'active') === 'resigned')),
         ];
+
+        // Pagination
+        $limit = 10;
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $totalItems = count($karyawans);
+        $totalPages = max(1, (int)ceil($totalItems / $limit));
+        if ($page > $totalPages) {
+            $page = $totalPages;
+        }
+        $offset = ($page - 1) * $limit;
+        $paginatedKaryawans = array_slice($karyawans, $offset, $limit);
         
         $this->render('admin/employees/index', [
             'title' => 'List Karyawan', 
-            'karyawans' => $karyawans,
+            'karyawans' => $paginatedKaryawans,
             'statistics' => $statistics,
             'currentSearch' => $search,
             'currentStatus' => $statusFilter,
             'currentPosition' => $positionFilter,
-            'availablePositions' => Karyawan::getAvailablePositions()
+            'availablePositions' => Karyawan::getAvailablePositions(),
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'totalItems' => $totalItems,
+            'limit' => $limit
         ]);
     }
 
