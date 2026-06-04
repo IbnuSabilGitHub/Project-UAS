@@ -50,6 +50,7 @@ Aplikasi HRIS sederhana dengan fitur inti: Login berbasis role, Dashboard, Manaj
   - Filter karyawan berdasarkan status (Aktif, Cuti, Resign) dan posisi
   - Pencarian karyawan by nama atau NIK
   - Statistik (total karyawan, by status, karyawan baru)
+  - **Pagination (Pembagian Halaman)** demi performa scroll yang super ringan dan optimal
 - **Manajemen Akun**
   - Buat akun otomatis saat tambah karyawan (opsional)
   - Generate temporary password acak
@@ -230,15 +231,7 @@ chmod 755 storage/leave_attachments
 
 ### 7️⃣ Buat Akun Admin
 
-Edit file `scripts/register.php`, ubah variabel `$email` dan `$password` sesuai keinginan Anda:
-
-```php
-$email = 'admin@hris.local';
-$password = 'admin123';
-$role = 'super_admin';
-```
-
-Lalu jalankan:
+Jalankan perintah berikut di terminal. Skrip ini bersifat interaktif dan akan menanyakan email serta password admin yang ingin Anda buat (atau tekan **Enter** langsung untuk menggunakan nilai default):
 
 ```bash
 cd scripts
@@ -246,9 +239,22 @@ php register.php
 cd ..
 ```
 
+* **Default Email**: `admin@hris.local`
+* **Default Password**: `admin123`
+
 ---
 
-### 8️⃣ Jalankan Aplikasi
+### 8️⃣ Suntik Data Karyawan Tiruan (Mock Data)
+
+Aplikasi menyediakan data tiruan sebanyak 1.000 data karyawan untuk pengujian performa skala besar. Anda dapat menyuntikkan data ini ke database dengan menjalankan perintah:
+
+```bash
+php scripts/inject_karyawan.php
+```
+
+---
+
+### 9️⃣ Jalankan Aplikasi
 
 ```bash
 php -S localhost:8000 -t public
@@ -405,4 +411,4 @@ HRIS-APP/
 Project ini dibuat untuk keperluan pembelajaran dan tugas akhir semester.
 
 ## 👥 Team
-Developed by **KELOMPOK 8**.
+Developed by **KELOMPOK 3**.
