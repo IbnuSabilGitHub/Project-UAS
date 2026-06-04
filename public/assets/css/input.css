@@ -7,7 +7,7 @@
 
 /* Configure the source files of Flowbite */
 
-@source "C:/xampp/htdocs/HRIS/node_modules/flowbite"; /* Paksa Flowbite untuk menggunakan path absolut di Windows */
+@source "../../../node_modules/flowbite"; /* Gunakan 3 level ke atas (../../../) agar mencapai root folder proyek */
 
 
 @custom-variant dark (&:where(.dark, .dark *));

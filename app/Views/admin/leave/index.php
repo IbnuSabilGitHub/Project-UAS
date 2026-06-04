@@ -320,65 +320,6 @@
                                         </svg>
                                     </button>
 
-                                    <!-- Dropdown menu -->
-                                    <div id="dropdown<?= $pc['id'] ?>" class="z-10 hidden bg-neutral-primary border border-default-medium rounded-base shadow-lg w-44">
-                                        <ul class="py-2 text-sm text-body" aria-labelledby="dropdownButton<?= $pc['id'] ?>">
-                                            <?php if ($pc['status'] === 'pending'): ?>
-                                                <li>
-                                                    <form
-                                                        action="<?= url('/admin/cuti/approve') ?>"
-                                                        method="post"
-                                                        class="block"
-                                                        id="approve-form-<?= $pc['id'] ?>"
-                                                        onsubmit="return handleApprove(event, '<?= $pc['id'] ?>', '<?= htmlspecialchars(addslashes($pc['karyawan_name'])) ?>');">
-                                                        <input type="hidden" name="id" value="<?= $pc['id'] ?>">
-                                                        <button type="submit" class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-success-strong font-medium flex items-center">
-                                                            <i class="fa-solid fa-check text-xs mr-2"></i>
-                                                            Approve
-                                                        </button>
-                                                    </form>
-                                                </li>
-                                                <li>
-                                                    <button type="button"
-                                                        data-modal-target="reject-modal-<?= $pc['id'] ?>"
-                                                        data-modal-toggle="reject-modal-<?= $pc['id'] ?>"
-                                                        class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong font-medium flex items-center">
-                                                        <i class="fa-solid fa-xmark text-xs mr-2"></i>
-                                                        Reject
-                                                    </button>
-                                                </li>
-                                                <li>
-                                                    <hr class="my-1 border-default-medium">
-                                                </li>
-                                            <?php endif; ?>
-                                            <li>
-                                                <button type="button"
-                                                    onclick="showDetail(<?= htmlspecialchars(json_encode($pc)) ?>)"
-                                                    class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-heading flex items-center">
-                                                    <i class="fa-solid fa-eye text-xs mr-2"></i>
-                                                    Detail
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <hr class="my-1 border-default-medium">
-                                            </li>
-                                            <li>
-                                                <form
-                                                    action="<?= url('/admin/cuti/delete') ?>"
-                                                    method="post"
-                                                    class="block"
-                                                    id="delete-leave-form-<?= $pc['id'] ?>"
-                                                    onsubmit="return handleDeleteLeave(event, <?= $pc['id'] ?>, '<?= htmlspecialchars($pc['karyawan_name']) ?>');">
-                                                    <input type="hidden" name="id" value="<?= $pc['id'] ?>">
-                                                    <button type="submit" class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong flex items-center">
-                                                        <i class="fa-solid fa-trash text-xs mr-2"></i>
-                                                        Hapus
-                                                    </button>
-                                                </form>
-                                            </li>
-                                        </ul>
-                                    </div>
-
                                     <!-- Rejection Modal -->
                                     <div id="reject-modal-<?= $pc['id'] ?>" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                                         <div class="relative p-4 w-full max-w-md max-h-full">
@@ -451,6 +392,69 @@
         </div>
     </div>
 </div>
+
+<!-- Dropdown menus outside table container to prevent clipping -->
+<?php if (!empty($pengajuanCuti)): ?>
+    <?php foreach ($pengajuanCuti as $pc): ?>
+        <div id="dropdown<?= $pc['id'] ?>" class="z-50 hidden bg-neutral-primary border border-default-medium rounded-base shadow-lg w-44">
+            <ul class="py-2 text-sm text-body" aria-labelledby="dropdownButton<?= $pc['id'] ?>">
+                <?php if ($pc['status'] === 'pending'): ?>
+                    <li>
+                        <form
+                            action="<?= url('/admin/cuti/approve') ?>"
+                            method="post"
+                            class="block"
+                            id="approve-form-<?= $pc['id'] ?>"
+                            onsubmit="return handleApprove(event, '<?= $pc['id'] ?>', '<?= htmlspecialchars(addslashes($pc['karyawan_name'])) ?>');">
+                            <input type="hidden" name="id" value="<?= $pc['id'] ?>">
+                            <button type="submit" class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-success-strong font-medium flex items-center">
+                                <i class="fa-solid fa-check text-xs mr-2"></i>
+                                Approve
+                            </button>
+                        </form>
+                    </li>
+                    <li>
+                        <button type="button"
+                            data-modal-target="reject-modal-<?= $pc['id'] ?>"
+                            data-modal-toggle="reject-modal-<?= $pc['id'] ?>"
+                            class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong font-medium flex items-center">
+                            <i class="fa-solid fa-xmark text-xs mr-2"></i>
+                            Reject
+                        </button>
+                    </li>
+                    <li>
+                        <hr class="my-1 border-default-medium">
+                    </li>
+                <?php endif; ?>
+                <li>
+                    <button type="button"
+                        onclick="showDetail(<?= htmlspecialchars(json_encode($pc)) ?>)"
+                        class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-heading flex items-center">
+                        <i class="fa-solid fa-eye text-xs mr-2"></i>
+                        Detail
+                    </button>
+                </li>
+                <li>
+                    <hr class="my-1 border-default-medium">
+                </li>
+                <li>
+                    <form
+                        action="<?= url('/admin/cuti/delete') ?>"
+                        method="post"
+                        class="block"
+                        id="delete-leave-form-<?= $pc['id'] ?>"
+                        onsubmit="return handleDeleteLeave(event, <?= $pc['id'] ?>, '<?= htmlspecialchars($pc['karyawan_name']) ?>');">
+                        <input type="hidden" name="id" value="<?= $pc['id'] ?>">
+                        <button type="submit" class="w-full text-left px-4 py-2 hover:bg-neutral-tertiary-medium text-danger-strong flex items-center">
+                            <i class="fa-solid fa-trash text-xs mr-2"></i>
+                            Hapus
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
 
 <!-- Overlay -->
 <div id="modalOverlay"

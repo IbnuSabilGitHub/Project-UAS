@@ -34,12 +34,12 @@
                             <img class="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo">
                         </button>
                     </div>
-                    <div class="z-50 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44" id="dropdown-user">
+                    <div class="z-50 hidden bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-56" id="dropdown-user">
                         <div class="px-4 py-3 border-b border-default-medium" role="none">
-                            <p class="text-sm font-medium text-heading" role="none">
+                            <p class="text-sm font-medium text-heading truncate" role="none" title="<?= htmlspecialchars($email) ?>">
                                 <?= htmlspecialchars($email) ?>
                             </p>
-                            <p class="text-sm text-body truncate" role="none">
+                            <p class="text-xs text-body" role="none">
                                 Karyawan
                             </p>
                         </div>
