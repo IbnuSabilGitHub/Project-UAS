@@ -17,8 +17,6 @@ yarn-error.log*
 
 # env files
 .env
-./public/assets/css/output.css
-public/assets/css/output.css
 
 
 # uploaded cuti files
